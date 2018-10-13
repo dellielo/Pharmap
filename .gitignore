@@ -1,3 +1,9 @@
+#own file
+tmp_data
+
+#data set
+data/dataset
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
