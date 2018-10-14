@@ -51,6 +51,20 @@ def computeRow(row, tempTab):
         totalNotFound += 1
         return float('NaN')
 
+def averageTemps(row, tempTab):
+    global totalNotFound
+    temps = select(tempTab, row['latitude'], row['longitude'], row['DepthInMeters'])
+    if (not temps.empty):
+        tempPoints = []
+        for c in temps.columns:
+		for v in temps[c]:
+			tempPoints.append(v)
+        return sum(tempPoints)/len(tempPoints)
+    else:
+        totalNotFound += 1
+        return float('NaN')
+
+
 def computeTemp(mainTab, tempTab, format=True):
     tempTab = formatTempTab(tempTab)
     temp = []
@@ -62,6 +76,9 @@ def computeTemp(mainTab, tempTab, format=True):
     mainTab['temperature'] = temp
     print(mainTab)
     return 1
+
+
+
 
 if __name__=='__main__':
     data = tools.load(config.testDir)
