@@ -44,9 +44,11 @@ def computeRow(row, tempTab):
     temps = select(tempTab, row['latitude'], row['longitude'], row['DepthInMeters'])
     if (not temps.empty):
         total = 0
+        length = 0
         for c in temps.columns:
-            total += temps[c].mean()
-        return total / len(temps.columns)
+            total += temps[c].sum()
+            length += len(temps[c])
+        return total / length
     else:
         totalNotFound += 1
         return float('NaN')
