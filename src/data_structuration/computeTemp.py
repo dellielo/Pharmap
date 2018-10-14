@@ -68,9 +68,6 @@ def computeTemp(mainTab, tempTab, format=True):
     print(mainTab)
     return 1
 
-
-
-
 if __name__=='__main__':
     data = tools.load(config.testDir)
     tempTab = data['temp_0-4000m_2013.geojson']
