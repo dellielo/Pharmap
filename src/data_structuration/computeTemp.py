@@ -55,11 +55,12 @@ def averageTemps(row, tempTab):
     global totalNotFound
     temps = select(tempTab, row['latitude'], row['longitude'], row['DepthInMeters'])
     if (not temps.empty):
-        tempPoints = []
-        for c in temps.columns:
-		for v in temps[c]:
-			tempPoints.append(v)
-        return sum(tempPoints)/len(tempPoints)
+	total = 0
+	length = 0
+	for c in temps.columns:
+        	total += temps[c].sum()
+        	length += len(temps[c])
+return total / length
     else:
         totalNotFound += 1
         return float('NaN')
