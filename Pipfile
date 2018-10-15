@@ -13,6 +13,7 @@ six = "*"
 pyproj = "*"
 matplotlib = "*"
 descartes = "*"
+tensorflow = "*"
 
 [dev-packages]
 

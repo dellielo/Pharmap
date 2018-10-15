@@ -3,6 +3,7 @@ tmp_data
 
 #data set
 data/dataset
+data/aiData
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
