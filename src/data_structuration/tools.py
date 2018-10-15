@@ -3,6 +3,14 @@ from os.path import join
 import config
 import geopandas
 
+def meanTab(tab):
+    total = 0
+    length = 0
+    for c in tab.columns:
+        total += tab[c].sum()
+        length += tab[c].count()
+    return total / length
+
 def load(dataDir):
     data = {}
     for f in listdir(dataDir):
@@ -24,3 +32,5 @@ def save(tab, dirName, filename):
 def multipleTabSave(tabs, dirName):
     for name, tab in tabs.items():
         save(tab, dirName, name)
+
+notFound = 0

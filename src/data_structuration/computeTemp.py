@@ -1,8 +1,6 @@
 import tools
 import config
 import geopandas
-import numpy as np
-import time
 
 totalNotFound = 0
 
@@ -40,40 +38,19 @@ def select(t, lat, lon, depth):
     t = t.loc[:,nb]
     return t
 
-def computeRow(row, tempTab):
-    global totalNotFound
+def computeTempRow(row, tempTab):
     temps = select(tempTab, row['latitude'], row['longitude'], row['DepthInMeters'])
     if (not temps.empty):
-        total = 0
-        length = 0
-        for c in temps.columns:
-            total += temps[c].sum()
-            length += temps[c].count()
-        return total / length
+        return tools.meanTab(temps)
     else:
-        totalNotFound += 1
+        tools.notFound += 1
         return float('NaN')
 
-def computeTemp(mainTab, tempTab, format=True):
-    tempTab = formatTempTab(tempTab)
-    temp = []
-    start_time = time.time()
-    for index, row in mainTab.iterrows():
-        tempRow = computeRow(row, tempTab)
-        temp.append(tempRow)
-        if (index % 1000 == 0):
-            print(index , "\nNot found: ", totalNotFound, "\ntime for 1000: ", time.time() - start_time, "s\n----")
-            start_time = time.time()
-    mainTab['temperature'] = temp
-    print(mainTab)
-    return 1
-
 if __name__=='__main__':
+    import factory
+
     data = tools.load(config.testDir)
     tempTab = data['temp_0-4000m_2013.geojson']
     mainTab = data['coraux_geo.geojson']
-    computeTemp(mainTab, tempTab)
-    #data = tools.load(config.dataDir)
-    #for name, tab in data.items():
-    #    data[name] = tab.head(10)
-    #tools.multipleTabSave(data, config.testDir)
+    tempTab = formatTempTab(tempTab)
+    factory.addColumn(mainTab, "temperature", tempTab, computeTempRow)
