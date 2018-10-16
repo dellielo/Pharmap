@@ -1,7 +1,10 @@
-extension = [
-    "shp",
-    "geojson"
-]
+extension = {
+    "geo":[
+        "shp",
+         "geojson"],
+    "tab":[
+        "csv", "json"]
+}
 dataDir = './data/dataset'
 testDir = './data/test'
 
