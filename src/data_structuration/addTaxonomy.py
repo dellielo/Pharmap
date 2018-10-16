@@ -40,6 +40,8 @@ def addTaxonomy(df_target, df_source):
     df1 = df_target
     df2 = df_source
     ranks = ['worms_id', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+    for rank in ranks:
+        df1[rank] = None
     try:
         df1_sp = set(df1.species):
         df2_sp = set(df2.species):
