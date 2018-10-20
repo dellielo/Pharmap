@@ -21,7 +21,7 @@ def load(dataDir):
             if extension in config.extension["geo"]:
                 d = gpd.read_file(path)
             elif extension in config.extension["tab"]:
-                d = pd.read_csv(path)
+                d = pd.read_csv(path, low_memory=False, header=1)
             else:
                 continue
             data[f] = d
