@@ -1,6 +1,7 @@
 import time
 import tools
 import config
+import numpy as np
 
 def toNumber(s):
     if (s.isnumeric()):
@@ -45,16 +46,7 @@ def select(t, lat, lon, depth):
     return t
 
 def meanTab(tab):
-    total = 0
-    length = 0
-    for c in tab.columns:
-        total += tab[c].sum()
-        length += tab[c].count()
-    if (length):
-        return total / length
-    else:
-        tools.notFound += 1
-        return float('NaN')
+    return np.nanmean(tab.values)
 
 def computeRow(row, dataTab):
     tab = select(dataTab, row['latitude'], row['longitude'], row['DepthInMeters'])
@@ -73,7 +65,7 @@ def addColumn(mainTab, newColumnName, otherTab, computeRowFct=computeRow):
     for index, row in mainTab.iterrows():
         newRow = computeRowFct(row, otherTab)
         newTab.append(newRow)
-        if (index + 1 % 1000 == 0):
+        if ((index + 1) % 9999 == 0):
             print(index , "\nNot found: ", tools.notFound, "\ntime for 1000: ", time.time() - start_time, "s\nNew row sample:", newRow, "\n----")
             start_time = time.time()
     mainTab[newColumnName] = newTab
