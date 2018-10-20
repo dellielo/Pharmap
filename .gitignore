@@ -1,8 +1,8 @@
 #own file
 tmp_data
+.vscode/
 
-#data set
-data/dataset
+#data set not used
 data/aiData
 
 # Byte-compiled / optimized / DLL files

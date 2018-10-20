@@ -1,0 +1,6 @@
+data/oceanData/nitrate.csv filter=lfs diff=lfs merge=lfs -text
+data/oceanData/oxygen.csv filter=lfs diff=lfs merge=lfs -text
+data/oceanData/phosphate.csv filter=lfs diff=lfs merge=lfs -text
+data/oceanData/salinity.csv filter=lfs diff=lfs merge=lfs -text
+data/oceanData/temperature.csv filter=lfs diff=lfs merge=lfs -text
+data/coraux/coraux_geo.geojson filter=lfs diff=lfs merge=lfs -text
