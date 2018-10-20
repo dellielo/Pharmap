@@ -1,13 +1,13 @@
-extension = [
-    "shp",
-    "geojson"
-]
+extension = {
+    "geo":[
+        "shp",
+         "geojson"],
+    "tab":[
+        "csv", "json"]
+}
+
 dataDir = './data/dataset'
 testDir = './data/test'
-
-files = {
-    'temperature': ''
-}
 
 tempDepthOffset = 100
 tempLatitudeOffset = 0.5
