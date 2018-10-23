@@ -6,7 +6,7 @@ import itertools
 
 class PhyloTree(Tree):
     '''
-    TODO : Create a new node class to get data while iterating in the tree
+    TODO : 
            Put the distribution and environmental pandaDataframe without useless columns (taxonomy) thus making the whole data lighter
            PICKLE the tree for persistence
     '''
@@ -15,6 +15,7 @@ class PhyloTree(Tree):
         self.mytest = kwargs.get("mytest", None)
         self.df= kwargs.get("dataframe", None)
         self.ranks = ["phylum","class", "order", "family", "genus", "species"]
+        self.leaf_attributes = kwargs.get('leaf_attributes', ['latitude', 'longitude', 'depth'])
 
         '''
         TODO : Find a way to add them without getting lost in recursion
@@ -24,9 +25,10 @@ class PhyloTree(Tree):
         self.add_child(name="Protista").add_features(rank="kingdom")
         '''
 
-    def build(self, **kwargs):
+    def build_tree(self, **kwargs):
         
         v = kwargs.get("verbose", False)
+        assign_data = kwargs.get("assign_data", False)
 
         if self.df.empty:
             raise Exception('Need dataframe for build')
@@ -46,6 +48,8 @@ class PhyloTree(Tree):
                         except Exception as e:
                             print(e)
             last = rank
+            
+        self.assign_data_tree(**kwargs) if assign_data else None
         
     def build_from_csv(self, **kwargs):
         '''
@@ -59,8 +63,30 @@ class PhyloTree(Tree):
             except Exception as e:
                 print("Couldn't open file : ", e)
                 return e
-        self.build()
+        self.build_tree(**kwargs)
 
+    
+    def assign_data_tree(self, **kwargs):
+        '''
+        Assign given attributes to each node in pandas DataFrame form.
+        '''
+        v = kwargs.get("verbose", False)
+                                          
+        for leaf in self.get_leaves():
+            print(leaf.name) if v else none
+            leaf.add_features(data=self.df.loc[self.df[leaf.rank]==leaf.name][self.leaf_attributes])
+    
+    def get_dataframe(self):
+        '''
+        return dataframe of data attributes of node leaves
+        '''
+        newdf = pd.DataFrame()
+        for leaf in self.get_leaves():
+            newdf = newdf.append(leaf.data)
+        return newdf
+        
+        
+    
     
     def count(self, **kwargs):
         '''
