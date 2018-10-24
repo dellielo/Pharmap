@@ -17,7 +17,7 @@ def selectTrainData(mainTab):
     return newTab
 
 if __name__=="__main__":
-    data = tools.load(conf.aiDataDir)
-    mainTable = data['coraux_geo.geojson']
-    print(newTab)
-    selectTrainData(mainTable)
+    data = tools.load('./data/out/')
+    for key in data:
+        print(data[key])
+    #selectTrainData(mainTable)

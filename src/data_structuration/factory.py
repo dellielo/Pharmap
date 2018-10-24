@@ -66,7 +66,7 @@ def addColumn(mainTab, newColumnName, otherTab, computeRowFct=computeRow):
         newRow = computeRowFct(row, otherTab)
         newTab.append(newRow)
         if ((index + 1) % 9999 == 0):
-            print(index , "\nNot found: ", tools.notFound, "\ntime for 1000: ", time.time() - start_time, "s\nNew row sample:", newRow, "\n----")
+            print("Adding: ", newColumnName, "\n", index , "\nNot found: ", tools.notFound, "\ntime for 10000: ", time.time() - start_time, "s\nNew row sample:", newRow, "\n----")
             start_time = time.time()
     mainTab[newColumnName] = newTab
     print('Added', mainTab[newColumnName].count(), "row of", newColumnName,

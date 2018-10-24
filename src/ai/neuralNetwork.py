@@ -15,7 +15,7 @@ class NeuralNetwork:
         ])
 
         self.model.compile(optimizer=tf.train.AdamOptimizer(),
-                      loss='sparse_categorical_crossentropy',
+                      loss='categorical_crossentropy',
                       metrics=['accuracy'])
 
     def evaluate(self, testInput, testOutput):
