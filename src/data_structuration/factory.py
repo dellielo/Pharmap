@@ -14,7 +14,7 @@ def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
     
     d1 = kwargs.get("d1",None)
     d2 = kwargs.get("d2", None)
-    squaredist = kwargs.get("nosqrt", False) 
+    squaredist = kwargs.get("squaredist", False) 
     
     R =  6378137 - d1 
     p1 = to_rad(lat1)
