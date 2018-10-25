@@ -3,6 +3,30 @@ import tools
 import config
 import numpy as np
 
+
+def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
+    '''
+    calculates distance between 2 points (degree coordinates) on a wgs84 sphere
+    
+    use squaredist = True for "speed", approx 10% faster, but you get squaredist     
+    '''
+    to_rad = np.deg2rad
+    
+    d1 = kwargs.get("d1",None)
+    d2 = kwargs.get("d2", None)
+    squaredist = kwargs.get("squaredist", False) 
+    
+    R =  6378137 - d1 
+    p1 = to_rad(lat1)
+    p2 = to_rad(lat2)
+    dp = to_rad(lat2-lat1)
+    dlon = to_rad(lon2-lon1)
+    
+    a = np.sin(dp/2.0)**2 + np.cos(p1)*np.cos(p2) * np.sin(dlon/2.0)**2
+    c = 2.0*np.arctan2(np.sqrt(a), np.sqrt(1-a))
+    
+    return np.sqrt( (R*c)**2 + abs(d1-d2)**2 ) if not squaredist else (R*c)**2 + abs(d1-d2)**2 
+
 def toNumber(s):
     if (s.isnumeric()):
         return int(s)
