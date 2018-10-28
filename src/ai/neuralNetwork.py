@@ -28,9 +28,13 @@ class NeuralNetwork:
         pred = self.model.predict(inputsToPredict)
         return pred
 
+    def predict_classes(self, inputsToPredict): #input is an array
+        pred = self.model.predict_classes(inputsToPredict)
+        return pred
+
     def test(self, testInput, testOutput):
         test_loss, test_acc = self.model.evaluate(testInput, testOutput)
         print('Test accuracy:', test_acc, "loss: ", test_loss)
 
-    def train(self, trainInput, trainOutput):
-        self.model.fit(trainInput, trainOutput, epochs=100)
+    def train(self, trainInput, trainOutput, epochs=100):
+        self.model.fit(trainInput, trainOutput, epochs=epochs)

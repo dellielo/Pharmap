@@ -6,6 +6,8 @@ import tools
 import conf
 import neuralNetwork
 from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn import preprocessing
 from keras_pandas.Automater import Automater
 
 def orderColumns(tab):
@@ -21,7 +23,7 @@ def cleanTab(tab):
 
 def addOutputColumn(tab):
     print('adding output column')
-    minSampleSize = 2000
+    minSampleSize = 2000 
     tab['counts'] = tab.groupby('ScientificName')['ScientificName'].transform('count') #add coulumn counts
     tab = tab[tab.counts > minSampleSize] # select all element that have at least $minSampleSize element
     print('have', len(tab.groupby('counts').size()), 'type with more than', minSampleSize, 'sample')
@@ -32,7 +34,6 @@ def getInputOutput(tab):
 
     x = tab.loc[:,conf.inputFileds].values
     y = tab.loc[:,conf.outputField].values
-
     return (x, y)
 
 if __name__=="__main__":
@@ -43,8 +44,17 @@ if __name__=="__main__":
         tab = cleanTab(tab)
         tab = addOutputColumn(tab)
         x, y = getInputOutput(tab)
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
-        outputNb = tab[conf.outputField].max() + 1 # +1 beacuase index start at 0
+        x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.25)
+        
+        # Standardization 
+        scaler = preprocessing.StandardScaler().fit(x_train)
+        x_train = scaler.transform(x_train)
+        x_test = scaler.transform(x_test)
+
+        outputNb = len(tab[conf.outputField].unique()) 
         nn = neuralNetwork.NeuralNetwork(outputNb)
-        nn.train(x_train, y_train)
+        nn.train(x_train, y_train, epochs=100)
         nn.evaluate(x_test, y_test)
+        y_pred = nn.predict_classes(x_test)
+        labels = sorted(tab['ScientificName'].unique())
+        print (metrics.classification_report(y_test, y_pred, target_names=labels))
