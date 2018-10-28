@@ -21,7 +21,7 @@ def cleanTab(tab):
 
 def addOutputColumn(tab):
     print('adding output column')
-    minSampleSize = 1000
+    minSampleSize = 2000
     tab['counts'] = tab.groupby('ScientificName')['ScientificName'].transform('count') #add coulumn counts
     tab = tab[tab.counts > minSampleSize] # select all element that have at least $minSampleSize element
     print('have', len(tab.groupby('counts').size()), 'type with more than', minSampleSize, 'sample')
@@ -43,9 +43,7 @@ if __name__=="__main__":
         tab = cleanTab(tab)
         tab = addOutputColumn(tab)
         x, y = getInputOutput(tab)
-        print(x[0], y[0])
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1)
-        print(x_train[0], y_train[0])
         outputNb = tab[conf.outputField].max() + 1 # +1 beacuase index start at 0
         nn = neuralNetwork.NeuralNetwork(outputNb)
         nn.train(x_train, y_train)

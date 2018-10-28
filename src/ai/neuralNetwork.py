@@ -10,9 +10,8 @@ class NeuralNetwork:
     def createNn(self, outputNb):
         self.model = keras.Sequential([
             keras.layers.Flatten(input_shape=(len(conf.inputFileds),)),
-            keras.layers.Dense(100, activation=tf.nn.relu),
-            keras.layers.Dense(100, activation=tf.nn.relu),
-            keras.layers.Dense(100, activation=tf.nn.relu),
+            keras.layers.Dense(240, activation=tf.nn.relu),
+            keras.layers.Dense(128, activation=tf.nn.relu),
             keras.layers.Dense(outputNb, activation=tf.nn.softmax)
         ])
 
@@ -34,4 +33,4 @@ class NeuralNetwork:
         print('Test accuracy:', test_acc, "loss: ", test_loss)
 
     def train(self, trainInput, trainOutput):
-        self.model.fit(trainInput, trainOutput, steps_per_epoch=5000)
+        self.model.fit(trainInput, trainOutput, epochs=100)
