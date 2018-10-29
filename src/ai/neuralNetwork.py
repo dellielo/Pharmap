@@ -10,14 +10,32 @@ class NeuralNetwork:
     def createNn(self, outputNb):
         self.model = keras.Sequential([
             keras.layers.Flatten(input_shape=(len(conf.inputFileds),)),
-            keras.layers.Dense(240, activation=tf.nn.relu),
-            keras.layers.Dense(128, activation=tf.nn.relu),
-            keras.layers.Dense(outputNb, activation=tf.nn.softmax)
+            keras.layers.Dense(240, activation='relu'),
+            keras.layers.Dense(128, activation='relu'),
+            keras.layers.Dense(outputNb, activation='softmax')
         ])
 
         self.model.compile(optimizer=tf.train.AdamOptimizer(),
                       loss='sparse_categorical_crossentropy',
                       metrics=['accuracy'])
+
+    ##  test another network, don't work very well"
+    # def createNn(self, outputNb):
+    #     print("len")
+    #     print(outputNb, len(conf.inputFileds))
+
+    #     self.model = keras.Sequential([
+    #         keras.layers.Dense(64, activation='relu', input_dim=(len(conf.inputFileds))),
+    #         keras.layers.Dropout(0.5),
+    #         keras.layers.Dense(64, activation='relu'),
+    #         keras.layers.Dropout(0.5),
+    #         keras.layers.Dense(outputNb, activation='softmax')
+    #     ])
+    #     sgd = keras.optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    #     self.model.compile(optimizer=sgd,
+    #                   loss='categorical_crossentropy',
+    #                   metrics=['accuracy'])
+
 
     def evaluate(self, testInput, testOutput):
         testLoss, testAcc = self.model.evaluate(testInput, testOutput)
@@ -37,4 +55,7 @@ class NeuralNetwork:
         print('Test accuracy:', test_acc, "loss: ", test_loss)
 
     def train(self, trainInput, trainOutput, epochs=100):
+        #if network works with "categorical_crossentropy"
+        # trainOutput = keras.utils.to_categorical(trainOutput, num_classes=47)
+        # print(trainInput.shape, trainOutput.shape)
         self.model.fit(trainInput, trainOutput, epochs=epochs)

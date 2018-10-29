@@ -16,6 +16,7 @@ descartes = "*"
 tensorflow = "*"
 keras-pandas = "*"
 sklearn = "*"
+imblearn = "*"
 
 [dev-packages]
 
