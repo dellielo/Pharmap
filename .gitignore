@@ -1,6 +1,8 @@
 #own file
-tmp_data
 .vscode/
+
+# tmp files
+*~
 
 #data set not used
 data/aiData
