@@ -67,7 +67,7 @@ if __name__=="__main__":
         describe(x_train, y_train)
 
         nn = neuralNetwork.NeuralNetwork(outputNb)
-        nn.train(x_train, y_train, epochs=1)
+        nn.train(x_train, y_train, epochs=100)
 
         nn.evaluate(x_test, y_test)
         nn.test(x_test, y_test, labels)
