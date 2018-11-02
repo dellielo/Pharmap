@@ -39,6 +39,12 @@ class NeuralNetwork:
     #                   loss='categorical_crossentropy',
     #                   metrics=['accuracy'])
 
+
+    def evaluate(self, testInput, testOutput):
+        testLoss, testAcc = self.model.evaluate(testInput, testOutput)
+        print('Accuracy:', testAcc, "loss: ", testLoss)
+        return testLoss, testAcc
+
     def predict(self, inputsToPredict): #input is an array
         pred = self.model.predict(inputsToPredict)
         return pred
@@ -47,35 +53,20 @@ class NeuralNetwork:
         pred = self.model.predict_classes(inputsToPredict)
         return pred
 
+    def test(self, testInput, testOutput):
+        test_loss, test_acc = self.model.evaluate(testInput, testOutput)
+        print('Test accuracy:', test_acc, "loss: ", test_loss)
+
     def train(self, trainInput, trainOutput, epochs=100):
         #if network works with "categorical_crossentropy"
         # trainOutput = keras.utils.to_categorical(trainOutput, num_classes=47)
         # print(trainInput.shape, trainOutput.shape)
+        from imblearn.keras import balanced_batch_generator
+        from imblearn.under_sampling import NearMiss
         self.model.fit(trainInput, trainOutput, epochs=epochs)
-
-    def evaluate(self, testInput, testOutput):
-        testLoss, testAcc = self.model.evaluate(testInput, testOutput)
-        print('Accuracy:', testAcc, "loss: ", testLoss)
-        return testLoss, testAcc
-
-    def test(self, x_test, y_test, labels):
-        y_pred = self.predict_classes(x_test)
-        prob = self.predict(x_test)
-
-        idx2label = dict((v,k) for k,v in zip(labels, range(0,self.outputNb)))
-        print(idx2label)
-        errors = np.where(y_pred != y_test)[0]
-        print("No of errors = {}/{}".format(len(errors),len(y_test)))
-
-        for i in range(len(errors[:5])):
-            pred_class = np.argmax(prob[errors[i]])
-            print(pred_class)
-            pred_label = idx2label[pred_class]
-            true_label = idx2label[y_test[errors[i]]]
-
-            print('Original label: [{}], Prediction :[{}], confidence : {:.3f}'.format(
-                true_label,
-                pred_label,
-                prob[errors[i]][pred_class]))
-
-        print (metrics.classification_report(y_test, y_pred, target_names=labels))
+        
+        # training_generator, steps_per_epoch = balanced_batch_generator(
+        #     trainInput, trainOutput, sampler=NearMiss(), batch_size=10, random_state=42)
+        # callback_history = self.model.fit_generator(generator=training_generator,
+        #                                 steps_per_epoch=steps_per_epoch,
+        #                                 epochs=epochs, verbose=1)
