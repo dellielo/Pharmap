@@ -18,15 +18,15 @@ def orderColumns(tab):
     return tab[cols]
 
 def cleanTab(tab):
-    return tab.dropna(subset=conf.inputFileds)
+    return tab.dropna(subset=(conf.inputFileds + [conf.selectedField]))
 
 def addOutputColumn(tab):
     print('adding output column')
     minSampleSize = 2000
-    tab['counts'] = tab.groupby('ScientificName')['ScientificName'].transform('count') #add coulumn counts
+    tab['counts'] = tab.groupby(conf.selectedField)[conf.selectedField].transform('count') #add coulumn counts
     tab = tab[tab.counts > minSampleSize] # select all element that have at least $minSampleSize element
-    print('have', len(tab.groupby('ScientificName').size()), 'type with more than', minSampleSize, 'sample')
-    tab = tab.assign(output=(tab['ScientificName']).astype('category').cat.codes) #add unique id to each scientific name
+    print('have', len(tab.groupby(conf.selectedField).size()), 'type with more than', minSampleSize, 'sample')
+    tab = tab.assign(output=(tab[conf.selectedField]).astype('category').cat.codes) #add unique id to each scientific name
     return tab
 
 def describe(x, y):
@@ -51,7 +51,7 @@ if __name__=="__main__":
         x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.1)
 
         outputNb = len(tab[conf.outputField].unique())
-        labels = sorted(tab['ScientificName'].unique()) #why sorted ?
+        labels = sorted(tab[conf.selectedField].unique()) #why sorted ?
 
         print("Before balance: ")
         describe(x_train, y_train)
