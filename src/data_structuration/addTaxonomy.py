@@ -58,7 +58,6 @@ def addTaxonomy(df_target, df_source, log=True, **kwargs):
         print("Sanitize df1 and df2 first")
         raise(e)
 
-    print(df1.columns, df2.columns)
     for sp in df1_sp:
         if sp in df2_sp: #if target species among source species, add taxonomy
             for c in columns:
