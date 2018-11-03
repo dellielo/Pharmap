@@ -8,14 +8,20 @@ import json
 def fetchID(name):
     ID = None
     try:
-        genus, species = name.split(" ")
-        req = "{genus}%20{species}?marine_only=true".format(genus = genus, species=species)
-    except:
-        req = "{name}?marine_only=true".format(name = name)
-    try:
-        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}".format(req = req)).read().decode('utf8').replace("'", '"'))
+        splited = [x for x in name.split(" ")   \
+        if len(x) > 0 and not(                  \
+            x[0] == '.' or x[-1] == '.'         \
+            or (x[0] == '(' and x[-1] == ')')   \
+        )                                       \
+        ]
+        req = "%20".join(splited)
     except Exception as e:
-        print("Couldn't fetch Taxonomy, abort...")
+        print(e)
+        req = name
+    try:
+        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}?marine_only=true".format(req = req)).read().decode('utf8').replace("'", '"'))
+    except Exception as e:
+        print("Couldn't fetch Taxonomy, abort...", req)
         raise(e)
     return ID
 
