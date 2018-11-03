@@ -5,3 +5,4 @@ data/oceanData/salinity.csv filter=lfs diff=lfs merge=lfs -text
 data/oceanData/temperature.csv filter=lfs diff=lfs merge=lfs -text
 data/coraux/coraux_geo.geojson filter=lfs diff=lfs merge=lfs -text
 data/out/coraux_geo.geojson filter=lfs diff=lfs merge=lfs -text
+data/obis/porifera_obis_light.csv filter=lfs diff=lfs merge=lfs -text

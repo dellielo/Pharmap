@@ -12,11 +12,11 @@ def fetchID(name):
     except:
         req = "{name}?marine_only=true".format(name = name)
     try:
-        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}".format(req = req).read().decode('utf8').replace("'", '"'))
+        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}".format(req = req).read().decode('utf8').replace("'", '"')))
     except Exception as e:
         print(e)
         print("Couldn't fetch Taxonomy, abort...")
- return ID
+    return ID
 
 def fetchTaxonomy(ID):
     url = "http://www.marinespecies.org/rest/AphiaClassificationByAphiaID/{ID}?marine_only=true".format(ID = ID)
@@ -47,8 +47,8 @@ def addTaxonomy(df_target, df_source, **kwargs):
     for c in columns:
         df1[c] = None
     try:
-        df1_sp = set(df1.species):
-        df2_sp = set(df2.species):
+        df1_sp = set(df1.species)
+        df2_sp = set(df2.species)
     except Exception as e:
         print(e)
         print("Sanitize df1 and df2 first")
