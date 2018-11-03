@@ -42,7 +42,7 @@ def addTaxonomy(df_target, df_source, **kwargs):
     df1 = df_target
     df2 = df_source
     ranks = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-    columns += ranks + [ rank + "_id" for rank in ranks]
+    columns = ranks + [ rank + "_id" for rank in ranks]
 
     for c in columns:
         df1[c] = None
