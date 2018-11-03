@@ -48,6 +48,9 @@ def formatNoaaTab(tab):
     print('done formating')
     return newTab
 
+def formatCorailTab(tab):
+    return tab.rename(columns={"ScientificName": 'species'})
+
 def select(t, lat, lon, depth):
     t = t[
         (t.latitude <= (lat + config.tempLatitudeOffset)) &

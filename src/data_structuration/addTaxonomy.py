@@ -6,16 +6,17 @@ import urllib
 import json
 
 def fetchID(name):
+    ID = None
     try:
         genus, species = name.split(" ")
         req = "{genus}%20{species}?marine_only=true".format(genus = genus, species=species)
     except:
         req = "{name}?marine_only=true".format(name = name)
     try:
-        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}".format(req = req).read().decode('utf8').replace("'", '"')))
+        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}".format(req = req)).read().decode('utf8').replace("'", '"'))
     except Exception as e:
-        print(e)
         print("Couldn't fetch Taxonomy, abort...")
+        raise(e)
     return ID
 
 def fetchTaxonomy(ID):
@@ -23,8 +24,8 @@ def fetchTaxonomy(ID):
     try:
         answer = urllib.request.urlopen(url).read().decode('utf8').replace("'", '"')
     except Exception as e:
-        print(e)
         print("Couldn't fetch Taxonomy, abort...")
+        raise(e)
     data = json.loads(answer)
     taxo = {}
     x = data
@@ -44,14 +45,17 @@ def addTaxonomy(df_target, df_source, **kwargs):
     ranks = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
     columns = ranks + [ rank + "_id" for rank in ranks]
 
+    df1_sp = None
+    df2_sp = None
     for c in columns:
-        df1[c] = None
+        if c not in df1.columns: #prevent overriding species
+            df1[c] = None
     try:
         df1_sp = set(df1.species)
         df2_sp = set(df2.species)
     except Exception as e:
-        print(e)
         print("Sanitize df1 and df2 first")
+        raise(e)
 
     for sp in df1_sp:
         if sp in df2_sp: #if target species among source species, add taxonomy
@@ -61,10 +65,14 @@ def addTaxonomy(df_target, df_source, **kwargs):
                     df1.at[df1.species == sp, c] = c_set.pop()
                 else:
                     print("Please sanitize data first")
-                    pass
+                    continue
                     #resolv conflict... Most common ? Or use internet ?
         else:
-            taxonomy = fetchTaxonomy(fetchID(sp))
+            taxonomy = None
+            try:
+                taxonomy = fetchTaxonomy(fetchID(sp))
+            except Exception as e:
+                continue
             for rank in ranks:
                 df1.at[df1.species == sp, rank] = taxonomy[rank]["name"]
                 df1.at[df1.species == sp, rank+"_id"] = taxonomy[rank]["id"]

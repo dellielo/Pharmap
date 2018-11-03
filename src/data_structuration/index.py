@@ -14,23 +14,23 @@ if __name__=="__main__":
     for prop in oceanData:
         oceanData[prop] = factory.formatNoaaTab(oceanData[prop])
     for key in corauxData:
-        corauxData[key] = corauxData[key].head(400) #to have a fast result
+        #corauxData[key] = corauxData[key].head(400) #to have a fast result
+        corauxData[key] = factory.formatCorailTab(corauxData[key])
         threads = []
+
+        #adding column such as salinity temperature
         for prop in oceanData:
             t = threading.Thread(target=worker, args=(corauxData[key], prop, oceanData[prop]))
             t.start()
             threads.append(t)
 
-        #adding taxonomy
-        t = threading.Thread(target=addTaxonomy.addTaxonomy, args=(corauxData, taxonomySupport[config.taxonomyFile]))
+        #adding columns taxonomy such as family
+        t = threading.Thread(target=addTaxonomy.addTaxonomy, args=(corauxData[key], taxonomySupport[config.taxonomyFile]))
         t.start()
         threads.append(t)
 
         for t in threads:
             t.join()
 
-        for column in corauxData[key]:
-            print(column,"\n",corauxData[key][column],"----------")
-
         print(corauxData[key])
-        #tools.save(corauxData[key], './data/out/', key)
+        tools.save(corauxData[key], './data/out/', key)
