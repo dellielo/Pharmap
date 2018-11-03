@@ -35,15 +35,16 @@ def fetchTaxonomy(ID):
     return taxo
 
 
-def addTaxonomy(df_target, df_source, **kwargs):
+def addTaxonomy(df_target, df_source, log=True, **kwargs):
     '''
     Be sure to have a species column in both arrays before continuing
     Be sure to put the taxonomy values in df_source
     '''
     df1 = df_target
     df2 = df_source
+    noRankId = ['kingdom']
     ranks = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-    columns = ranks + [ rank + "_id" for rank in ranks]
+    columns = ranks + [ rank + "_id" for rank in ranks if rank not in noRankId]
 
     df1_sp = None
     df2_sp = None
@@ -57,6 +58,7 @@ def addTaxonomy(df_target, df_source, **kwargs):
         print("Sanitize df1 and df2 first")
         raise(e)
 
+    print(df1.columns, df2.columns)
     for sp in df1_sp:
         if sp in df2_sp: #if target species among source species, add taxonomy
             for c in columns:
@@ -74,6 +76,10 @@ def addTaxonomy(df_target, df_source, **kwargs):
             except Exception as e:
                 continue
             for rank in ranks:
+                if not rank in taxonomy:
+                    print('missing {rank} in taxonomy'.format(rank=rank))
+                    continue
                 df1.at[df1.species == sp, rank] = taxonomy[rank]["name"]
-                df1.at[df1.species == sp, rank+"_id"] = taxonomy[rank]["id"]
+                if (rank not in noRankId):
+                    df1.at[df1.species == sp, rank+"_id"] = taxonomy[rank]["id"]
     return df1
