@@ -19,7 +19,8 @@ def fetchID(name):
         print(e)
         req = name
     try:
-        ID = int(urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}?marine_only=true".format(req = req)).read().decode('utf8').replace("'", '"'))
+        ID = urllib.request.urlopen("http://www.marinespecies.org/rest/AphiaIDByName/{req}?marine_only=true".format(req = req)).read().decode('utf8').replace("'", '"')
+        ID=int(ID) if ID else 0
     except Exception as e:
         print("Couldn't fetch Taxonomy, abort...", req)
         raise(e)
