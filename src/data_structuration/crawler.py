@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import urllib
 import json
+import pickle
 from addTaxonomy import fetchID, fetchTaxonomy
 from molregex import REG
 
@@ -34,17 +35,20 @@ def fetchDict(page):
         if good:
             species = abstract.find_all("i", class_=False) #let's find species in italics
             if species:
-                print(species)
+                #print(species)
                 for sp in species:
                     ID = fetchID(sp.text)
+                    select_mol = set([i.group().lower() for i in reg.finditer(abstract.text)]) #lets make a list of the molecules listed in the paper
+                    #print(select_mol) if select_mol else None
                     try:
                         taxonomy = fetchTaxonomy(ID)
                         if taxonomy['phylum']['id'] in rankid:
-                            select_mol = set([i.group().lower() for i in REG.finditer(abstract.text)]) #lets make a list of the molecules listed in the paper
+                            #print(sp.text)
                             sp_dict[sp.text]= {paper.text:{"molecules":select_mol,"abstract":abstract.text}}
                     except:
-                        print("Couldn't find name in database, resuming \n")
+                        #print("Couldn't find name in database, resuming \n")
                         pass
+    
     return sp_dict
 
 def getArticles(page):
@@ -85,16 +89,20 @@ def crawl(**kwargs):
     TODO: Finish the function to check for valid molecules and make a global dictionnary
     
     '''
+    
+    
     domain= kwargs.get("domain", 'https://www.mdpi.com')
     start = kwargs.get("start", '/1660-3397/15')
-    depth = kwargs.get("depth", 1)
     output_method = kwargs.get("output_method", None)
     output = kwargs.get("output", None)
     visited = kwargs.get("visited", set())
     runlenght = kwargs.get("runlength", 10)
     
-    page = BeautifulSoup(urllib.request.urlopen(domain+start))
-    links = findGoodLinks(page)
+    page = BeautifulSoup(urllib.request.urlopen(domain+start))    
+    links = kwargs.get("links", findGoodLinks(page))
+    
+    rdict = {}
+    
     new_links = set()
     c = 0
     while links and c <= runlenght:
@@ -115,7 +123,11 @@ def crawl(**kwargs):
                 
         try:
             page_dict = fetchDict(page)
-            #print(str(page_dict)[:2000]+"\n\n")
+            rdict.update(page_dict)
         except:
-            print("No article there, resuming...\n")
+            print("No article {here}, resuming...\n".format(here=(domain+href)))
             pass
+    
+    pickle.dump(visited, open( "saved_vidisted.p", "wb" ) )
+    pickle.dump(links, open("saved_links.p", 'wb'))
+    return rdict

@@ -98,3 +98,5 @@ class PhyloTree(Tree):
             return self.df.groupby(rank).size()
         else:
             return pd.Series(data=size)
+    def save(self, name):
+        pickle.dump(self, open(name, "wb")
