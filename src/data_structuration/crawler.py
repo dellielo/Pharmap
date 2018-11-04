@@ -38,7 +38,7 @@ def fetchDict(page):
                 #print(species)
                 for sp in species:
                     ID = fetchID(sp.text)
-                    select_mol = set([i.group().lower() for i in reg.finditer(abstract.text)]) #lets make a list of the molecules listed in the paper
+                    select_mol = set([i.group().lower() for i in REG.finditer(abstract.text)]) #lets make a list of the molecules listed in the paper
                     #print(select_mol) if select_mol else None
                     try:
                         taxonomy = fetchTaxonomy(ID)
