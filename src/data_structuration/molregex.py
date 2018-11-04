@@ -26,7 +26,15 @@ trile|\
 inin|\
 inine|\
 chloride|\
-assin)"
+assin|\
+ycin|\
+spol|\
+sterol|\
+enoid|\
+erin|\
+orin|\
+ine|\
+ocin)"
 
 
 REG = re.compile("[a-zA-Z0-9--]+{chem}+(( |-)[a-zA-Z0-9--]*{chem}(s)*)*(( |-)[A-Z]?[0-9]*)* ".format(chem = CHEMS))
