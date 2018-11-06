@@ -46,7 +46,8 @@ DRUGCLASS ={
                   "growth inhibitor",
                   "growth inhibiting"
                   "anti-cancer", 
-                  "antineoplastic"],
+                  "antineoplastic",
+                  "cytostatic"],
     'antioxydant':["anti-oxydant",
                    "antioxydative"],
     'antibiotic':["bacteriostatic", 
