@@ -11,8 +11,8 @@ def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
     '''
     to_rad = np.deg2rad
     
-    d1 = kwargs.get("d1",None)
-    d2 = kwargs.get("d2", None)
+    d1 = kwargs.get("d1",0)
+    d2 = kwargs.get("d2", 0)
     squaredist = kwargs.get("squaredist", False) 
     
     R =  6378137 - d1 
@@ -49,6 +49,25 @@ def formatNoaaTab(tab):
 
 def formatCorailTab(tab):
     return tab.rename(columns={"ScientificName": 'species'})
+
+def nearestNeightborValue(df, lat, lon, depth):
+    dist_min = float('inf') #maximum distance is infinity     
+    
+    value = 0           #No value
+    for row in df.itertuples(index=True, name='Pandas'): #we iterate through each row
+        depthdist_min = float('inf')
+        d = calc_dist(row.latitude, row.longitude, lat, lon, squaredist==True) #get the distance
+        
+        if d < dist_min: #if we have a new closer record...
+            
+            dist_min = d
+            
+            for depth2 in t.columns: #let's look at the closest by depth
+                depthdist = abs(d-depth2) if (isinstance(depth2, int) and isinstance(row[depth2], int)) else float("inf")
+                depthdist_min = depthdist if depthdist < depthdist_min else depthdist_min
+                value = row[depth2]
+    return value
+                
 
 def select(t, lat, lon, depth):
     t = t[
