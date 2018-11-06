@@ -4,7 +4,7 @@ import config
 import geopandas as gpd
 import pandas as pd
 
-def load(dataDir, header=0):
+def load(dataDir, header=0, separator=','):
     data = {}
     for f in listdir(dataDir):
         extension = f.split('.')[-1]
@@ -13,7 +13,7 @@ def load(dataDir, header=0):
             if extension in config.extension["geo"]:
                 d = gpd.read_file(path)
             elif extension in config.extension["tab"]:
-                d = pd.read_csv(path, low_memory=False, header=header)
+                d = pd.read_csv(path, low_memory=False, header=header, sep=separator)
             else:
                 continue
             data[f] = d
