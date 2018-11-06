@@ -68,9 +68,18 @@ DRUGCLASS ={
     'antifungal':["antifungic",
                   "antifungal"],
     'antiviral':["antiviral"],
-    'anti-inflammatory':["anti-inflammatory"],
+    'anti-inflammatory':["anti-inflammatory",
+                         "NSAIDs"],
     'anesthetic/analgesic':["anesthetic", 
                             "pain inhibitor",
-                            "analgesic"]    
+                            "analgesic"],
+    'psychotropic': ["GABAergic",
+                     "anti-convulsant",
+                     "anti-epileptic",
+                     "anti-seizure",
+                     "GABAr-agonist",
+                     "neuroprotective",
+                     "anti-beta-amyloid fibrillization"]
+                     
 }
 
