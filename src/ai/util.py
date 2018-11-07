@@ -38,3 +38,19 @@ def write_data_by_name(x, y, idx2label, dir_save = 'data/debug'):
                 true_label = idx2label[y[item]]
                 str_data = ";".join("{:.2f}".format(x) for x in x[item])
                 fic.write("{};{}\n".format(true_label, str_data)) # x_test[item],
+
+def write_data(x, y, idx2label, dir_save = 'data/debug'):
+    import conf
+    import pandas as pd 
+    df = pd.DataFrame(x, columns = conf.inputFileds)
+    df[conf.outputField] = y
+
+    if not os.path.exists(dir_save):
+        os.makedirs(dir_save)
+        
+    df.to_csv(os.path.join(dir_save, "data_input_pd.csv"), sep='\t')
+    # with open(os.path.join(dir_save, "data_input.csv"), 'w') as fic:
+    #     for x_item, y_item in zip(x,y):
+    #         true_label = idx2label[y_item]
+    #         str_data = ";".join("{:.2f}".format(i) for i in x_item)
+    #         fic.write("{};{}\n".format(true_label, str_data))

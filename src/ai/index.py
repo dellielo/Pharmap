@@ -14,6 +14,7 @@ import conf
 import neuralNetwork
 import tools
 import util
+import mutipleNetwork
 
 import argparse
 
@@ -85,7 +86,7 @@ def save_out_csv(data):
     path_save_out_csv = 'data/out_csv'
     if not os.path.exists(path_save_out_csv):
         os.makedirs(path_save_out_csv)
-    data.to_csv(os.path.join(path_save_out_csv, "coraux_geo.csv"), sep=",", encoding = 'utf-8')
+    data.to_csv(os.path.join(path_save_out_csv, "coraux_geo.csv"), sep=",", encoding = 'utf-8', index=False)
 
 
 def process(args):  
@@ -113,15 +114,34 @@ def process(args):
             print("After balance: ")
             describe(x_train, y_train)
     
+        x_train = x_train[:1000]
+        y_train = y_train[:1000]
 
         if args.run_multiple_config:
-            import mutipleNetwork
+            
             msp = mutipleNetwork.MultiSearchParam()
             grid_results = msp.run_search(x_train, y_train, outputNb)
-            msp.write_report(grid_results, args)
+            # clf = grid_results.best_estimator_
+            
+            # Evaluate on Test data with the best network
+            params = grid_results.best_params_
+            best_model = mutipleNetwork.create_best_model(outputNb, params)
+            best_model.fit(x_train, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
+            best_model.summary()
+            pred_best = best_model.predict_classes(x_test)
+            
+            #To move 
+            from sklearn.metrics import accuracy_score
+            print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
+            
+            # Write results
+            msp.write_report(args, grid_results)
+            # for param in ["activation", "epochs", "optimizers", "init_mode"]:
+            #     mutipleNetwork.gridSearch_table_plot(grid_results, param)
+
         else:
             nn = neuralNetwork.NeuralNetwork(outputNb)
-            nn.train(x_train, y_train, epochs=args.epoch)
+            nn.train(x_train, y_train, epochs=args.epochs)
 
             scores = nn.evaluate(x_test, y_test)
             nn.test(x_test, y_test, labels)
@@ -129,7 +149,7 @@ def process(args):
 
 def main():
     parser = argparse.ArgumentParser(description='Process some networks')
-    parser.add_argument('--epoch', type=int, default=100, help='nb epochs')
+    parser.add_argument('--epochs', type=int, default=100, help='nb epochs')
     parser.add_argument('--dir_input', default='data/out')
     parser.add_argument('--do_standardization', '-s,', action='store_true')
     parser.add_argument('--do_balance_smote', '-b,', action='store_true')
