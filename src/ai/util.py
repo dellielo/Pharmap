@@ -1,8 +1,9 @@
 import numpy as np
 import os 
+import conf
 
 def get_idx2label(tab):
-    labels = sorted(tab['ScientificName'].unique())
+    labels = sorted(tab[conf.selectedField].unique())
     idx2label = dict((v,k) for k,v in zip(labels, range(0,len(labels))))
     return idx2label
 
