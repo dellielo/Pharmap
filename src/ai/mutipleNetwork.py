@@ -8,13 +8,13 @@ import conf
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-def createNn(outputNb, optimizer='adam', init_mode='uniform', activation='relu'):
+def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu'):
     inputNb = len(conf.inputFileds)
     model = keras.Sequential()
     model.add(keras.layers.Flatten(input_shape=(len(conf.inputFileds),)))
     model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
     model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
-    model.add(keras.layers.Dense(outputNb, activation='sigmoid'))
+    model.add(keras.layers.Dense(outputNb, activation='softmax'))
     model.compile(optimizer=optimizer, #tf.train.AdamOptimizer(),
                     loss='sparse_categorical_crossentropy',
                     metrics=['accuracy'])
@@ -59,6 +59,7 @@ class MultiSearchParam :
 
     def run_search(self, x_train, y_train, outputNb):
         np.random.seed(42) # fix random seed for reproducibility
+        tf.set_random_seed(42)
         model = KerasClassifier(build_fn=createNn, outputNb=outputNb, verbose=0)
         
         param_grid = dict(optimizer=self.optimizers, epochs=self.epochs, batch_size=self.batches, init_mode=self.init_mode, activation=self.activation)
@@ -76,7 +77,7 @@ class MultiSearchParam :
             print("%f (%f) with: %r" % (mean, stdev, param))
         return grid_result
     
-    def write_report(self, args, grid_result, dir_save = "data/report"):
+    def write_report(self, args, grid_result, dir_save = "data/report", nb_data=-1):
         import json
         import datetime 
 
@@ -87,6 +88,7 @@ class MultiSearchParam :
 
         with open(os.path.join(dir_save, name_date + "_config.txt"), 'w') as fic:
             print(args_dict)
+            args_dict['nb_data'] = nb_data
             json.dump(args_dict, fic, indent=4)
         with open(os.path.join(dir_save, name_date +"_result.txt"), 'w') as fic:
             fic.write("Best: %f using %s \n" % (grid_result.best_score_, grid_result.best_params_))
