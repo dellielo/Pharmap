@@ -47,7 +47,7 @@ def addOutputColumn(tab):
     if 'ScientificName' not in tab.keys() : # to be compatible with old file
         tab['ScientificName'] = tab['species']
 
-    tab['counts'] = tab.groupby('ScientificName')['ScientificName'].transform('count') #add coulumn counts
+    tab['counts'] = tab.groupby(conf.selectedField)[conf.selectedField].transform('count')  
     tab = tab[tab.counts > minSampleSize] # select all element that have at least $minSampleSize element
     print('have', len(tab.groupby(conf.selectedField).size()), 'type with more than', minSampleSize, 'sample')
     tab = tab.assign(output=(tab[conf.selectedField]).astype('category').cat.codes) #add unique id to each scientific name
@@ -86,7 +86,7 @@ def save_out_csv(data):
     path_save_out_csv = 'data/out_csv'
     if not os.path.exists(path_save_out_csv):
         os.makedirs(path_save_out_csv)
-    data.to_csv(os.path.join(path_save_out_csv, "coraux_geo.csv"), sep=",", encoding = 'utf-8', index=False)
+    data.to_csv(os.path.join(path_save_out_csv, "coraux_geo.csv"), sep=",", encoding = 'utf-8') #, index=False)
 
 
 def process(args):  
@@ -95,8 +95,8 @@ def process(args):
         save_out_csv(data[key])
 
         x,y, tab = prepareData(data[key], args.remove_duplicate)
-        util.write_data_by_name(x,y, util.get_idx2label(tab))
-        util.write_data(x, y, util.get_idx2label(tab))
+        # util.write_data_by_name(x,y, util.get_idx2label(tab))
+        # util.write_data(x, y, util.get_idx2label(tab))
         x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.1)
 
         outputNb = len(tab[conf.outputField].unique())
@@ -114,8 +114,8 @@ def process(args):
             print("After balance: ")
             describe(x_train, y_train)
     
-        # x_train = x_train[:1000]
-        # y_train = y_train[:1000]
+        x_train = x_train[:1000]
+        y_train = y_train[:1000]
 
         if args.run_multiple_config:
             
