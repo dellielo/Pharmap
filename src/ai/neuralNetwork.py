@@ -38,9 +38,6 @@ class NeuralNetwork:
         pred = self.model.predict_classes(inputsToPredict)
         return pred
 
-    def test(self, testInput, testOutput):
-        test_loss, test_acc = self.model.evaluate(testInput, testOutput)
-        print('Test accuracy:', test_acc, "loss: ", test_loss)
 
     def train(self, trainInput, trainOutput, epochs=100):
         #if network works with "categorical_crossentropy"
