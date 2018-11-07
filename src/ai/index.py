@@ -1,10 +1,13 @@
+from __future__ import print_function
 import sys
 sys.path.insert(0, './src/data_structuration/')
+import os
 
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
+
 
 import balanceTool
 import conf
@@ -52,9 +55,10 @@ def addOutputColumn(tab):
 def prepareData(data, remove_duplicate):
     # tab = data[key]
     tab = orderColumns(data)
-    tab = cleanTab(tab)
+    tab = cleanTab(tab, remove_duplicate)
     tab = addOutputColumn(tab)
     x, y = getInputOutput(tab)
+
     return x,y, tab
 
 def describe(x, y):
@@ -72,18 +76,26 @@ def makeStandardization(x_train, x_test):
 
 
 def getInputOutput(tab):
-
     x = tab.loc[:,conf.inputFileds].values
     y = tab.loc[:,conf.outputField].values
     return (x, y)
 
 
-def process(args):
-    
-    data = tools.load('./data/out/')
+def save_out_csv(data):
+    path_save_out_csv = 'data/out_csv'
+    if not os.path.exists(path_save_out_csv):
+        os.makedirs(path_save_out_csv)
+    data.to_csv(os.path.join(path_save_out_csv, "coraux_geo.csv"), sep=",", encoding = 'utf-8')
+
+
+def process(args):  
+    data = tools.load(args.dir_input)
     for key in data:
+        save_out_csv(data[key])
+
         x,y, tab = prepareData(data[key], args.remove_duplicate)
         util.write_data_by_name(x,y, util.get_idx2label(tab))
+        util.write_data(x, y, util.get_idx2label(tab))
         x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.1)
 
         outputNb = len(tab[conf.outputField].unique())
@@ -100,23 +112,30 @@ def process(args):
             x_train, y_train = balanceTool.smote(x_train, y_train)
             print("After balance: ")
             describe(x_train, y_train)
-        nn = neuralNetwork.NeuralNetwork(outputNb)
-        nn.train(x_train, y_train, epochs=args.epoch)
+    
 
-        scores = nn.evaluate(x_test, y_test)
-        nn.test(x_test, y_test, labels)
+        if args.run_multiple_config:
+            import mutipleNetwork
+            msp = mutipleNetwork.MultiSearchParam()
+            grid_results = msp.run_search(x_train, y_train, outputNb)
+            msp.write_report(grid_results, args)
+        else:
+            nn = neuralNetwork.NeuralNetwork(outputNb)
+            nn.train(x_train, y_train, epochs=args.epoch)
 
-       
+            scores = nn.evaluate(x_test, y_test)
+            nn.test(x_test, y_test, labels)
 
-        
-        
 
 def main():
     parser = argparse.ArgumentParser(description='Process some networks')
     parser.add_argument('--epoch', type=int, default=100, help='nb epochs')
-    parser.add_argument('--do_standardization', '-s,', action='store_true',)
+    parser.add_argument('--dir_input', default='data/out')
+    parser.add_argument('--do_standardization', '-s,', action='store_true')
     parser.add_argument('--do_balance_smote', '-b,', action='store_true')
     parser.add_argument('--remove_duplicate', '-d,', action='store_true')
+    parser.add_argument('--run_multiple_config', '-r,', action='store_true')
+    parser.add_argument('--config_multiple', default="config.json")
     args = parser.parse_args()
     print(args)
     process(args)

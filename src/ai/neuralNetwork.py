@@ -40,9 +40,6 @@ class NeuralNetwork:
 
 
     def train(self, trainInput, trainOutput, epochs=100):
-        #if network works with "categorical_crossentropy"
-        # trainOutput = keras.utils.to_categorical(trainOutput, num_classes=47)
-        # print(trainInput.shape, trainOutput.shape)
         self.model.fit(trainInput, trainOutput, epochs=epochs)
 
 
@@ -66,5 +63,5 @@ class NeuralNetwork:
                 pred_label,
                 prob[errors[i]][pred_class]))
 
-        print (metrics.classification_report(y_test, y_pred, target_names=labels))
+        print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in labels]))
         util.write_file_error_by_name(y_pred, y_test, x_test, idx2label)
