@@ -45,7 +45,7 @@ def addOutputColumn(tab):
     print(tab.keys())
 
     if 'ScientificName' not in tab.keys() : # to be compatible with old file
-        tab['ScientificName'] = tab['species_id']
+        tab['ScientificName'] = tab['species']
 
     tab['counts'] = tab.groupby('ScientificName')['ScientificName'].transform('count') #add coulumn counts
     tab = tab[tab.counts > minSampleSize] # select all element that have at least $minSampleSize element
@@ -114,8 +114,8 @@ def process(args):
             print("After balance: ")
             describe(x_train, y_train)
     
-        x_train = x_train[:1000]
-        y_train = y_train[:1000]
+        # x_train = x_train[:1000]
+        # y_train = y_train[:1000]
 
         if args.run_multiple_config:
             
@@ -135,7 +135,7 @@ def process(args):
             print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
             
             # Write results
-            msp.write_report(args, grid_results)
+            msp.write_report(args, grid_results, nb_data=len(x))
             # for param in ["activation", "epochs", "optimizers", "init_mode"]:
             #     mutipleNetwork.gridSearch_table_plot(grid_results, param)
 
