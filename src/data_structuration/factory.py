@@ -54,16 +54,43 @@ def justDepth(t):
     nb = [x for x in t.columns if isinstance(x, int)]
     return t.loc[:,nb]
 
-def nearestNeightborValue(df, lat, lon, depth):
+def getDist(df, lat, lon, depth):
     allDist = []
     for index, row in df.iterrows(): #we iterate through each row
         allDist.append(calc_dist(row['latitude'], row['longitude'], lat, lon, squaredist=True))
-    allDist = np.array(allDist)
+    return np.array(allDist)
+
+def closestValue(array, value):
+    idx = np.nanargmin(np.abs(array - value))
+    return array[idx]
+
+def closestDepth(row, depth):
+    depthLvl = np.array([x for x in row.axes[0].tolist() if isinstance(x, int) and not math.isnan(row[x])])
+    if (not len(depthLvl)):
+        return float('NaN')
+    i = closestValue(depthLvl, depth)
+    return row[i]
+
+def nearestNeightborValue(df, lat, lon, depth):
+    allDist = getDist(df, lat, lon, depth)
     bestDistIndex = allDist.argmin()
-    bestRow = df.iloc[bestDistIndex].to_frame()
-    bestRow = justDepth(bestRow).values[0] # [0] because we know that there is only one row in
-    idx = (np.abs(bestRow - depth)).argmin()
-    return bestRow[idx]
+    bestRow = df.iloc[bestDistIndex]
+    return closestDepth(bestRow, depth)
+
+def meanNeightbor(df, lat, lon, depth):
+    allDist = getDist(df, lat, lon, depth)
+    minDist = allDist.min()
+    weights = np.apply_along_axis(lambda x: minDist / x, 0, allDist)
+
+    depthsValues = justDepth(df)
+    values = []
+    for index, row in depthsValues.iterrows():
+        values.append(closestDepth(row, depth))
+    values = np.array(values)
+
+    indices = np.where(np.logical_not(np.isnan(values)))[0] # all indice that's not "NaN"
+
+    return np.average(values[indices], weights=weights[indices])
 
 def meanTab(t):
     return np.nanmean(justDepth(t).values)
@@ -103,6 +130,8 @@ def computeRow(row, dataTab):
             return meanTab(tab)
         elif (config.method == "nearest"):
             return nearestNeightborValue(tab, row["latitude"], row["longitude"], row['DepthInMeters'])
+        elif config.method == "meanNearest":
+            return meanNeightbor(tab, row['latitude'], row['longitude'], row['DepthInMeters'])
         else:
             print('Unknow method', config.method)
     else:

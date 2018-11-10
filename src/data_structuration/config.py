@@ -12,7 +12,7 @@ testDir = './data/test'
 taxonomyDir = "./data/obis"
 taxonomyFile = "porifera_obis_light.csv"
 
-methodList = ['offset', 'nearest']
+methodList = ['offset', 'nearest', "meanNearest"]
 method = "nearest"
 
 offset = {
@@ -25,7 +25,12 @@ offset = {
         "lat": 5,
         "lon": 5,
         "depth": 1000
-    }
+    },
+    "meanNearest": {
+        "lat": 5,
+        "lon": 5,
+        "depth": 1000
+    },
 }
 tempDepthOffset = 100
 
