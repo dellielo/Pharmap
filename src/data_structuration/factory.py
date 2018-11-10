@@ -50,53 +50,61 @@ def formatNoaaTab(tab):
 def formatCorailTab(tab):
     return tab.rename(columns={"ScientificName": 'species'})
 
-def nearestNeightborValue(df, lat, lon, depth):
-    dist_min = float('inf') #maximum distance is infinity     
-    
-    value = 0           #No value
-    for row in df.itertuples(index=True, name='Pandas'): #we iterate through each row
-        depthdist_min = float('inf')
-        d = calc_dist(row.latitude, row.longitude, lat, lon, squaredist==True) #get the distance
-        
-        if d < dist_min: #if we have a new closer record...
-            
-            dist_min = d
-            
-            for depth2 in t.columns: #let's look at the closest by depth
-                depthdist = abs(d-depth2) if (isinstance(depth2, int) and isinstance(row[depth2], int)) else float("inf")
-                depthdist_min = depthdist if depthdist < depthdist_min else depthdist_min
-                value = row[depth2]
-    return value
-                
+def justDepth(t):
+    nb = [x for x in t.columns if isinstance(x, int)]
+    return t.loc[:,nb]
 
-def select(t, lat, lon, depth):
+def nearestNeightborValue(df, lat, lon, depth):
+    allDist = []
+    for index, row in df.iterrows(): #we iterate through each row
+        allDist.append(calc_dist(row['latitude'], row['longitude'], lat, lon, squaredist=True))
+    allDist = np.array(allDist)
+    bestDistIndex = allDist.argmin()
+    bestRow = df.iloc[bestDistIndex].to_frame()
+    bestRow = justDepth(bestRow).values[0] # [0] because we know that there is only one row in
+    idx = (np.abs(bestRow - depth)).argmin()
+    return bestRow[idx]
+
+def meanTab(t):
+    return np.nanmean(justDepth(t).values)
+
+def cropData(t, lat, lon, depth):
+    offset = config.offset[config.method]
     t = t[
-        (t.latitude <= (lat + config.tempLatitudeOffset)) &
-        (t.latitude >= (lat - config.tempLatitudeOffset)) &
-        (t.longitude <= (lon + config.tempLongitudeOffset)) &
-        (t.longitude >= (lon - config.tempLongitudeOffset))
+        (t.latitude <= (lat + offset['lat'])) &
+        (t.latitude >= (lat - offset['lat'])) &
+        (t.longitude <= (lon + offset['lon'])) &
+        (t.longitude >= (lon - offset['lon']))
     ]
     nb = [x for x in t.columns \
     if (
-    isinstance(x, int)
-    and
         (
-            x < (depth + config.tempDepthOffset)
-            and
-            x > (depth - config.tempDepthOffset)
+        isinstance(x, int)
+        and
+            (
+                x < (depth + offset['depth'])
+                and
+                x > (depth - offset['depth'])
+            )
+        )
+        or
+        (
+            not isinstance(x, int) # to keep other column
         )
     )
     ]
     t = t.loc[:,nb]
     return t
 
-def meanTab(tab):
-    return np.nanmean(tab.values)
-
 def computeRow(row, dataTab):
-    tab = select(dataTab, row['latitude'], row['longitude'], row['DepthInMeters'])
+    tab = cropData(dataTab, row['latitude'], row['longitude'], row['DepthInMeters'])
     if (not tab.empty):
-        return meanTab(tab)
+        if (config.method == "offset"):
+            return meanTab(tab)
+        elif (config.method == "nearest"):
+            return nearestNeightborValue(tab, row["latitude"], row["longitude"], row['DepthInMeters'])
+        else:
+            print('Unknow method', config.method)
     else:
         return float('NaN')
 
@@ -116,5 +124,7 @@ def addColumn(mainTab, newColumnName, otherTab, computeRowFct=computeRow):
             start_time = time.time()
     mainTab[newColumnName] = newTab
     print('Added', mainTab[newColumnName].count(), "row of", newColumnName,
-        "in", time.time() - startBcp, "total not found", notFound)
+    "\nTime: ", time.time() - startBcp,
+    "\nTotal not found: ", notFound,
+    "\nTotal unique: ", len(mainTab.groupby(newColumnName).count()))
     return mainTab
