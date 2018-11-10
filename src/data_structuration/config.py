@@ -27,9 +27,9 @@ offset = {
         "depth": 1000
     },
     "meanNearest": {
-        "lat": 3,
-        "lon": 3,
-        "depth": 200
+        "lat": 2,
+        "lon": 2,
+        "depth": 100
     },
 }
 tempDepthOffset = 100
