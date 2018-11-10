@@ -92,7 +92,7 @@ def save_out_csv(data):
 def process(args):  
     data = tools.load(args.dir_input)
     for key in data:
-        save_out_csv(data[key])
+        save_out_csv(data[key]) #more for debug
 
         x,y, tab = prepareData(data[key], args.remove_duplicate)
         # util.write_data_by_name(x,y, util.get_idx2label(tab))
@@ -114,8 +114,8 @@ def process(args):
             print("After balance: ")
             describe(x_train, y_train)
     
-        x_train = x_train[:1000]
-        y_train = y_train[:1000]
+        x_train = x_train[:1000] # to have a fast result
+        y_train = y_train[:1000] # to have a fast result
 
         if args.run_multiple_config:
             
