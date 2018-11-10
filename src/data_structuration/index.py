@@ -17,7 +17,7 @@ if __name__=="__main__":
     for prop in oceanData:
         oceanData[prop] = factory.formatNoaaTab(oceanData[prop])
     for key in corauxData:
-        corauxData[key] = corauxData[key].head(400) #to have a fast result
+        #corauxData[key] = corauxData[key].head(400) #to have a fast result
         corauxData[key] = factory.formatCorailTab(corauxData[key])
         threads = []
 

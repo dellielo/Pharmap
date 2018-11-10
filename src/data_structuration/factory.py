@@ -79,16 +79,18 @@ def nearestNeightborValue(df, lat, lon, depth):
 
 def meanNeightbor(df, lat, lon, depth):
     allDist = getDist(df, lat, lon, depth)
-    minDist = allDist.min()
-    weights = np.apply_along_axis(lambda x: minDist / x, 0, allDist)
+    maxDist = allDist.max()
+    weights = np.apply_along_axis(lambda x: maxDist / x, 0, allDist)
 
-    depthsValues = justDepth(df)
     values = []
-    for index, row in depthsValues.iterrows():
+    for index, row in df.iterrows():
         values.append(closestDepth(row, depth))
     values = np.array(values)
 
     indices = np.where(np.logical_not(np.isnan(values)))[0] # all indice that's not "NaN"
+
+    if (not len(values[indices])): # all values are NaN
+        return float('NaN')
 
     return np.average(values[indices], weights=weights[indices])
 
