@@ -1,3 +1,4 @@
+import os
 from os import listdir
 from os.path import join
 import config
@@ -24,6 +25,11 @@ def load(dataDir, header=0, separator=','):
 
 def save(tab, dirName, filename):
     tab.to_file(join(dirName, filename), driver='GeoJSON')
+
+def save_out_csv(tab, dirname, filename):
+    if not os.path.exists(dirname):
+        os.makedirs(dirname)
+    tab.to_csv(os.path.join(dirname, filename), sep=",", encoding = 'utf-8') #, index=False)
 
 def multipleTabSave(tabs, dirName):
     for name, tab in tabs.items():

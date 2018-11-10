@@ -81,17 +81,10 @@ def getInputOutput(tab):
     y = tab.loc[:,conf.outputField].values
     return (x, y)
 
-
-def save_out_csv(data):
-    path_save_out_csv = 'data/out_csv'
-    if not os.path.exists(path_save_out_csv):
-        os.makedirs(path_save_out_csv)
-    data.to_csv(os.path.join(path_save_out_csv, "coraux_geo.csv"), sep=",", encoding = 'utf-8') #, index=False)
-
-
-def process(args):  
+def process(args):
     data = tools.load(args.dir_input)
     for key in data:
+        tools.save_out_csv(data[key], './data/out', 'coraux_geo.csv')
         save_out_csv(data[key]) #more for debug
 
         x,y, tab = prepareData(data[key], args.remove_duplicate)
