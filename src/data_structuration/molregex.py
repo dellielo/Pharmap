@@ -80,6 +80,12 @@ DRUGCLASS ={
                      "GABAr-agonist",
                      "neuroprotective",
                      "anti-beta-amyloid fibrillization"]
+    'cardio-vascular': ["Diuretics",
+                        "Angiotensin-receptor blokers",
+                        "Beta-blokers",
+                        "calcium-channel blokers",
+                        "Alpha-blokers"]
+                    
                      
 }
 
