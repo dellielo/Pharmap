@@ -5,20 +5,26 @@ import config
 import geopandas as gpd
 import pandas as pd
 
+
+def simpleLoad(path, header=0, separator=','):
+    path = join(path)
+    extension = path.split('.')[-1]
+    if extension in config.extension["geo"]:
+        d = gpd.read_file(path)
+    elif extension in config.extension["tab"]:
+        d = pd.read_csv(join(path), low_memory=False, header=header, sep=separator)
+    else:
+        raise ValueError('Unknown extension')
+    print("Succesfuly loaded " + path)
+    return d
+
 def load(dataDir, header=0, separator=','):
     data = {}
     for f in listdir(dataDir):
-        extension = f.split('.')[-1]
         path = join(dataDir, f)
         try:
-            if extension in config.extension["geo"]:
-                d = gpd.read_file(path)
-            elif extension in config.extension["tab"]:
-                d = pd.read_csv(path, low_memory=False, header=header, sep=separator)
-            else:
-                continue
+            d = simpleLoad(path, header, separator)
             data[f] = d
-            print("Succesfuly loaded " + path)
         except Exception as e:
             print("An error occured while loading " + path, e)
     return (data)
