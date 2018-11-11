@@ -54,7 +54,6 @@ def addOutputColumn(tab):
     return tab
 
 def prepareData(data, remove_duplicate):
-    # tab = data[key]
     tab = orderColumns(data)
     tab = cleanTab(tab, remove_duplicate)
     tab = addOutputColumn(tab)
@@ -81,69 +80,66 @@ def getInputOutput(tab):
     y = tab.loc[:,conf.outputField].values
     return (x, y)
 
-def process(args):
-    data = tools.load(args.dir_input)
-    for key in data:
-        tools.save_out_csv(data[key], './data/out', 'coraux_geo.csv')
-        save_out_csv(data[key]) #more for debug
+def process(data, args):
 
-        x,y, tab = prepareData(data[key], args.remove_duplicate)
-        # util.write_data_by_name(x,y, util.get_idx2label(tab))
-        # util.write_data(x, y, util.get_idx2label(tab))
-        x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.1)
+    x,y, tab = prepareData(data, args.remove_duplicate)
+    # util.write_data_by_name(x,y, util.get_idx2label(tab))
+    # util.write_data(x, y, util.get_idx2label(tab))
+    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.1)
 
-        outputNb = len(tab[conf.outputField].unique())
-        labels = sorted(tab[conf.selectedField].unique()) #why sorted ?
+    outputNb = len(tab[conf.outputField].unique())
+    labels = sorted(tab[conf.selectedField].unique()) #why sorted ?
 
-        print("Before balance: ")
+    print("Before balance: ")
+    describe(x_train, y_train)
+
+    if args.do_standardization:
+        print("Make Standardization")
+        x_train, x_test = makeStandardization(x_train, x_test)
+
+    if args.do_balance_smote:
+        x_train, y_train = balanceTool.smote(x_train, y_train)
+        print("After balance: ")
         describe(x_train, y_train)
 
-        if args.do_standardization:
-            print("Make Standardization")
-            x_train, x_test = makeStandardization(x_train, x_test)
+    x_train = x_train[:1000] # to have a fast result
+    y_train = y_train[:1000] # to have a fast result
 
-        if args.do_balance_smote:
-            x_train, y_train = balanceTool.smote(x_train, y_train)
-            print("After balance: ")
-            describe(x_train, y_train)
-    
-        x_train = x_train[:1000] # to have a fast result
-        y_train = y_train[:1000] # to have a fast result
+    if args.run_multiple_config:
+        
+        msp = mutipleNetwork.MultiSearchParam()
+        grid_results = msp.run_search(x_train, y_train, outputNb)
+        # clf = grid_results.best_estimator_
+        
+        # Evaluate on Test data with the best network
+        params = grid_results.best_params_
+        best_model = mutipleNetwork.create_best_model(outputNb, params)
+        best_model.fit(x_train, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
+        best_model.summary()
+        pred_best = best_model.predict_classes(x_test)
+        
+        #To move 
+        from sklearn.metrics import accuracy_score
+        print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
+        
+        # Write results
+        msp.write_report(args, grid_results, nb_data=len(x))
+        # for param in ["activation", "epochs", "optimizers", "init_mode"]:
+        #     mutipleNetwork.gridSearch_table_plot(grid_results, param)
 
-        if args.run_multiple_config:
-            
-            msp = mutipleNetwork.MultiSearchParam()
-            grid_results = msp.run_search(x_train, y_train, outputNb)
-            # clf = grid_results.best_estimator_
-            
-            # Evaluate on Test data with the best network
-            params = grid_results.best_params_
-            best_model = mutipleNetwork.create_best_model(outputNb, params)
-            best_model.fit(x_train, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
-            best_model.summary()
-            pred_best = best_model.predict_classes(x_test)
-            
-            #To move 
-            from sklearn.metrics import accuracy_score
-            print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
-            
-            # Write results
-            msp.write_report(args, grid_results, nb_data=len(x))
-            # for param in ["activation", "epochs", "optimizers", "init_mode"]:
-            #     mutipleNetwork.gridSearch_table_plot(grid_results, param)
+    else:
+        nn = neuralNetwork.NeuralNetwork(outputNb)
+        nn.train(x_train, y_train, epochs=args.epochs)
 
-        else:
-            nn = neuralNetwork.NeuralNetwork(outputNb)
-            nn.train(x_train, y_train, epochs=args.epochs)
-
-            scores = nn.evaluate(x_test, y_test)
-            nn.test(x_test, y_test, labels)
+        scores = nn.evaluate(x_test, y_test)
+        nn.test(x_test, y_test, labels)
 
 
 def main():
     parser = argparse.ArgumentParser(description='Process some networks')
     parser.add_argument('--epochs', type=int, default=100, help='nb epochs')
-    parser.add_argument('--dir_input', default='data/out')
+    parser.add_argument('--dir_input', default='data/out'),
+    parser.add_argument('--file_input', default='')
     parser.add_argument('--do_standardization', '-s,', action='store_true')
     parser.add_argument('--do_balance_smote', '-b,', action='store_true')
     parser.add_argument('--remove_duplicate', '-d,', action='store_true')
@@ -151,7 +147,14 @@ def main():
     parser.add_argument('--config_multiple', default="config.json")
     args = parser.parse_args()
     print(args)
-    process(args)
+
+    if (args.file_input):
+        data = tools.simpleLoad(args.file_input)
+        process(data, args)
+    else:
+        data = tools.load(args.dir_input)
+        for key in data:
+            process(data[key], args)
 
 if __name__=="__main__":
-    main()    
+    main()
