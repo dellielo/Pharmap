@@ -2,6 +2,8 @@ import time
 import config
 import numpy as np
 import math
+import gdal
+
 
 def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
     '''
@@ -25,6 +27,20 @@ def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
     c = 2.0*np.arctan2(np.sqrt(a), np.sqrt(1-a))
     
     return np.sqrt( (R*c)**2 + abs(d1-d2)**2 ) if not squaredist else (R*c)**2 + abs(d1-d2)**2 
+
+
+def select_pixel_coord(raster, lat, lon, extent):
+    """
+    Given a numpy array representing the raster band, returns pixel(array) value at lat/long coordinate, extent is degree system (usually 360*180)
+    """
+    width, height = raster_array.shape
+    x_pixel_size = extent[0]/width
+    y_pixel_size = extent[1]/height
+    
+    x_row = max(0, math.floor((180+lon)/x_pixel_size))
+    y_col = max(0, math.floor((90-lat)/y_pixel_size))
+    
+    return x_row, y_row
 
 def toNumber(s):
     if (s.isnumeric()):
