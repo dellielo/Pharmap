@@ -63,5 +63,27 @@ class NeuralNetwork:
                 pred_label,
                 prob[errors[i]][pred_class]))
 
+        report = metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in labels])
         print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in labels]))
         util.write_file_error_by_name(y_pred, y_test, x_test, idx2label)
+        scores = self.evaluate(x_test, y_test)  
+        results =  (report, scores)   
+        return results
+
+def write_report_unique(info_run, results, dir_save = "data/report"):
+    import json, os
+    import datetime 
+
+    
+    name_date = 'report-{date:%Y-%m-%d_%H:%M:%S}'.format( date=datetime.datetime.now() )
+    if not(os.path.exists(dir_save)):
+        os.makedirs(dir_save)
+
+    with open(os.path.join(dir_save, name_date + "_config_nn.txt"), 'w') as fic:
+        json.dump(info_run, fic, indent=4)
+    with open(os.path.join(dir_save, name_date +"_result_nn.txt"), 'w') as fic:
+        report, scores = results
+        fic.write("Resultas tests: accuracy %f loss % f\n" % (scores[1], scores[0]))
+        fic.write(report)
+
+

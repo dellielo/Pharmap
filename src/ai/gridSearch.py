@@ -15,7 +15,7 @@ def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation=
     model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
     model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
     model.add(keras.layers.Dense(outputNb, activation='softmax'))
-    model.compile(optimizer=optimizer, #tf.train.AdamOptimizer(),
+    model.compile(optimizer=optimizer, 
                     loss='sparse_categorical_crossentropy',
                     metrics=['accuracy'])
     
@@ -76,27 +76,26 @@ class MultiSearchParam :
         for mean, stdev, param in zip(means, stds, params):
             print("%f (%f) with: %r" % (mean, stdev, param))
         return grid_result
-    
-    def write_report(self, args, grid_result, dir_save = "data/report", nb_data=-1):
-        import json
-        import datetime 
 
-        args_dict = vars(args)  
-        name_date = 'report-{date:%Y-%m-%d_%H:%M:%S}'.format( date=datetime.datetime.now() )
-        if not(os.path.exists(dir_save)):
-            os.makedirs(dir_save)
 
-        with open(os.path.join(dir_save, name_date + "_config.txt"), 'w') as fic:
-            print(args_dict)
-            args_dict['nb_data'] = nb_data
-            json.dump(args_dict, fic, indent=4)
-        with open(os.path.join(dir_save, name_date +"_result.txt"), 'w') as fic:
-            fic.write("Best: %f using %s \n" % (grid_result.best_score_, grid_result.best_params_))
-            means = grid_result.cv_results_['mean_test_score']
-            stds = grid_result.cv_results_['std_test_score']
-            params = grid_result.cv_results_['params']
-            for mean, stdev, param in zip(means, stds, params):
-                fic.write("%f (%f) with: %r \n" % (mean, stdev, param))
+def write_report(info_run, grid_result, dir_save = "data/report"):
+    import json
+    import datetime 
+
+    name_date = 'report-{date:%Y-%m-%d_%H:%M:%S}'.format( date=datetime.datetime.now() )
+    if not(os.path.exists(dir_save)):
+        os.makedirs(dir_save)
+
+    with open(os.path.join(dir_save, name_date + "_config.txt"), 'w') as fic:
+        # info_run['nb_data'] = nb_data
+        json.dump(info_run, fic, indent=4)
+    with open(os.path.join(dir_save, name_date +"_result.txt"), 'w') as fic:
+        fic.write("Best: %f using %s \n" % (grid_result.best_score_, grid_result.best_params_))
+        means = grid_result.cv_results_['mean_test_score']
+        stds = grid_result.cv_results_['std_test_score']
+        params = grid_result.cv_results_['params']
+        for mean, stdev, param in zip(means, stds, params):
+            fic.write("%f (%f) with: %r \n" % (mean, stdev, param))
 
 
 def gridSearch_table_plot(grid_clf, param_name,
@@ -187,3 +186,4 @@ def gridSearch_table_plot(grid_clf, param_name,
         plt.xlabel(param_name)
         plt.ylabel('Score')
         plt.show()
+
