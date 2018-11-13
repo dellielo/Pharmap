@@ -85,7 +85,7 @@ def write_report_unique(info_run, results, dir_save = "data/report"):
         fic.write("Resultas tests: accuracy %f loss % f\n" % (scores[1], scores[0]))
         fic.write(report)
 
-#/!\ fonction en attente d'etre utilisées
+#/!\ fonction en attente d'etre utilisees
 def plot_model(model):
     from keras.utils import plot_model
     plot_model(head_model, to_file='head-model.png')
