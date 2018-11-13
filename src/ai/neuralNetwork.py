@@ -13,16 +13,16 @@ class NeuralNetwork:
         self.outputNb = outputNb
 
     def createNn(self, outputNb):
-        inputNb = len(conf.inputFileds)
+        inputNb = len(conf.inputFields)
         self.model = keras.Sequential([
             keras.layers.Flatten(input_shape=(inputNb,)),
             keras.layers.Dense(240, activation='relu'),
             keras.layers.Dense(128, activation='relu'),
-            keras.layers.Dense(outputNb, activation='softmax')
+            keras.layers.Dense(outputNb, activation='softmax') #softmax')
         ])
 
         self.model.compile(optimizer=tf.train.AdamOptimizer(),
-                      loss='sparse_categorical_crossentropy',
+                      loss='sparse_categorical_crossentropy', #binary_crossentropy', #sparse_categorical_crossentropy',
                       metrics=['accuracy'])
 
     def evaluate(self, testInput, testOutput):
@@ -43,28 +43,27 @@ class NeuralNetwork:
         self.model.fit(trainInput, trainOutput, epochs=epochs)
 
 
-    def test(self, x_test, y_test, labels):
+    def test(self, x_test, y_test, idx2label):
         y_pred = self.predict_classes(x_test)
         prob = self.predict(x_test)
 
-        idx2label = dict((v,k) for k,v in zip(labels, range(0,self.outputNb)))
-        print(idx2label)
         errors = np.where(y_pred != y_test)[0]
         print("No of errors = {}/{}".format(len(errors),len(y_test)))
 
         for i in range(len(errors[:5])):
             pred_class = np.argmax(prob[errors[i]])
-            print(pred_class)
-            pred_label = idx2label[pred_class]
-            true_label = idx2label[y_test[errors[i]]]
+            # todo: to fix
+            # print(pred_class)
+            # pred_label = idx2label[pred_class]
+            # true_label = idx2label[y_test[errors[i]]]
 
-            print('Original label: [{}], Prediction :[{}], confidence : {:.3f}'.format(
-                true_label,
-                pred_label,
-                prob[errors[i]][pred_class]))
+            # print('Original label: [{}], Prediction :[{}], confidence : {:.3f}'.format(
+            #     true_label,
+            #     pred_label,
+            #     prob[errors[i]][pred_class]))
 
-        report = metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in labels])
-        print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in labels]))
+        report = metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()])
+        print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()]))
         util.write_file_error_by_name(y_pred, y_test, x_test, idx2label)
         scores = self.evaluate(x_test, y_test)  
         results =  (report, scores)   
@@ -86,4 +85,15 @@ def write_report_unique(info_run, results, dir_save = "data/report"):
         fic.write("Resultas tests: accuracy %f loss % f\n" % (scores[1], scores[0]))
         fic.write(report)
 
+#/!\ fonction en attente d'etre utilisées
+def plot_model(model):
+    from keras.utils import plot_model
+    plot_model(head_model, to_file='head-model.png')
+    pil_image.open('head-model.png')
 
+
+def plot_hitory(history):
+    import seaborn as sns
+    df = pd.DataFrame({'epochs':history.epoch, 'accuracy': history.history['acc'], 'validation_accuracy': history.history['val_acc']})
+    g = sns.pointplot(x="epochs", y="accuracy", data=df, fit_reg=False)
+    g = sns.pointplot(x="epochs", y="validation_accuracy", data=df, fit_reg=False, color='green')

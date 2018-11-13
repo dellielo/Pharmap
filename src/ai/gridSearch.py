@@ -8,13 +8,13 @@ import conf
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu'):
+def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax'):
     inputNb = len(conf.inputFileds)
     model = keras.Sequential()
     model.add(keras.layers.Flatten(input_shape=(len(conf.inputFileds),)))
     model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
     model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
-    model.add(keras.layers.Dense(outputNb, activation='softmax'))
+    model.add(keras.layers.Dense(outputNb, activation=act_final))
     model.compile(optimizer=optimizer, 
                     loss='sparse_categorical_crossentropy',
                     metrics=['accuracy'])
@@ -33,10 +33,11 @@ def create_best_model(outputNb, params):
 class MultiSearchParam :
     def __init__(self):
         self.epochs = [10, 100]
-        self.optimizers = ['adam', 'RMSprop']
-        self.init_mode = ['normal', 'uniform', 'glorot_uniform']
-        self.batches = [50]
-        self.activation = ['relu', 'linear']
+        self.optimizers = ['adam', 'RMSprop', 'SGD' , 'Nadam']
+        self.init_mode = ['normal', 'uniform', 'glorot_uniform', 'glorot_normal']
+        self.batches = [20, 50, 100]
+        self.activation = ['relu', 'linear', 'tanh']
+        self.act_final = ['softmax', 'sigmoid', 'tanh']
         #init_mode = ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform']
         # optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
         # activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
@@ -60,10 +61,15 @@ class MultiSearchParam :
     def run_search(self, x_train, y_train, outputNb):
         np.random.seed(42) # fix random seed for reproducibility
         tf.set_random_seed(42)
-        model = KerasClassifier(build_fn=createNn, outputNb=outputNb, verbose=0)
+        model = KerasClassifier(build_fn=createNn, outputNb=outputNb, verbose=1)
         
-        param_grid = dict(optimizer=self.optimizers, epochs=self.epochs, batch_size=self.batches, init_mode=self.init_mode, activation=self.activation)
-        grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=-1, cv=None)
+        param_grid = dict(optimizer=self.optimizers, 
+                          epochs=self.epochs, 
+                          batch_size=self.batches, 
+                          init_mode=self.init_mode, 
+                          activation=self.activation, 
+                          act_final=self.act_final)
+        grid = GridSearchCV(estimator=model, param_grid=param_grid, n_jobs=2, cv=None)
         print('shape :', (x_train.shape))
         print('shape :', (y_train.shape))
         grid_result = grid.fit(x_train, y_train)
