@@ -154,6 +154,7 @@ def main():
     parser = argparse.ArgumentParser(description='Process some networks')
     parser.add_argument('--epochs', '-e', type=int, default=100, help='nb epochs')
     parser.add_argument('--dir_input', default='data/out')
+    parser.add_argument('--file_input', default='data/out/coraux_geov2.csv', help='input file')
     parser.add_argument('--save_input_csv', action='store_true')
     parser.add_argument('--do_standardization', '-s,', action='store_true')
     parser.add_argument('--do_balance_smote', '-b,', action='store_true')
