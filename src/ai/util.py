@@ -1,8 +1,8 @@
 import numpy as np
 import os 
 import conf
-
-
+import datetime
+from keras.models import model_from_yaml
 
 def write_file_error_by_name(y_pred, y_test, x_test,  idx2label, dir_save = 'data/debug'):
     if not os.path.exists(dir_save):
@@ -57,3 +57,26 @@ def write_data(x, y, idx2label, dir_save = 'data/debug'):
     #         true_label = idx2label[y_item]
     #         str_data = ";".join("{:.2f}".format(i) for i in x_item)
     #         fic.write("{};{}\n".format(true_label, str_data))
+
+def save_model(model, dir_save = 'data/model'):
+
+    name_date = 'model-{date:%Y-%m-%d_%H:%M:%S}'.format(date=datetime.datetime.now())
+    if not os.path.exists(dir_save):
+        os.makedirs(dir_save)
+
+    # serialize model to YAML
+    model_yaml = model.to_yaml()
+    with open(os.path.join(dir_save, name_date+".yaml"), "w") as yaml_file:
+        yaml_file.write(model_yaml)
+    # serialize weights to HDF5
+    model.save_weights(os.path.join(dir_save, name_date+".h5"))
+    print("Saved model to disk")
+
+def load_model(name_model, dir_save = 'data/model'):
+    # load YAML and create model
+    yaml_file = open(os.path.join(dir_save, name_model+'.yaml'), 'r')
+    loaded_model_yaml = yaml_file.read()
+    yaml_file.close()
+    loaded_model = model_from_yaml(loaded_model_yaml)
+    # load weights into new model
+    loaded_model.load_weights(open(os.path.join(dir_save, name_model+'.h5'))

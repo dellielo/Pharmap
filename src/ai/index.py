@@ -67,20 +67,21 @@ def process(data, args):
         
     # x_train = x_train[:1000]
     # y_train = y_train[:1000]
-
+    x_train_data = dataManage.getInputColumn(x_train)
     if args.run_multiple_config:
         
         msp = gridSearch.MultiSearchParam()
-        grid_results = msp.run_search(x_train, y_train, outputNb)
+        grid_results, best_params = msp.run_search(x_train_data, y_train, dm.nb_labels)
         # clf = grid_results.best_estimator_
         
         # Evaluate on Test data with the best network
-        params = grid_results.best_params_
+        params = best_params
         best_model = gridSearch.create_best_model(dm.nb_labels, params)
-        best_model.fit(x_train, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
+
+        best_model.fit(x_train_data, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
         best_model.summary()
-        pred_best = best_model.predict_classes(x_test)
-        
+        pred_best = best_model.predict_classes(dataManage.getInputColumn(x_test))
+        util.save_model(best_model)
         #To move 
         from sklearn.metrics import accuracy_score
         print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
@@ -92,7 +93,7 @@ def process(data, args):
 
     else:
         nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
-        nn.train(dataManage.getInputColumn(x_train), y_train, epochs=args.epochs)
+        nn.train(x_train_data, y_train, epochs=args.epochs)
         # scores = nn.evaluate(x_test, y_test)
         results = nn.test(dataManage.getInputColumn(x_test), y_test, dm.idx2label)
         neuralNetwork.write_report_unique(info_run, results)
