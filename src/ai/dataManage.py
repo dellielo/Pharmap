@@ -110,7 +110,7 @@ class ManageData:
         tab = orderColumns(tab)
         tab = cleanTab(tab, remove_duplicate)
         tab = removeDuplicate(tab, remove_duplicate)
-        tab = filterNumberOcc(tab, minSampleSize=2000)
+        tab = filterNumberOcc(tab, min_sample_size)
         tab = tab.reset_index(drop=True)
         self.y, self.idx2label = transformOutput(tab)
         # tab = addOutputColumn(tab, min_sample_size)
