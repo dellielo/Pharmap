@@ -3,6 +3,7 @@ import config
 import pandas as pd
 from ete3 import Tree, TreeStyle, NCBITaxa, NodeStyle, faces, AttrFace, TreeFace
 import itertools
+from db import dbDriver
 
 class PhyloTree(Tree):
     '''
@@ -24,6 +25,26 @@ class PhyloTree(Tree):
         self.add_child(name="Fungi").add_features(rank="kingdom")
         self.add_child(name="Protista").add_features(rank="kingdom")
         '''
+
+    def login(self, uri, user, password):
+        self.driver = dbDriver(uri, user, password)
+    
+    def db_addchild(self, parent_name, child_rank, child_name):
+        txt = ('MATCH (p) WHERE p.name="'+parent_name+'"'\
+              'CREATE (c:'+child_rank+'{name:"'+child_name+'"})-[:parent]->(p)')
+        self.driver.add_node(txt)
+                        
+    def db_build_tree(self, **kwargs):
+        if self.df.empty:
+            raise Exception('Need dataframe for build')
+        last = "kingdom"
+        for rank in self.ranks:
+            for sci_name in set(self.df[rank]):
+                if sci_name and sci_name != "nan" and isinstance(sci_name, str):
+                    parents = set(self.df.loc[self.df[rank]==sci_name][last]).pop()
+                    if parents and parents != "nan" and isinstance(parents, str):
+                        self.db_addchild(parents, rank, sci_name)
+            last = rank
 
     def build_tree(self, **kwargs):
 
