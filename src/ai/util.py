@@ -52,14 +52,9 @@ def write_data(x, y, idx2label, dir_save = 'data/debug'):
         os.makedirs(dir_save)
         
     df.to_csv(os.path.join(dir_save, "data_input_pd.csv"), sep='\t')
-    # with open(os.path.join(dir_save, "data_input.csv"), 'w') as fic:
-    #     for x_item, y_item in zip(x,y):
-    #         true_label = idx2label[y_item]
-    #         str_data = ";".join("{:.2f}".format(i) for i in x_item)
-    #         fic.write("{};{}\n".format(true_label, str_data))
 
-def save_model(model, dir_save = 'data/model'):
 
+def save_model(model, info_run, dir_save = 'data/model'):
     name_date = 'model-{date:%Y-%m-%d_%H:%M:%S}'.format(date=datetime.datetime.now())
     if not os.path.exists(dir_save):
         os.makedirs(dir_save)
@@ -69,8 +64,11 @@ def save_model(model, dir_save = 'data/model'):
     with open(os.path.join(dir_save, name_date+".yaml"), "w") as yaml_file:
         yaml_file.write(model_yaml)
     # serialize weights to HDF5
-    model.save_weights(os.path.join(dir_save, name_date+".h5"))
-    print("Saved model to disk")
+    name_network = os.path.join(dir_save, name_date+".h5")
+    model.save_weights(name_network)
+    print("Saved model to disk " + name_network )
+    return name_date
+
 
 def load_model(name_model, dir_save = 'data/model'):
     # load YAML and create model
@@ -80,3 +78,4 @@ def load_model(name_model, dir_save = 'data/model'):
     loaded_model = model_from_yaml(loaded_model_yaml)
     # load weights into new model
     loaded_model.load_weights(open(os.path.join(dir_save, name_model+'.h5')))
+    return loaded_model

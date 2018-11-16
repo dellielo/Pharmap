@@ -128,5 +128,5 @@ class ManageData:
     def split_train_test(self):
         # _getInputOutput
         y = self.y # self.tab[conf.outputField]
-        x_train, x_test, y_train, y_test = train_test_split(self.tab, y, random_state=42, test_size=0.2)
+        x_train, x_test, y_train, y_test = train_test_split(self.tab, y, random_state=42, test_size=0.2,  stratify=y)
         return  x_train, x_test, y_train, y_test

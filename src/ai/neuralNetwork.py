@@ -14,7 +14,6 @@ import util
 class NeuralNetwork:
 
     def __init__(self, outputNb):
-        print(conf.network, conf.network['optimizer'])
         self.createNn(outputNb, 
                       optimizer=conf.network['optimizer'],
                       init_mode=conf.network['init_mode'],
@@ -54,31 +53,33 @@ class NeuralNetwork:
         self.model.fit(trainInput, trainOutput, epochs=epochs_)
 
 
-    def test(self, x_test, y_test, idx2label):
-        y_pred = self.predict_classes(x_test)
-        prob = self.predict(x_test)
+def test(model, x_test, y_test, idx2label):
+    y_pred = model.predict_classes(x_test)
+    prob = model.predict(x_test)
 
-        errors = np.where(y_pred != y_test)[0]
-        print("No of errors = {}/{}".format(len(errors),len(y_test)))
+    errors = np.where(y_pred != y_test)[0]
+    print("No of errors = {}/{}".format(len(errors),len(y_test)))
+    
+    for i in range(len(errors[:5])):
+        pred_class = np.argmax(prob[errors[i]])
+        # todo: to fix
+        print(pred_class)
+        pred_label = idx2label[pred_class]
+        true_label = idx2label[y_test[errors[i]]]
 
-        for i in range(len(errors[:5])):
-            pred_class = np.argmax(prob[errors[i]])
-            # todo: to fix
-            # print(pred_class)
-            # pred_label = idx2label[pred_class]
-            # true_label = idx2label[y_test[errors[i]]]
+        print('Original label: [{}], Prediction :[{}], confidence : {:.3f}'.format(
+            true_label,
+            pred_label,
+            prob[errors[i]][pred_class]))
 
-            # print('Original label: [{}], Prediction :[{}], confidence : {:.3f}'.format(
-            #     true_label,
-            #     pred_label,
-            #     prob[errors[i]][pred_class]))
-
-        report = metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()])
-        print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()]))
-        util.write_file_error_by_name(y_pred, y_test, x_test, idx2label)
-        scores = self.evaluate(x_test, y_test)  
-        results =  (report, scores)   
-        return results
+    report = metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()])
+    print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()]))
+    scores = model.evaluate(x_test, y_test)  
+    results =  (report, scores)   
+    print("Test final with the best of the best: %2.4f %%"%(metrics.accuracy_score(y_test, y_pred)))
+    util.write_file_error_by_name(y_pred, y_test, x_test, idx2label)
+    
+    return results
 
 def write_report_unique(info_run, results, dir_save = "data/report"):
     name_date = 'report-{date:%Y-%m-%d_%H:%M:%S}'.format( date=datetime.datetime.now() )

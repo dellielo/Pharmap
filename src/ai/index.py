@@ -18,6 +18,14 @@ import gridSearch
 
 import argparse
 
+def get_report_test_on_best_model(x_test, y_test, best_model, idx2label, info_run, has_saved_network=False):
+    best_model.summary()
+    # pred_best = best_model.predict_classes(dataManage.getInputColumn(x_test))
+    if has_saved_network:
+        name_network = util.save_model(best_model, info_run)
+        info_run.update({"name_network": name_network})
+    results = neuralNetwork.test(best_model, dataManage.getInputColumn(x_test), y_test, idx2label)
+    neuralNetwork.write_report_unique(info_run, results)
 
 def save_out_csv(data):
     path_save_out_csv = 'data/out_csv'
@@ -63,30 +71,23 @@ def process(data, args):
         grid_results, best_params = msp.run_search(x_train_data, y_train, dm.nb_labels)
         # clf = grid_results.best_estimator_
         
-        # Evaluate on Test data with the best network
+        # Retrain and Evaluate on Test data with the best network
         params = best_params
         best_model = gridSearch.create_best_model(dm.nb_labels, params)
 
         best_model.fit(x_train_data, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
-        best_model.summary()
-        pred_best = best_model.predict_classes(dataManage.getInputColumn(x_test))
-        util.save_model(best_model)
-        #To move 
-        from sklearn.metrics import accuracy_score
-        print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
-        
-        # Write results
+       
+        # Write results for all configs
         gridSearch.write_report(info_run, grid_results)
-        # for param in ["activation", "epochs", "optimizers", "init_mode"]:
-        #     mutipleNetwork.gridSearch_table_plot(grid_results, param)
-
+      
     else:
+        #just train one config !
         nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
         nn.train(x_train_data, y_train, epochs=args.epochs)
-        # scores = nn.evaluate(x_test, y_test)
-    
-        results = nn.test(dataManage.getInputColumn(x_test), y_test, dm.idx2label)
-        neuralNetwork.write_report_unique(info_run, results)
+        best_model = nn.model
+
+    # Run on test data !
+    get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, info_run, has_saved_network=True)
 
 
 def main():
