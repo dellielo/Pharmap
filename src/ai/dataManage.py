@@ -108,7 +108,7 @@ class ManageData:
         tab = removeDuplicate(tab, remove_duplicate)
         tab = filterNumberOcc(tab, min_sample_size)
         tab = tab.reset_index(drop=True)
-        self.y, _ = transformOutput(tab, output) #self.idx2label keep the origin!
+        self.y, self.idx2label = transformOutput(tab, output) #self.idx2label keep the origin!
         # tab = addOutputColumn(tab, min_sample_size)
         self.tab = tab
         
