@@ -9,7 +9,7 @@ import conf
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax'):
+def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons="240"):
     inputNb = len(conf.inputFields)
     model = keras.Sequential()
     model.add(keras.layers.Flatten(input_shape=(inputNb,)))
@@ -32,34 +32,22 @@ def create_best_model(outputNb, params):
     
 
 class MultiSearchParam :
+    #init_mode = ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform']
+    # optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
+    # activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
+    # dropout rate
+    # neurons_1 and _2 = [1, 5, 10, 15, 20, 25, 30]
+    # learn_rate = [0.001, 0.01, 0.1, 0.2, 0.3]
+
     def __init__(self):
         self.epochs = [10, 100]
         self.optimizers = ['adam', 'RMSprop', 'SGD' , 'Nadam']
         self.init_mode = ['normal', 'uniform', 'glorot_uniform', 'glorot_normal']
         self.batches = [1, 20, 50, 100]
         self.activation = ['relu', 'linear', 'tanh']
-        self.act_final = ['softmax', 'sigmoid', 'tanh']
+        self.act_final = ['softmax', 'sigmoid']
         
-        #init_mode = ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform']
-        # optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
-        # activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']
-        # dropout rate
-        # neurons_1 and _2 = [1, 5, 10, 15, 20, 25, 30]
-        # learn_rate = [0.001, 0.01, 0.1, 0.2, 0.3]
-
-    def set_epochs(self, new_epochs):
-        self.epochs = new_epochs
-
-    def set_optimizers(self, new_optimizers):
-        self.optimizers = new_optimizers
-    
-    def set_init_mode(self, new_init_mode):
-        # 
-        self.init_mode = new_init_mode
-    
-    def set_batches(self, batches):
-        self.batches = batches
-
+        
     def run_search(self, x_train, y_train, outputNb):
         np.random.seed(42) # fix random seed for reproducibility
         tf.set_random_seed(42)

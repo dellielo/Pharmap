@@ -50,7 +50,10 @@ class NeuralNetwork:
 
     def train(self, trainInput, trainOutput, epochs=None):
         epochs_ = conf.network['epochs'] if epochs is None else epochs
-        self.model.fit(trainInput, trainOutput, epochs=epochs_)
+
+        early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
+        #self.model.fit(trainInput, trainOutput, validation_split=0.1, callbacks=[early_stopping], epochs=epochs_)
+        self.model.fit(trainInput, trainOutput, validation_split=0.1, epochs=epochs_)
 
 
 def test(model, x_test, y_test, idx2label):

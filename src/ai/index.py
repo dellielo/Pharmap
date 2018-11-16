@@ -85,6 +85,10 @@ def process(data, args):
         nn.train(x_train_data, y_train, epochs=args.epochs)
         best_model = nn.model
 
+    #if load_model 
+    # best_model = util.load_model('model-2018-11-16_15:08:34', 'data/bestModel/model1')
+    # util.plot_model(best_model)
+    
     # Run on test data !
     get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, info_run, has_saved_network=args.save_network)
 

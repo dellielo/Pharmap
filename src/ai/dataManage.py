@@ -45,20 +45,13 @@ def filterNumberOcc(tab, minSampleSize=2000):
     print('have', len(tab.groupby(conf.selectedField).size()), 'type with more than', minSampleSize, 'sample')
     return tab
 
-def transformOutput(tab):
-    c = tab[conf.selectedField].astype('category')
+def transformOutput(tab, selectedField):
+    c = tab[selectedField].astype('category')
     dict_category = dict(enumerate(c.cat.categories))
     tab[conf.outputField] = c.cat.codes
     y = tab[conf.outputField].values # 
     
     return y, dict_category
-
-# def addOutputColumn(tab):
-#     print('adding output column')
-#     print(tab.keys())  
-#     print('have', len(tab.groupby(conf.selectedField).size()), 'type with more than', minSampleSize, 'sample')
-#     tab = tab.assign(output=(tab[conf.selectedField]).astype('category').cat.codes) #add unique id to each scientific name
-#     return tab
 
 
 def makeStandardization(x_train, x_test):
@@ -84,17 +77,17 @@ def describe(y):
     print(unique, counts)
     print('Mean output: ', np.mean(counts), "\nRange: ", np.ptp(counts), "\nMax: ", np.amax(counts), "\nMin: ", np.amin(counts))
 
-def get_idx2label(tab):
-    labels = sorted(tab[conf.selectedField].unique())
-    idx2label = dict((v,k) for k,v in zip(labels, range(0,len(labels))))
-    return idx2label
+# def get_idx2label(tab):
+#     labels = sorted(tab[conf.selectedField].unique())
+#     idx2label = dict((v,k) for k,v in zip(labels, range(0,len(labels))))
+#     return idx2label
 
 class ManageData:
     def __init__(self, tab):
         self.tab = tab
         print("Len Tab init {}".format(len(tab)))
         
-        self.y, self.idx2label = transformOutput(tab)
+        # self.y, self.idx2label = transformOutput(tab, )
     
     @property
     def labels(self):
@@ -104,17 +97,19 @@ class ManageData:
     def nb_labels(self):
         return len(self.idx2label)
 
-    def prepareData(self,remove_duplicate, min_sample_size, keyTaxonRk, return_copy=False):
+    def prepareData(self,remove_duplicate, min_sample_size, keyTaxonRk, output=conf.selectedField, return_copy=False):
             # tab = data[key]
+
         tab = filterTaxonRank(self.tab, keyTaxonRk)
+        _, self.idx2label = transformOutput(tab, output) #to have all labels
+
         tab = orderColumns(tab)
         tab = cleanTab(tab)
         tab = removeDuplicate(tab, remove_duplicate)
         tab = filterNumberOcc(tab, min_sample_size)
         tab = tab.reset_index(drop=True)
-        self.y, self.idx2label = transformOutput(tab)
+        self.y, _ = transformOutput(tab, output) #self.idx2label keep the origin!
         # tab = addOutputColumn(tab, min_sample_size)
-        # return x,y, tab
         self.tab = tab
         
         # self.know_output(dict_category)
