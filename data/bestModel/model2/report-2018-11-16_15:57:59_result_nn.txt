@@ -1,0 +1,60 @@
+Resultas tests: accuracy 0.700152 loss  0.848772
+                                     precision    recall  f1-score   support
+
+                    Acanella weberi       0.59      0.58      0.59       132
+           Adelogorgia phyllosclera       0.65      0.68      0.66       251
+           Anthoptilum grandiflorum       0.62      0.46      0.53       356
+          Antipathes dendrochristos       0.42      0.72      0.53       207
+              Aphrocallistes vastus       0.60      0.48      0.53       506
+                Bathydorus spinosus       0.98      1.00      0.99       294
+               Bathypathes conferta       0.45      0.15      0.22       122
+                Calcigorgia beringi       0.92      0.93      0.93      1387
+           Calibelemnon symmetricum       0.51      0.46      0.48       200
+              Callogorgia americana       0.81      0.43      0.56       134
+               Callogorgia gracilis       0.81      0.43      0.56       132
+            Chrysogorgia geniculata       0.54      0.45      0.49       119
+                   Corallium regale       0.70      0.33      0.45       149
+                 Corallium secundum       0.45      0.70      0.55       250
+              Desmophyllum dianthus       0.57      0.73      0.64       164
+             Enallopsammia rostrata       0.70      0.70      0.70       125
+                    Eugorgia rubens       0.68      0.76      0.72       340
+                 Fanellia compressa       0.14      0.17      0.15       120
+                        Farrea occa       0.70      0.69      0.69      1598
+                    Farrea truncata       0.79      0.11      0.19       171
+                Gersemia rubiformis       0.86      0.96      0.91       155
+                     Guancha blanca       0.11      0.05      0.07       146
+Halichondria (Halichondria) panicea       0.49      0.22      0.30       133
+               Halichondria sitiens       0.18      0.14      0.15       132
+             Halipteris californica       0.76      0.55      0.63       765
+              Halipteris willemoesi       0.75      0.39      0.51       145
+                  Heterochone calyx       0.56      0.08      0.14       400
+              Heteropolypus ritteri       0.66      0.79      0.72      4286
+          Iridogorgia magnispiralis       0.34      0.49      0.40       104
+              Kulamanamana haumeaae       0.59      0.76      0.67       527
+              Leiopathes glaberrima       0.92      0.10      0.19       799
+                    Lepidisis olapa       0.47      0.22      0.30       223
+              Leptogorgia chilensis       0.70      0.42      0.53       128
+                   Lophelia pertusa       0.82      0.97      0.89      4033
+        Metallogorgia melanotrichos       0.63      0.54      0.58       127
+             Mycale (Mycale) loveni       0.27      0.43      0.33       317
+                   Oculina varicosa       0.93      0.99      0.96       201
+                 Paragorgia arborea       0.49      0.51      0.50       636
+                Parastenella ramosa       0.60      0.31      0.41       117
+               Pennatula phosphorea       0.90      0.63      0.74       201
+              Plumarella longispina       0.86      0.75      0.80       257
+        Poecillastra tenuilaminaris       0.69      0.68      0.68       233
+                   Primnoa pacifica       0.65      0.79      0.71       366
+                Ptilosarcus gurneyi       0.73      0.57      0.64       177
+                 Radicipes verrilli       1.00      1.00      1.00       316
+               Stichopathes lutkeni       0.95      0.87      0.91       107
+                    Suberites ficus       0.40      0.49      0.44       129
+                    Swiftia kofoidi       0.63      0.30      0.41       432
+                   Swiftia pacifica       0.73      0.77      0.75      1209
+                    Swiftia simplex       0.57      0.24      0.34       394
+                    Thenea muricata       0.63      0.68      0.65       412
+       Trissopathes pseudotristicha       0.86      0.94      0.90       720
+                 Umbellula lindahli       0.69      0.86      0.76      1286
+
+                          micro avg       0.70      0.70      0.70     26370
+                          macro avg       0.64      0.56      0.57     26370
+                       weighted avg       0.71      0.70      0.68     26370
