@@ -17,22 +17,11 @@ class PhyloTree(Tree):
         self.df= kwargs.get("dataframe", None)
         self.ranks = ["phylum","class", "order", "family", "genus", "species"]
         self.leaf_attributes = kwargs.get('leaf_attributes', ['latitude', 'longitude', 'depth'])
+        self.driver = None
 
-        '''
-        TODO : Find a way to add them without getting lost in recursion
-        self.add_child(name="Animalia").add_features(rank="kingdom")
-        self.add_child(name="Plantae").add_features(rank="kingdom")
-        self.add_child(name="Fungi").add_features(rank="kingdom")
-        self.add_child(name="Protista").add_features(rank="kingdom")
-        '''
 
     def login(self, uri, user, password):
         self.driver = dbDriver(uri, user, password)
-    
-    def db_addchild(self, parent_name, child_rank, child_name):
-        txt = ('MATCH (p) WHERE p.name="'+parent_name+'"'\
-              'CREATE (c:'+child_rank+'{name:"'+child_name+'"})-[:parent]->(p)')
-        self.driver.add_node(txt)
                         
     def db_build_tree(self, **kwargs):
         if self.df.empty:
@@ -43,7 +32,7 @@ class PhyloTree(Tree):
                 if sci_name and sci_name != "nan" and isinstance(sci_name, str):
                     parents = set(self.df.loc[self.df[rank]==sci_name][last]).pop()
                     if parents and parents != "nan" and isinstance(parents, str):
-                        self.db_addchild(parents, rank, sci_name)
+                        self.driver.add_child(parents, rank, sci_name)
             last = rank
 
     def build_tree(self, **kwargs):

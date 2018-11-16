@@ -33,10 +33,10 @@ sterol|\
 enoid|\
 erin|\
 orin|\
-ine|\
 ocin)"
 
-REG = re.compile("[a-zA-Z0-9]+{chem}+(( |-)[a-zA-Z0-9--]*{chem}(s)*)*(( |-)[A-Z]?[0-9]*)* ".format(chem = CHEMS))
+REG = re.compile("[a-zA-Z0-9α-ωΑ-Ω,-]+{chem}+(( |-)[a-zA-Z0-9--α-ωΑ-Ω,-]*{chem}(s)*)*(( |-)[A-Z]?[0-9]*)* ".format(chem = chems))
+
 
 DRUGCLASS ={
     'anticancer':["anti-tumour",
@@ -105,15 +105,15 @@ DRUGCLASS ={
                      "glutamate receptor agonists",
                      "glutamate receptor antagonists",
                      "neuroprotective"],
-    'cardio-vascular': ["alpha-blokers",
-                        "angiotensin-receptor blokers",
+    'cardiovascular': ["alpha-blockers",
+                        "angiotensin-receptor blockers",
                         "angiotensin-converting enzyme inhibitor",
                         "antiplatelets",
                         "antithrombotic",
                         "anticoagulant",
                         "antihypertensive",
-                        "beta-blokers",
-                        "calcium-channel blokers",
+                        "beta-blockers",
+                        "calcium-channel blockers",
                         "diuretics",
                         "hematopoietic"]
                     

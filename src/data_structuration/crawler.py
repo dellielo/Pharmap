@@ -1,16 +1,7 @@
-import tools
-import config
-import pandas as pd
-import numpy as np
-import urllib
 import json
 import pickle
+from db import dbDriver
 from addTaxonomy import fetchID, fetchTaxonomy
-from molregex import REG
-
-#
-# Don't USE yet
-#
 
 def fetchDict(page):
     article_titles = page.find_all("a", attrs={"class":u"title-link"})
@@ -35,21 +26,25 @@ def fetchDict(page):
         if good:
             species = abstract.find_all("i", class_=False) #let's find species in italics
             if species:
-                #print(species)
                 for sp in species:
                     ID = fetchID(sp.text)
-                    select_mol = set([i.group().lower() for i in REG.finditer(abstract.text)]) #lets make a list of the molecules listed in the paper
-                    #print(select_mol) if select_mol else None
+                    select_mol = set([i.group().lower() for i in reg.finditer(abstract.text)]) #lets make a list of the molecules listed in the paper
                     try:
                         taxonomy = fetchTaxonomy(ID)
                         if taxonomy['phylum']['id'] in rankid:
-                            #print(sp.text)
                             sp_dict[sp.text]= {paper.text:{"molecules":select_mol,"abstract":abstract.text}}
-                    except:
-                        #print("Couldn't find name in database, resuming \n")
+                            for mol in select_mol:
+                                driver.add_mol_to_sp(mol, sp.text,1)
+                                genus = sp.text.split(" ")[0]
+                                if genus != sp.text:
+                                    driver.add_mol_to_sp(mol, genus, 0.5)
+                    except Exception as e:
+                        print("Couldn't find name in database, resuming \n", e)
                         pass
     
     return sp_dict
+
+
 
 def getArticles(page):
     return page.find_all("a", attrs={"class":u"title-link"})    
@@ -96,20 +91,23 @@ def crawl(**kwargs):
     output_method = kwargs.get("output_method", None)
     output = kwargs.get("output", None)
     visited = kwargs.get("visited", set())
-    runlenght = kwargs.get("runlength", 10)
+    rdict = kwargs.get("rdict", dict())
+    runlength = kwargs.get("runlength", 10)
     
     page = BeautifulSoup(urllib.request.urlopen(domain+start))    
     links = kwargs.get("links", findGoodLinks(page))
     
-    rdict = {}
-    
     new_links = set()
     c = 0
-    while links and c <= runlenght:
+    print(runlength)
+    while links and c <= runlength:
         c += 1
         
         href = links.pop() #Following lines update the crawler visited/tovisit status
         visited.add(href)
+        
+        print(c, href)
+        print("\n\n\n")
 
         page = BeautifulSoup(urllib.request.urlopen(domain+href)) #Now open the page and add all unseen links to set
         try:
@@ -125,9 +123,55 @@ def crawl(**kwargs):
             page_dict = fetchDict(page)
             rdict.update(page_dict)
         except:
-            print("No article {here}, resuming...\n".format(here=(domain+href)))
+            print("No article here : {here}, resuming...\n".format(here=(domain+href)))
             pass
+        print(links)
+        print("\n\n\n")
+
     
-    pickle.dump(visited, open( "saved_vidisted.p", "wb" ) )
+    pickle.dump(visited, open( "saved_visited.p", "wb" ) )
     pickle.dump(links, open("saved_links.p", 'wb'))
+    pickle.dump(rdict, open("saved_dict.p", 'wb'))
     return rdict
+
+
+def fetchMoleculeEffects(molecule, categories, effect=False):
+    class_set = set()
+    effect_set = set()
+    print("Trying : "+url+"%20".join(molecule.split(" ")))
+    page = urllib.request.urlopen(url+"%20".join(molecule.split(" ")))
+    soup = BeautifulSoup(page)
+    ids = soup.find_all("id")
+    for ID in ids:
+        try:
+            article_soup = BeautifulSoup(urllib.request.urlopen('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pmc&id='+ID.text))
+            abstract = article_soup.find('abstract').text.lower()
+            article_kwd = [kwd.text.lower() for kwd in article_soup.findAll("kwd")]
+            #print(article_kwd)
+            if molecule in abstract:
+                for cat in categories:
+                    for keyword in categories[cat]:                    
+                        if keyword in article_kwd:
+                            effect_set |= {keyword}
+                            dclass_set |= {cat}
+                        elif keyword in abstract:
+                            effect_set |= {keyword}
+                            dclass_set |= {cat}
+                        else:
+                            pass
+        except:
+            print("No article at {ID}".format(ID=ID))
+
+    return effect_set if effect else class_set
+    
+def linkMolEffect(rdict):
+    checked_id = set()
+    molecules = dict()
+    for sp in rdict:
+        for paper in rdict[sp]:
+            print("Checking for : "+str(rdict[sp][paper]['molecules']))
+            for molecule in rdict[sp][paper]['molecules']:
+                effects = fetchMoleculeEffects(molecule, DRUGCLASS, effect=True)
+                for e in effects:
+                    print(e)
+                    driver.add_prop_to_mol(molecule, e)
