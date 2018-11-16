@@ -93,15 +93,3 @@ def write_report_unique(info_run, results, dir_save = "data/report"):
         fic.write("Resultas tests: accuracy %f loss % f\n" % (scores[1], scores[0]))
         fic.write(report)
 
-#/!\ fonction en attente d'etre utilisees
-def plot_model(model):
-    from keras.utils import plot_model
-    plot_model(head_model, to_file='head-model.png')
-    pil_image.open('head-model.png')
-
-
-def plot_hitory(history):
-    import seaborn as sns
-    df = pd.DataFrame({'epochs':history.epoch, 'accuracy': history.history['acc'], 'validation_accuracy': history.history['val_acc']})
-    g = sns.pointplot(x="epochs", y="accuracy", data=df, fit_reg=False)
-    g = sns.pointplot(x="epochs", y="validation_accuracy", data=df, fit_reg=False, color='green')

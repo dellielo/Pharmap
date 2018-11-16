@@ -2,7 +2,8 @@ import numpy as np
 import os 
 import conf
 import datetime
-from keras.models import model_from_yaml
+from tensorflow import keras
+# from keras.models import model_from_yaml
 
 def write_file_error_by_name(y_pred, y_test, x_test,  idx2label, dir_save = 'data/debug'):
     if not os.path.exists(dir_save):
@@ -71,11 +72,26 @@ def save_model(model, info_run, dir_save = 'data/model'):
 
 
 def load_model(name_model, dir_save = 'data/model'):
-    # load YAML and create model
-    yaml_file = open(os.path.join(dir_save, name_model+'.yaml'), 'r')
-    loaded_model_yaml = yaml_file.read()
-    yaml_file.close()
-    loaded_model = model_from_yaml(loaded_model_yaml)
+    # load YAML and create model 
+    with open(os.path.join(dir_save, name_model+'.yaml'), 'r') as yaml_file:
+        loaded_model_yaml = yaml_file.read()
+
+    loaded_model = keras.models.model_from_yaml(loaded_model_yaml)
     # load weights into new model
-    loaded_model.load_weights(open(os.path.join(dir_save, name_model+'.h5')))
+    loaded_model.load_weights(os.path.join(dir_save, name_model+'.h5'))
+    loaded_model.compile(optimizer='adam',  # 
+                loss='sparse_categorical_crossentropy',
+                metrics=['accuracy'])
     return loaded_model
+
+
+def plot_model(model):
+    from keras.utils import plot_model
+    plot_model(model, to_file='head-model.svg', show_shapes=True)
+      
+
+def plot_hitory(history):
+    import seaborn as sns
+    df = pd.DataFrame({'epochs':history.epoch, 'accuracy': history.history['acc'], 'validation_accuracy': history.history['val_acc']})
+    g = sns.pointplot(x="epochs", y="accuracy", data=df, fit_reg=False)
+    g = sns.pointplot(x="epochs", y="validation_accuracy", data=df, fit_reg=False, color='green')

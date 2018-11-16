@@ -20,7 +20,6 @@ import argparse
 
 def get_report_test_on_best_model(x_test, y_test, best_model, idx2label, info_run, has_saved_network=False):
     best_model.summary()
-    # pred_best = best_model.predict_classes(dataManage.getInputColumn(x_test))
     if has_saved_network:
         name_network = util.save_model(best_model, info_run)
         info_run.update({"name_network": name_network})
@@ -80,17 +79,20 @@ def process(data, args):
         # Write results for all configs
         gridSearch.write_report(info_run, grid_results)
       
-    else:
+    else :
         #just train one config !
-        nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
-        nn.train(x_train_data, y_train, epochs=args.epochs)
-        best_model = nn.model
+        # nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
+        # nn.train(x_train_data, y_train, epochs=args.epochs)
+        # best_model = nn.model
 
+        best_model = util.load_model('model-2018-11-16_15:08:34', 'data/bestModel/model1')
+        util.plot_model(best_model)
     # Run on test data !
-    get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, info_run, has_saved_network=True)
+    get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, info_run, has_saved_network=args.save_network)
 
 
 def main():
+    
     parser = argparse.ArgumentParser(description='Process some networks')
     parser.add_argument('--epochs', '-e', type=int, default=100, help='nb epochs')
     parser.add_argument('--dir_input', default='data/out')
@@ -100,9 +102,9 @@ def main():
     parser.add_argument('--do_balance_smote', '-b,', action='store_true')
     parser.add_argument('--remove_duplicate', '-d,', action='store_true')
     parser.add_argument('--run_multiple_config', '-r,', action='store_true')
-    parser.add_argument('--config_multiple', default="config.json")
     parser.add_argument('--min_sample_size', '-n', type=int, default=2000)
     parser.add_argument('--filter_taxon_rank',default=None, type=str, choices=["species", "genus", "order", "family", "class"])
+    parser.add_argument('--save_network', action='store_true')
     args = parser.parse_args()
     print(args)
 
