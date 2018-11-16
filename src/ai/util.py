@@ -79,4 +79,4 @@ def load_model(name_model, dir_save = 'data/model'):
     yaml_file.close()
     loaded_model = model_from_yaml(loaded_model_yaml)
     # load weights into new model
-    loaded_model.load_weights(open(os.path.join(dir_save, name_model+'.h5'))
+    loaded_model.load_weights(open(os.path.join(dir_save, name_model+'.h5')))

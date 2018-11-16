@@ -25,7 +25,7 @@ def orderColumns(tab):
         tab.loc[:,'ScientificName'] = tab['species']
     return tab
 
-def cleanTab(tab, remove_duplicate):
+def cleanTab(tab):
     print("Len Tab with Nan {}".format(len(tab)))
     tab = tab.dropna(subset=conf.inputFields)
     print("Len Tab without Nan {}".format(len(tab)))
@@ -49,7 +49,7 @@ def transformOutput(tab):
     c = tab[conf.selectedField].astype('category')
     dict_category = dict(enumerate(c.cat.categories))
     tab[conf.outputField] = c.cat.codes
-    y = tab[conf.outputField] # 
+    y = tab[conf.outputField].values # 
     
     return y, dict_category
 
@@ -80,7 +80,7 @@ def getInputOutput(tab):
     return (x, y)
 
 def describe(y):
-    unique, counts = np.unique(y.values, return_counts=True)
+    unique, counts = np.unique(y, return_counts=True)
     print(unique, counts)
     print('Mean output: ', np.mean(counts), "\nRange: ", np.ptp(counts), "\nMax: ", np.amax(counts), "\nMin: ", np.amin(counts))
 
@@ -108,7 +108,7 @@ class ManageData:
             # tab = data[key]
         tab = filterTaxonRank(self.tab, keyTaxonRk)
         tab = orderColumns(tab)
-        tab = cleanTab(tab, remove_duplicate)
+        tab = cleanTab(tab)
         tab = removeDuplicate(tab, remove_duplicate)
         tab = filterNumberOcc(tab, min_sample_size)
         tab = tab.reset_index(drop=True)

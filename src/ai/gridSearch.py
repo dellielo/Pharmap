@@ -39,6 +39,7 @@ class MultiSearchParam :
         self.batches = [1, 20, 50, 100]
         self.activation = ['relu', 'linear', 'tanh']
         self.act_final = ['softmax', 'sigmoid', 'tanh']
+        
         #init_mode = ['uniform', 'lecun_uniform', 'normal', 'zero', 'glorot_normal', 'glorot_uniform', 'he_normal', 'he_uniform']
         # optimizer = ['SGD', 'RMSprop', 'Adagrad', 'Adadelta', 'Adam', 'Adamax', 'Nadam']
         # activation = ['softmax', 'softplus', 'softsign', 'relu', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear']

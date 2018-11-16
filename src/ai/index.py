@@ -19,18 +19,6 @@ import gridSearch
 import argparse
 
 
-# def prepareData(tab, remove_duplicate, min_sample_size, keyTaxonRk):
-#     # tab = data[key]
-#     tab = filterTaxonRank(tab, keyTaxonRk)
-#     tab = orderColumns(tab)
-#     tab = cleanTab(tab, remove_duplicate)
-#     tab = removeDuplicate(tab, remove_duplicate)
-#     tab = addOutputColumn(tab, min_sample_size)
-#     x, y = getInputOutput(tab)
-
-#     return x,y, tab
-
-
 def save_out_csv(data):
     path_save_out_csv = 'data/out_csv'
     if not os.path.exists(path_save_out_csv):
@@ -53,21 +41,22 @@ def process(data, args):
     info_run = {'init_tab':len(data),  'x_train':len(x_train), 'x_test':len(x_test), 'nb_classes': dm.nb_labels} #'x':len(x),
     info_run.update(vars(args))
     info_run.update({"inputFields": conf.inputFields, "outputField": conf.selectedField})
+    info_run.update({"network": conf.network})
     print("Before balance: ")
     dataManage.describe(y_train)
 
     if args.do_standardization:
         print("Make Standardization")
         x_train, x_test = dataManage.makeStandardization(x_train, x_test)
-
-    if args.do_balance_smote:
-        x_train, y_train = balanceTool.smote(x_train, y_train)
-        print("After balance: ")
-        dataManage.describe(y_train)
         
     # x_train = x_train[:1000]
     # y_train = y_train[:1000]
     x_train_data = dataManage.getInputColumn(x_train)
+    if args.do_balance_smote:
+        x_train_data, y_train = balanceTool.smote(x_train_data, y_train)
+        print("After balance: ")
+        dataManage.describe(y_train)
+
     if args.run_multiple_config:
         
         msp = gridSearch.MultiSearchParam()
@@ -95,6 +84,7 @@ def process(data, args):
         nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
         nn.train(x_train_data, y_train, epochs=args.epochs)
         # scores = nn.evaluate(x_test, y_test)
+    
         results = nn.test(dataManage.getInputColumn(x_test), y_test, dm.idx2label)
         neuralNetwork.write_report_unique(info_run, results)
 

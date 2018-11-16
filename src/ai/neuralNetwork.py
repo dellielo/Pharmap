@@ -14,21 +14,26 @@ import util
 class NeuralNetwork:
 
     def __init__(self, outputNb):
-        self.createNn(outputNb)
+        print(conf.network, conf.network['optimizer'])
+        self.createNn(outputNb, 
+                      optimizer=conf.network['optimizer'],
+                      init_mode=conf.network['init_mode'],
+                      activation=conf.network['activation'],
+                      act_final=conf.network['act_final'])
         self.outputNb = outputNb
 
-    def createNn(self, outputNb):
+    def createNn(self, outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax'):
         inputNb = len(conf.inputFields)
-        self.model = keras.Sequential([
-            keras.layers.Flatten(input_shape=(inputNb,)),
-            keras.layers.Dense(240, activation='relu'),
-            keras.layers.Dense(128, activation='relu'),
-            keras.layers.Dense(outputNb, activation='softmax') #softmax')
-        ])
-
-        self.model.compile(optimizer=tf.train.AdamOptimizer(),
-                      loss='sparse_categorical_crossentropy', #binary_crossentropy', #sparse_categorical_crossentropy',
-                      metrics=['accuracy'])
+        model = keras.Sequential()
+        model.add(keras.layers.Flatten(input_shape=(inputNb,)))
+        model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
+        model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
+        model.add(keras.layers.Dense(outputNb, activation=act_final))
+        model.compile(optimizer=optimizer, 
+                        loss='sparse_categorical_crossentropy',
+                        metrics=['accuracy'])
+    
+        self.model = model
 
     def evaluate(self, testInput, testOutput):
         testLoss, testAcc = self.model.evaluate(testInput, testOutput)
@@ -44,8 +49,9 @@ class NeuralNetwork:
         return pred
 
 
-    def train(self, trainInput, trainOutput, epochs=100):
-        self.model.fit(trainInput, trainOutput, epochs=epochs)
+    def train(self, trainInput, trainOutput, epochs=None):
+        epochs_ = conf.network['epochs'] if epochs is None else epochs
+        self.model.fit(trainInput, trainOutput, epochs=epochs_)
 
 
     def test(self, x_test, y_test, idx2label):
