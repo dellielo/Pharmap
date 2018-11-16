@@ -3,7 +3,6 @@ import os
 import conf
 import datetime
 from tensorflow import keras
-# from keras.models import model_from_yaml
 
 def write_file_error_by_name(y_pred, y_test, x_test,  idx2label, dir_save = 'data/debug'):
     if not os.path.exists(dir_save):
