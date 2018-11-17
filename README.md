@@ -28,7 +28,7 @@ python3 src/data_structuration/index.py
 
 > This command process all data and save the result file on data/out
 
-## Config
+### Config
 
 A lot of parameter can be edited in `src/data_structuration/config.py`.
 
