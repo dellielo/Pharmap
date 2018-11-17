@@ -1,7 +1,7 @@
 import re
-
-CHEMS = "(\
+chems = "(\
 amine|\
+ynones|\
 imine|\
 mide|\
 alin|\
@@ -22,6 +22,7 @@ idine|\
 zide|\
 enol|\
 inol|\
+ynol|\
 trile|\
 inin|\
 inine|\
@@ -35,7 +36,9 @@ erin|\
 orin|\
 ocin)"
 
-REG = re.compile("[a-zA-Z0-9α-ωΑ-Ω,-]+{chem}+(( |-)[a-zA-Z0-9--α-ωΑ-Ω,-]*{chem}(s)*)*(( |-)[A-Z]?[0-9]*)* ".format(chem = chems))
+
+REG = re.compile("[a-zA-Z0-9α-ωΑ-Ω,--\(\)\+\-]+{chem}+(( |-)[a-zA-Z0-9--α-ωΑ-Ω,-]*{chem}(s)*)*(( |-)[A-Z]?[0-9]*)* ".format(chem = chems))
+
 
 
 DRUGCLASS ={
