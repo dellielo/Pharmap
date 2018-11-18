@@ -55,17 +55,28 @@ class NeuralNetwork:
         #self.model.fit(trainInput, trainOutput, validation_split=0.1, callbacks=[early_stopping], epochs=epochs_)
         self.model.fit(trainInput, trainOutput, validation_split=0.1, epochs=epochs_)
 
-
+def top_n_accuracy(preds, truths, n):
+    print(preds.shape)
+    best_n = np.argsort(preds, axis=1)[:,-n:]
+    ts = truths #np.argmax(truths, axis=1)
+    successes = 0
+    for i in range(ts.shape[0]):
+      if ts[i] in best_n[i,:]:
+        successes += 1
+    return float(successes)/ts.shape[0]
+	
 def test(model, x_test, y_test, idx2label):
     y_pred = model.predict_classes(x_test)
     prob = model.predict(x_test)
-
+    print(top_n_accuracy(prob, y_test, 3))
+    print(top_n_accuracy(prob, y_test, 1))
     errors = np.where(y_pred != y_test)[0]
     print("No of errors = {}/{}".format(len(errors),len(y_test)))
     
     for i in range(len(errors[:5])):
         pred_class = np.argmax(prob[errors[i]])
         # todo: to fix
+		# arr.argsort()[-3:][::-1]
         print(pred_class)
         pred_label = idx2label[pred_class]
         true_label = idx2label[y_test[errors[i]]]
