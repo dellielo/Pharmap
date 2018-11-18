@@ -68,13 +68,25 @@ def top_n_accuracy(preds, truths, n):
 def test(model, x_test, y_test, idx2label):
     y_pred = model.predict_classes(x_test)
     prob = model.predict(x_test)
+    print(top_n_accuracy(prob, y_test, 5))
     print(top_n_accuracy(prob, y_test, 3))
+    print(top_n_accuracy(prob, y_test, 2))
     print(top_n_accuracy(prob, y_test, 1))
     errors = np.where(y_pred != y_test)[0]
     print("No of errors = {}/{}".format(len(errors),len(y_test)))
     
     for i in range(len(errors[:5])):
         pred_class = np.argmax(prob[errors[i]])
+        best_n = np.argsort(prob[errors[i]])[-3:]
+        for index, resultas in enumerate(best_n[:3]):
+            pred_label = idx2label[resultas]
+            true_label = idx2label[y_test[errors[i]]]
+            print('Original label: [{}] n {}, Prediction :[{}], confidence : {:.3f}'.format(
+            true_label,
+			index,
+            pred_label,
+            prob[errors[i]][resultas]))
+			
         # todo: to fix
 		# arr.argsort()[-3:][::-1]
         print(pred_class)
