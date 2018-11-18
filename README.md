@@ -105,7 +105,9 @@ query:
     latitudeMin: 60
     longitudeMin: 100
     longitudeMax: 120
+    minPrediction: 0.7
 ```
+These query are optional
 Retour:
 ```js
 {
