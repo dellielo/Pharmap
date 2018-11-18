@@ -68,7 +68,7 @@ mydict.update(crawl(domain=urldomain, start=startingpoint, runlength=N, links=li
 
 # Web app
 
-The web app is actually in building state
+The web app is not rady yet, it's just a preview
 
 ##  Server
 
@@ -82,29 +82,29 @@ Command to start the server:
 ### list species
 Route `/getSpecies`
 Methode: `get`
-Body:
+query:
 ```js
-{
 	max: 300 // the max number of species returned (default return all)
 	offset: 100 // the offset in list (default 0)
-}
 ```
+These query are optional
 Retour:
 ```js
 {
-	//incoming
+    id: 13
+	//more incoming
 }
 ```
 ### Get predictions
 
-Route `/{speciesId}/prediction`
+Route `/species/{speciesId}/prediction`
 Methode: `get`
-Body:
+query:
 ```js
-{
-	latitude: [60, 70] // [start, end]
-	longitude: [100, 120] // [start, end]
-}
+    latitudeMax: 70
+    latitudeMin: 60
+    longitudeMin: 100
+    longitudeMax: 120
 ```
 Retour:
 ```js
