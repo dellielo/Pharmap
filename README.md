@@ -21,7 +21,7 @@ python3 src/ai/index.py --help
 > Show you all of the available options to train our neural network
 
 # Data structuration
-This is how we regrouped the data and linked them together
+This is how we regrouped the data and linked them together. It use panda and numpy to perform fast operation
 ```
 python3 src/data_structuration/index.py
 ```
