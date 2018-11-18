@@ -80,14 +80,15 @@ Command to start the server:
 	python3 -m flask run
 ```
 ### list species
-Route `/getSpecies`
-Methode: `get`
+Route `/getSpecies`  
+Methode: `get`  
 query:
 ```js
 	max: 300 // the max number of species returned (default return all)
 	offset: 100 // the offset in list (default 0)
 ```
 These query are optional
+
 Retour:
 ```js
 {
@@ -97,8 +98,8 @@ Retour:
 ```
 ### Get predictions
 
-Route `/species/{speciesId}/prediction`
-Methode: `get`
+Route `/species/{speciesId}/prediction`  
+Methode: `get`  
 query:
 ```js
     latitudeMax: 70
@@ -108,6 +109,7 @@ query:
     minPrediction: 0.7
 ```
 These query are optional
+
 Retour:
 ```js
 {
