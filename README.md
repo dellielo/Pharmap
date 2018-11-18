@@ -64,4 +64,64 @@ rdict = pickle.load(open("saved_dict.p","rb"))
 mydict.update(crawl(domain=urldomain, start=startingpoint, runlength=N, links=links, visited=visited, rdict=rdict))
 ```
 
-> Will resume the crawler 
+> Will resume the crawler
+
+# Web app
+
+The web app is actually in building state
+
+##  Server
+
+We use flask for our server and a sql database
+
+Command to start the server:
+```
+	cd website/server
+	python3 -m flask run
+```
+### list species
+Route `/getSpecies`
+Methode: `get`
+Body:
+```js
+{
+	max: 300 // the max number of species returned (default return all)
+	offset: 100 // the offset in list (default 0)
+}
+```
+Retour:
+```js
+{
+	//incoming
+}
+```
+### Get predictions
+
+Route `/{speciesId}/prediction`
+Methode: `get`
+Body:
+```js
+{
+	latitude: [60, 70] // [start, end]
+	longitude: [100, 120] // [start, end]
+}
+```
+Retour:
+```js
+{
+	[
+		lattitue: 63,2
+		longitude: 112
+		prediction: 0.8 // probability that the species can be find at this localisation
+	],
+	...
+}
+```
+## client
+We use ReactJS
+
+It is located in `website/client`
+
+installation `npm install`
+
+Start client: `npm start`
