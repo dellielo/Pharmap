@@ -14,12 +14,22 @@ session.flush = lambda: print('No writing allowed') #make db read only
 selectedId = 'species_id'
 mapTableName = "map"
 
+row2dict = lambda r: {c.name: str(getattr(r, c.name)) for c in r.__table__.columns}
+
+def resultProxyToArray(resultproxy):
+    d, a = {}, []
+    for rowproxy in resultproxy:
+    # rowproxy.items() returns an array like [(key0, value0), (key1, value1)]
+        for tup in rowproxy.items():
+            # build up the dictionary
+            d = {**d, **{tup[0]: tup[1]}}
+        a.append(d)
+    return a
+
 def getSpeciePredict(specieId, lattitudeMin, lattitudeMax, longitudeMin, longitudeMax):
     query = "SELECT * FROM {} WHERE {} = {} and latitude >= {} and latitude <= {} and longitude >= {} and longitude <= {}".format(
         mapTableName, selectedId, specieId, lattitudeMin, lattitudeMax, longitudeMin, longitudeMax)
     result = session.execute(query)
-    tab = []
-    for row in result:
-        tab.append(row)
+    tab = resultProxyToArray(result)
     result.close()
     return tab

@@ -10,10 +10,10 @@ def getSpecies():
 @app.route("/species/<int:specieId>/prediction", methods=['GET'])
 def getSpeciesPrediction(specieId):
     result = sql.getSpeciePredict(specieId,
-    request.args['lattitudeMin'] or -90,
-    request.args['lattitudeMax'] or 90,
-    request.args['longitudeMin'] or -180,
-    request.args['longitudeMax'] or 180
+    request.args.get('lattitudeMin', -90),
+    request.args.get('lattitudeMax', 90),
+    request.args.get('longitudeMin', -180),
+    request.args.get('longitudeMax', 180)
     )
     return jsonify(result)
 
