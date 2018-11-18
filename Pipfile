@@ -17,6 +17,10 @@ tensorflow = "*"
 keras-pandas = "*"
 sklearn = "*"
 imblearn = "*"
+flask = "*"
+python-dotenv = "*"
+sqlalchemy = "*"
+pymysql = "*"
 
 [dev-packages]
 
