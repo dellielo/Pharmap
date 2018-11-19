@@ -3,7 +3,7 @@ import config
 import numpy as np
 import math
 import gdal
-
+import affine
 
 def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
     '''
@@ -28,19 +28,35 @@ def calc_dist(lat1, lon1, lat2, lon2, **kwargs):
     
     return np.sqrt( (R*c)**2 + abs(d1-d2)**2 ) if not squaredist else (R*c)**2 + abs(d1-d2)**2 
 
+class mono_band_raster():
+    '''
+    This class allows basic manipulation of single-band raster (geotiff or nc format)
+    self.get_coord_value(geo_coord=(lat,lon)) returns value at given coordinate
+    '''
+    def __init__(self, path):
+        self.rs = self.load_raster(path)
+    
+    def load_raster(path):
+        rs = gdal.Open(path)
+        return rs
 
-def select_pixel_coord(raster, lat, lon, extent):
-    """
-    Given a numpy array representing the raster band, returns pixel(array) value at lat/long coordinate, extent is degree system (usually 360*180)
-    """
-    width, height = raster_array.shape
-    x_pixel_size = extent[0]/width
-    y_pixel_size = extent[1]/height
+    def calc_pixel_coord(geo_coord, data_source):
+        """Return floating-point value that corresponds to given point."""
+        x, y = geo_coord[0], geo_coord[1]
+        forward_transform = affine.Affine.from_gdal(*data_source.GetGeoTransform())
+        reverse_transform = ~forward_transform
+        px, py = reverse_transform * (x, y)
+        px, py = int(px + 0.5), int(py + 0.5)
+        return px, py
     
-    x_row = max(0, math.floor((180+lon)/x_pixel_size))
-    y_col = max(0, math.floor((90-lat)/y_pixel_size))
+    def get_pixel_value(pixel_coord, data_source):
+        val= float(src_ds.ReadAsArray(0,0,1,1))
+        return val
     
-    return x_row, y_row
+    def get_coord_value(self, geo_coord):
+        pixel_coord = self.calc_pixel_coord(geo_coord, self.rs)
+        pixel_value = self.get_pixel_value(pixel_coord, self.rs)
+        return pixel_value
 
 def toNumber(s):
     if (s.isnumeric()):
