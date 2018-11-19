@@ -1,0 +1,34 @@
+{
+    "min_sample_size": 100, 
+    "x_test": 30399, 
+    "x_train": 121596, 
+    "network": {
+        "act_final": "softmax", 
+        "optimizer": "adam", 
+        "activation": "tanh", 
+        "batch_size": 100, 
+        "epochs": 100, 
+        "init_mode": "glorot_normal"
+    }, 
+    "inputFields": [
+        "temperature.csv", 
+        "DepthInMeters", 
+        "phosphate.csv", 
+        "oxygen.csv", 
+        "salinity.csv", 
+        "nitrate.csv"
+    ], 
+    "nb_classes": 149, 
+    "file_input": "data/out/coraux_geov2.csv", 
+    "epochs": 100, 
+    "do_standardization": true, 
+    "save_input_csv": false, 
+    "outputField": "species", 
+    "filter_taxon_rank": "species", 
+    "run_multiple_config": false, 
+    "init_tab": 431751, 
+    "save_network": false, 
+    "remove_duplicate": false, 
+    "do_balance_smote": false, 
+    "dir_input": "data/out"
+}

@@ -1,0 +1,585 @@
+Resultats rank 0 :0.575
+Resultats rank 1 :0.737
+Resultats rank 2 :0.811
+Resultats rank 3 :0.847
+Resultats rank 4 :0.875
+                                                precision    recall  f1-score   support
+
+                            Acanella arbuscula       0.33      0.13      0.19        39
+                               Acanella dispar       0.00      0.00      0.00        52
+                              Acanella eburnea       0.00      0.00      0.00         9
+                           Acanella trichotoma       0.00      0.00      0.00         8
+                               Acanella weberi       0.26      0.75      0.39       132
+                           Acanthella cubensis       0.16      0.60      0.25         5
+                         Acanthella mastophora       0.00      0.00      0.00         3
+                          Acanthogorgia armata       0.00      0.00      0.00        24
+                        Acanthogorgia hedlundi       0.00      0.00      0.00         3
+                         Acanthogorgia striata       0.00      0.00      0.00        19
+                         Acanthopathes humilis       0.02      0.25      0.04         4
+                        Acanthopathes thyoides       0.50      0.03      0.06        30
+                          Acanthoprimnoa goesi       0.07      0.18      0.11        11
+                      Acanthoprimnoa pectinata       0.00      0.00      0.00         3
+                         Acanthoptilum gracile       0.89      0.33      0.48        49
+                      Adelogorgia phyllosclera       0.56      0.73      0.63       251
+                            Adelopora fragilis       0.00      0.00      0.00         3
+                        Alaskagorgia aleutiana       0.00      0.00      0.00        21
+                           Alcyonium digitatum       0.25      0.67      0.36         3
+                     Alternatipathes alternata       0.00      0.00      0.00         3
+                         Amphilectus digitatus       0.00      0.00      0.00        18
+                           Amphilectus lobatus       0.00      0.00      0.00         3
+                             Anomocora fecunda       0.00      0.00      0.00         9
+                            Anomocora marchadi       0.12      0.60      0.19         5
+                           Anomocora prolifera       0.14      0.25      0.18         8
+                         Anthomastus agassizii       0.12      0.18      0.15        11
+                      Anthomastus grandiflorus       0.03      0.07      0.04        15
+                               Anthomastus sp.       1.00      0.71      0.83        17
+                         Anthomastus tahinodus       0.00      0.00      0.00         2
+                       Anthomuricea tenuispina       0.40      0.22      0.29         9
+                      Anthoptilum grandiflorum       0.46      0.41      0.43       356
+                           Anthoptilum murrayi       0.00      0.00      0.00        62
+                        Anthothela grandiflora       0.00      0.00      0.00         9
+                           Anthothela nuttingi       0.29      0.10      0.14        21
+                       Antipathella subpinnata       0.60      0.60      0.60         5
+                          Antipathes atlantica       0.13      0.28      0.18        39
+                     Antipathes dendrochristos       0.38      0.47      0.42       207
+                            Antipathes furcata       0.50      0.02      0.04        50
+                           Antipathes gracilis       0.00      0.00      0.00         9
+                            Antipathes grandis       0.33      0.79      0.46        24
+                             Antipathes griggi       0.00      0.00      0.00        20
+                              Antipathes lenta       0.00      0.00      0.00         3
+                           Aphanipathes pedata       0.00      0.00      0.00         6
+                         Aphrocallistes vastus       0.32      0.59      0.41       506
+                              Arntzia gracilis       0.00      0.00      0.00         5
+                          Arthrogorgia otsukai       0.00      0.00      0.00         3
+                         Arthrogorgia utinomii       0.00      0.00      0.00         3
+         Asbestopluma (Asbestopluma) monticola       0.00      0.00      0.00        86
+            Asbestopluma (Asbestopluma) ramosa       0.50      0.43      0.46         7
+         Asbestopluma (Asbestopluma) rickettsi       1.00      1.00      1.00         4
+                            Astrangia poculata       0.75      0.50      0.60         6
+                           Auletta sycinularia       0.00      0.00      0.00         3
+                           Aulosaccus schulzei       0.00      0.00      0.00         5
+                            Axinella corrugata       0.00      0.00      0.00         2
+                           Axinella shoemakeri       0.00      0.00      0.00         5
+Balanophyllia (Balanophyllia) desmophyllioides       0.00      0.00      0.00         4
+          Balanophyllia (Balanophyllia) dineta       0.00      0.00      0.00         4
+           Balanophyllia (Balanophyllia) gigas       0.00      0.00      0.00         2
+                           Balanophyllia cornu       0.00      0.00      0.00         4
+                         Balanophyllia elegans       1.00      0.25      0.40        12
+                       Balanophyllia floridana       0.14      0.06      0.08        18
+                    Balanophyllia malouinensis       0.00      0.00      0.00         4
+                        Balanophyllia palifera       0.00      0.00      0.00         3
+                          Bathyalcyon robustum       0.26      0.18      0.21        39
+                            Bathydorus laniger       0.00      0.00      0.00        35
+                           Bathydorus spinosus       0.61      1.00      0.76       295
+                         Bathypathes alternata       0.00      0.00      0.00        16
+                          Bathypathes conferta       0.27      0.11      0.15       122
+                            Bathypathes patula       0.14      0.04      0.06        28
+                    Bathypsammia fallosocialis       0.13      0.22      0.17         9
+                    Bathypsammia tintinnabulum       0.00      0.00      0.00        12
+                         Bayergorgia vermidoma       0.00      0.00      0.00         2
+                               Bebryce brunnea       0.00      0.00      0.00        30
+                               Bebryce cinerea       0.00      0.00      0.00         7
+                               Bebryce grandis       0.00      0.00      0.00         7
+                         Bellonella rubistella       0.00      0.00      0.00         4
+                    Bourneotrochus stellulatus       1.00      0.33      0.50         3
+                            Briareopsis aegeon       0.00      0.00      0.00         2
+                           Calcigorgia beringi       0.90      0.92      0.91      1387
+                       Calcigorgia spiculifera       0.00      0.00      0.00        49
+                      Calibelemnon symmetricum       0.34      0.67      0.45       200
+                         Callogorgia americana       0.72      0.42      0.53       134
+                             Callogorgia delta       0.81      0.14      0.24        92
+                           Callogorgia formosa       0.00      0.00      0.00        11
+                          Callogorgia gilberti       0.25      0.03      0.06        91
+                          Callogorgia gracilis       0.67      0.39      0.49       132
+                        Callogorgia kinoshitae       0.20      0.14      0.17         7
+                        Calyptopora reticulata       0.00      0.00      0.00         4
+                       Calyptrophora agassizii       0.00      0.00      0.00         2
+                       Calyptrophora angularis       1.00      0.06      0.11        17
+                    Calyptrophora laevispinosa       1.00      0.50      0.67         2
+                         Calyptrophora pileata       0.00      0.00      0.00         3
+                         Calyptrophora spinosa       0.00      0.00      0.00         4
+                        Calyptrophora trilepis       0.00      0.00      0.00         3
+                        Calyptrophora wyvillei       0.33      0.07      0.12        14
+                           Candidella gigantea       0.67      0.06      0.11        68
+                     Candidella helminthophora       0.00      0.00      0.00        12
+                          Candidella imbricata       0.26      0.55      0.35        11
+                                Carijoa riisei       0.06      0.33      0.10         3
+                                   Carijoa sp.       0.75      0.44      0.55        41
+           Caryophyllia (Acanthocyathus) grayi       0.00      0.00      0.00         4
+     Caryophyllia (Acanthocyathus) spinicarens       0.00      0.00      0.00         6
+       Caryophyllia (Acanthocyathus) spinigera       0.00      0.00      0.00         6
+        Caryophyllia (Caryophyllia) antarctica       0.00      0.00      0.00         8
+        Caryophyllia (Caryophyllia) berteriana       0.00      0.00      0.00        13
+           Caryophyllia (Caryophyllia) cyathus       0.00      0.00      0.00         3
+         Caryophyllia (Caryophyllia) eltaninae       1.00      0.25      0.40         4
+       Caryophyllia (Caryophyllia) hawaiiensis       0.00      0.00      0.00         3
+        Caryophyllia (Caryophyllia) horologium       0.00      0.00      0.00         2
+            Caryophyllia (Caryophyllia) rugosa       0.06      0.14      0.08         7
+                       Caryophyllia alaskensis       0.20      0.10      0.13        10
+                         Caryophyllia ambrosia       0.00      0.00      0.00         9
+                          Caryophyllia arnoldi       0.25      0.25      0.25         8
+                        Caryophyllia diomedeae       0.00      0.00      0.00         6
+                         Caryophyllia polygona       1.00      0.33      0.50         3
+                    Caryophyllia quadragenaria       0.00      0.00      0.00         3
+                        Caryophyllia scobinosa       0.00      0.00      0.00         4
+                        Caryophyllia seguenzae       1.00      1.00      1.00         2
+                          Caryophyllia smithii       0.67      0.73      0.70        11
+                       Chironephthya agassizii       0.00      0.00      0.00         6
+                        Chironephthya caribaea       0.00      0.00      0.00        10
+     Chondrocladia (Chondrocladia) concrescens       0.35      0.87      0.50        23
+                            Chondrocladia lyra       0.00      0.00      0.00         4
+                         Chondrosia reniformis       0.00      0.00      0.00         2
+                          Chromoplexaura marki       0.35      0.48      0.40        48
+                         Chrysogorgia chryseis       0.17      0.14      0.15        22
+                         Chrysogorgia desbonni       0.00      0.00      0.00         3
+                          Chrysogorgia elegans       0.00      0.00      0.00         9
+                       Chrysogorgia flavescens       0.00      0.00      0.00         6
+                       Chrysogorgia geniculata       0.32      0.22      0.26       119
+                        Chrysogorgia monticola       0.00      0.00      0.00        27
+                       Chrysogorgia multiflora       0.00      0.00      0.00         2
+                          Chrysogorgia pinnata       0.43      0.33      0.38        18
+                         Chrysogorgia stellata       0.40      0.09      0.14        23
+                     Chrysogorgia thyrsiformis       0.00      0.00      0.00         5
+                        Chrysogorgia tricaulis       0.00      0.00      0.00         3
+                         Chrysopathes speciosa       0.00      0.00      0.00        18
+                        Cinachyrella alloclada       0.00      0.00      0.00         7
+                      Cinachyrella kuekenthali       0.00      0.00      0.00         2
+                          Cirrhipathes anguina       0.51      0.83      0.63        30
+                         Cirrhipathes spiralis       0.50      0.20      0.29         5
+                             Cladocora debilis       0.00      0.00      0.00         6
+                         Cladopsammia echinata       0.00      0.00      0.00         2
+                      Cladopsammia manuelensis       0.00      0.00      0.00        23
+                             Cladorhiza corona       0.50      0.25      0.33         4
+                             Cladorhiza pteron       0.00      0.00      0.00         3
+                          Clathrina cancellata       0.50      0.60      0.55         5
+                        Clavularia grandiflora       0.00      0.00      0.00        18
+                            Clavularia modesta       0.31      0.33      0.32        12
+                              Cliona schmidtii       0.00      0.00      0.00         3
+                                Cliona varians       0.15      0.71      0.25         7
+                          Coenocyathus bowersi       0.60      0.16      0.26        73
+                         Coenocyathus parvulus       0.00      0.00      0.00         3
+                         Coenosmilia arbuscula       0.00      0.00      0.00        10
+                      Concentrotheca laevigata       0.00      0.00      0.00         4
+                          Conopora candelabrum       0.20      0.33      0.25         6
+                               Conopora laevis       0.00      0.00      0.00         4
+                            Conopora verrucosa       0.00      0.00      0.00        14
+                          Conotrochus brunneus       0.00      0.00      0.00         4
+                       Conotrochus funicolumna       0.00      0.00      0.00         2
+                       Convexella magelhaenica       0.14      0.10      0.12        10
+                            Corallium abyssale       0.50      0.18      0.27        11
+                         Corallium kishinouyei       0.38      0.93      0.54        86
+                            Corallium laauense       0.23      0.12      0.15        52
+                              Corallium niveum       0.70      0.47      0.56        83
+                              Corallium regale       0.43      0.19      0.27       149
+                            Corallium secundum       0.29      0.44      0.34       250
+                             Craniella villosa       0.00      0.00      0.00         2
+                         Crispatotrochus cornu       0.00      0.00      0.00         2
+                     Crispatotrochus rubescens       0.50      0.14      0.22         7
+                            Cryogorgia koolsae       0.00      0.00      0.00         8
+                        Crypthelia cryptotrema       0.00      0.00      0.00         3
+                              Crypthelia cymas       0.00      0.00      0.00         3
+                          Crypthelia stenopoma       0.00      0.00      0.00         4
+                        Crypthelia trophostega       0.00      0.00      0.00        15
+                          Cyathotrochus pileus       0.00      0.00      0.00         4
+                          Cyclohelia lamellata       0.00      0.00      0.00        27
+                            Dasmosmilia lymani       0.83      0.53      0.65        45
+                        Dasystenella acanthina       0.00      0.00      0.00         4
+                    Deltocyathoides orientalis       0.40      0.27      0.32        22
+                    Deltocyathoides stimpsonii       0.00      0.00      0.00         3
+                      Deltocyathus andamanicus       0.00      0.00      0.00         4
+                           Deltocyathus calcar       0.12      0.10      0.11        20
+                      Deltocyathus eccentricus       0.11      0.20      0.14        15
+                         Deltocyathus italicus       0.11      0.03      0.05        29
+                       Deltocyathus magnificus       0.00      0.00      0.00         4
+                         Deltocyathus moseleyi       0.00      0.00      0.00         6
+                          Deltocyathus rotulus       0.00      0.00      0.00         4
+                        Deltocyathus suluensis       0.00      0.00      0.00         3
+                         Deltocyathus vaughani       0.17      0.25      0.20         4
+                 Dendrobathypathes boutillieri       1.00      0.50      0.67         4
+                     Dendropathes bacotaylorae       0.50      0.14      0.22         7
+                       Dendropathes intermedia       1.00      0.20      0.33        10
+                         Dendrophyllia alcocki       0.00      0.00      0.00         3
+                       Dendrophyllia alternata       0.00      0.00      0.00         3
+                       Dendrophyllia arbuscula       0.05      0.50      0.10         4
+                         Desmophyllum dianthus       0.45      0.29      0.35       164
+                        Diodogorgia nodulifera       0.00      0.00      0.00         4
+                          Distichopathes filix       0.00      0.00      0.00         4
+                           Distichopora anceps       0.62      0.91      0.74        23
+                         Distichopora borealis       0.00      0.00      0.00        22
+                         Distichopora foliacea       0.07      0.25      0.11         4
+                          Distichopora sulcata       0.00      0.00      0.00         4
+                         Distichopora violacea       0.83      0.45      0.59        11
+                        Distichoptilum gracile       0.35      0.27      0.31        22
+                          Docosaccus maculatus       0.00      0.00      0.00        38
+                                  Duva florida       0.18      0.54      0.27        13
+                              Dysidea fragilis       1.00      0.33      0.50         3
+                    Echinoclathria beringensis       0.00      0.00      0.00        16
+                      Eguchipsammia cornucopia       0.00      0.00      0.00         3
+                         Eguchipsammia fistula       0.29      0.41      0.34        41
+                      Eguchipsammia serpentina       0.15      0.33      0.21         6
+                          Elatopathes abietina       0.34      0.75      0.47        56
+                           Ellisella atlantica       0.00      0.00      0.00         7
+                         Ellisella barbadensis       0.00      0.00      0.00         7
+                            Ellisella elongata       0.00      0.00      0.00         5
+                          Ellisella funiculina       0.00      0.00      0.00         5
+                        Enallopsammia profunda       0.21      0.23      0.22        53
+                        Enallopsammia rostrata       0.54      0.62      0.58       125
+                              Endopachys grayi       0.00      0.00      0.00         9
+                             Errina antarctica       0.12      0.08      0.10        12
+                               Errina boschmai       0.00      0.00      0.00         4
+                              Errina fissurata       0.00      0.00      0.00         5
+                               Errina gracilis       0.00      0.00      0.00         6
+                             Errina laterorifa       0.06      0.33      0.10         6
+                            Errinopora nanneca       0.00      0.00      0.00        19
+                          Errinopora zarhyncha       0.00      0.00      0.00         3
+                               Erylus formosus       0.00      0.00      0.00         3
+                           Esperiopsis flagrum       0.00      0.00      0.00         4
+                         Euchelipluma elongata       0.93      1.00      0.96        38
+                               Eugorgia rubens       0.59      0.73      0.65       341
+                             Eunicella modesta       0.00      0.00      0.00        16
+                            Fanellia compressa       0.07      0.18      0.10       120
+                             Fanellia euthyeia       1.00      0.43      0.60         7
+                              Fanellia fraseri       0.00      0.00      0.00        18
+                          Fanellia tuberculata       0.00      0.00      0.00         2
+             Fannyella (Fannyella) kuekenthali       0.17      0.80      0.28         5
+                              Fannyella rossii       0.20      0.20      0.20         5
+                                   Farrea occa       0.87      0.53      0.66      1598
+                               Farrea truncata       0.43      0.67      0.52       171
+                   Flabellum (Flabellum) areum       0.00      0.00      0.00         3
+              Flabellum (Flabellum) atlanticum       0.20      0.25      0.22         4
+                Flabellum (Flabellum) curvatum       0.26      0.56      0.36         9
+               Flabellum (Flabellum) flexuosum       0.00      0.00      0.00        10
+              Flabellum (Flabellum) floridanum       0.00      0.00      0.00         4
+                Flabellum (Flabellum) impensum       0.12      0.05      0.07        19
+            Flabellum (Flabellum) lamellulosum       0.15      0.43      0.22         7
+               Flabellum (Flabellum) pavoninum       0.00      0.00      0.00         8
+                 Flabellum (Flabellum) politum       0.33      0.20      0.25         5
+               Flabellum (Flabellum) thouarsii       0.75      0.50      0.60         6
+                Flabellum (Flabellum) vaughani       0.00      0.00      0.00         3
+             Flabellum (Ulocyathus) alabastrum       0.39      0.41      0.40        39
+               Flabellum (Ulocyathus) angulare       0.00      0.00      0.00         7
+               Flabellum (Ulocyathus) deludens       0.00      0.00      0.00        14
+              Flabellum (Ulocyathus) japonicum       0.00      0.00      0.00         3
+             Flabellum (Ulocyathus) macandrewi       0.00      0.00      0.00         3
+               Flabellum (Ulocyathus) moseleyi       0.25      0.15      0.19        13
+            Fungiacyathus (Bathyactis) crispus       0.00      0.00      0.00         3
+         Fungiacyathus (Bathyactis) variegatus       0.00      0.00      0.00         3
+       Fungiacyathus (Fungiacyathus) paliferus       0.00      0.00      0.00         3
+       Fungiacyathus (Fungiacyathus) stephanus       0.00      0.00      0.00         5
+                    Fungiacyathus marenzelleri       0.85      0.73      0.79        15
+                     Fungiacyathus symmetricus       0.00      0.00      0.00        10
+                             Funiculina armata       0.00      0.00      0.00         3
+                     Funiculina quadrangularis       0.07      0.06      0.06        17
+                        Gardineria hawaiiensis       0.00      0.00      0.00        10
+                              Geodia gibberosa       0.00      0.00      0.00         3
+                            Geodia mesotriaena       0.00      0.00      0.00        14
+                                Geodia robusta       0.00      0.00      0.00        28
+                            Gersemia fruticosa       0.67      0.22      0.33         9
+                       Gersemia juliepackardae       0.75      0.05      0.09        63
+                           Gersemia rubiformis       0.85      0.92      0.88       155
+                           Goniocorella dumosa       0.00      0.00      0.00         2
+                                Guancha blanca       0.11      0.05      0.07       146
+                              Guitarra abbotti       0.71      0.83      0.77         6
+                               Guynia annulata       0.00      0.00      0.00         3
+               Halichondria (Eumastia) sitiens       0.00      0.00      0.00        69
+           Halichondria (Halichondria) panicea       0.23      0.05      0.08       133
+                          Halichondria sitiens       0.09      0.20      0.12       132
+                        Halipteris californica       0.72      0.52      0.60       765
+                        Halipteris finmarchica       0.17      0.08      0.11        12
+                         Halipteris willemoesi       0.52      0.41      0.46       145
+                             Heterochone calyx       0.31      0.04      0.06       400
+                   Heterocyathus aequicostatus       0.00      0.00      0.00         3
+                      Heterocyathus alternatus       0.00      0.00      0.00         3
+                        Heterocyathus sulcatus       0.00      0.00      0.00         5
+                         Heteropolypus ritteri       0.61      0.82      0.70      4286
+                     Heteropolypus steenstrupi       0.00      0.00      0.00         4
+                         Heteropsammia cochlea       0.00      0.00      0.00         5
+                      Homaxinella amphispicula       0.00      0.00      0.00        91
+               Hyalonema (Oonema) bianchoratum       0.00      0.00      0.00        57
+                        Hyattella intestinalis       0.00      0.00      0.00         2
+                       Hydrodendron gorgonoide       0.00      0.00      0.00        16
+                           Hypnogorgia pendula       0.33      0.01      0.02        78
+                          Iciligorgia schrammi       0.08      0.29      0.12         7
+                        Inferiolabiata labiata       0.05      0.09      0.07        11
+                          Inferiolabiata lowei       0.00      0.00      0.00         4
+                             Iophon cheliferum       0.00      0.00      0.00         3
+                               Ircinia campana       0.00      0.00      0.00         4
+                                 Ircinia felix       0.00      0.00      0.00         2
+                            Ircinia strobilina       0.00      0.00      0.00         4
+                             Iridogorgia bella       0.14      0.35      0.20        72
+                     Iridogorgia magnispiralis       0.17      0.01      0.02       104
+                           Isidella tentaculum       0.60      0.43      0.50         7
+                           Isidella trichotoma       0.00      0.00      0.00        25
+                             Isodictya palmata       0.00      0.00      0.00         5
+                              Isodictya rigida       0.17      0.03      0.05        38
+                            Javania antarctica       0.00      0.00      0.00         4
+                              Javania borealis       0.00      0.00      0.00         6
+                              Javania cailleti       0.00      0.00      0.00        27
+                          Javania lamprotichum       0.33      0.10      0.15        10
+                          Keratoisis flabellum       0.23      0.25      0.24        48
+                         Keratoisis flexibilis       0.00      0.00      0.00        10
+                            Keratoisis grandis       0.00      0.00      0.00         7
+                              Keratoisis grayi       0.00      0.00      0.00         8
+                             Keroeides mosaica       0.00      0.00      0.00         9
+                             Keroeides pallida       0.00      0.00      0.00         4
+                   Kophobelemnon macrospinosum       1.00      1.00      1.00         3
+                     Kophobelemnon stelliferum       0.23      0.35      0.28        34
+                         Kulamanamana haumeaae       0.44      0.61      0.51       527
+                             Leiopathes annosa       0.25      0.05      0.08        22
+                         Leiopathes glaberrima       0.91      0.09      0.16       799
+                        Lepidisis caryophyllia       0.00      0.00      0.00         8
+                               Lepidisis olapa       0.32      0.16      0.21       223
+                        Lepidopora cryptocymas       0.00      0.00      0.00         2
+                     Lepidotheca chauliostylus       0.20      0.50      0.29         2
+                      Lepidotheca fascicularis       0.17      0.33      0.22         3
+                        Leptogorgia cardinalis       0.00      0.00      0.00         2
+                         Leptogorgia chilensis       0.75      0.19      0.30       128
+                           Leptogorgia euryale       0.00      0.00      0.00         3
+                           Leptogorgia setacea       0.00      0.00      0.00         4
+                            Leptogorgia stheno       0.00      0.00      0.00         4
+                         Leptohelia flexibilis       0.33      0.33      0.33         3
+                        Leptohelia microstylus       0.50      0.33      0.40         3
+                      Letepsammia formosissima       0.00      0.00      0.00        12
+                              Leucandra heathi       0.00      0.00      0.00         2
+                              Lophelia pertusa       0.77      0.97      0.86      4033
+                             Madracis asperula       0.00      0.00      0.00        24
+                         Madracis brueggemanni       0.00      0.00      0.00         6
+                           Madracis kauaiensis       0.25      0.62      0.36        21
+                            Madracis myriaster       0.00      0.00      0.00        23
+                            Madrepora carolina       0.08      0.13      0.10        23
+                             Madrepora oculata       0.14      0.15      0.15        84
+                        Metafannyella lepidota       0.00      0.00      0.00         3
+                   Metallogorgia melanotrichos       0.41      0.24      0.30       127
+                               Muricea pendula       0.00      0.00      0.00         3
+                         Muriceides cylindrica       0.00      0.00      0.00         6
+                              Muriceides hirta       1.00      0.67      0.80         3
+                              Muriceides nigra       0.50      0.04      0.07        25
+                        Mycale (Mycale) loveni       0.25      0.08      0.12       317
+                              Myriopathes ulex       0.00      0.00      0.00        11
+                  Myxilla (Myxilla) incrustans       0.00      0.00      0.00        34
+                               Myxilla brunnea       0.00      0.00      0.00         8
+                                 Narella alata       0.00      0.00      0.00        24
+                               Narella bowersi       0.00      0.00      0.00         8
+                             Narella dichotoma       0.39      0.54      0.46        83
+                                 Narella gigas       0.15      0.05      0.07        86
+                          Narella hawaiinensis       0.00      0.00      0.00         4
+                            Narella macrocalyx       0.00      0.00      0.00        15
+                               Narella muzikae       0.22      0.83      0.35        78
+                            Narella pauciflora       0.00      0.00      0.00         3
+                      Neofibularia nolitangere       0.00      0.00      0.00         4
+                           Nicella deichmannae       0.13      0.15      0.14        33
+                               Nicella goreaui       0.00      0.00      0.00         6
+                         Nicella guadalupensis       0.00      0.00      0.00         9
+                                 Nicella hebes       0.00      0.00      0.00         6
+                                 Nicella obesa       0.12      0.33      0.17         6
+                               Nicella robusta       0.00      0.00      0.00         3
+                            Nicella toeplitzae       0.00      0.00      0.00         3
+                          Nidalia occidentalis       0.00      0.00      0.00        28
+                       Nodastrella nodastrella       0.00      0.00      0.00        16
+                           Notocyathus conicus       0.00      0.00      0.00         2
+                               Oculina tenella       0.06      0.29      0.10         7
+                              Oculina varicosa       0.81      0.98      0.89       201
+                              Onogorgia nodosa       1.00      0.60      0.75         5
+                        Oxysmilia rotundifolia       0.05      0.29      0.08         7
+                      Paracalyptrophora duplex       0.19      0.75      0.30         4
+                    Paracalyptrophora echinata       0.00      0.00      0.00         2
+                Paracalyptrophora hawaiinensis       0.00      0.00      0.00        19
+                     Paracalyptrophora simplex       0.00      0.00      0.00         3
+                             Paracis miyajimai       0.00      0.00      0.00         6
+                   Paraconotrochus antarcticus       0.00      0.00      0.00         7
+                       Paracorallium tortuosum       0.51      0.58      0.55        31
+                        Paracyathus pulchellus       0.50      0.15      0.23        34
+                         Paracyathus stearnsii       0.00      0.00      0.00         3
+                            Paragorgia arborea       0.43      0.60      0.50       637
+                        Paragorgia coralloides       0.00      0.00      0.00         4
+                            Paragorgia regalis       0.62      0.08      0.14        63
+                           Paramuricea biscaya       0.36      0.50      0.42        20
+                           Paramuricea grandis       0.22      0.50      0.30        20
+                        Paramuricea multispina       1.00      0.33      0.50         3
+                          Paramuricea placomus       0.50      0.22      0.31         9
+                     Parantipathes tetrasticha       0.00      0.00      0.00         3
+                           Parastenella bayeri       0.13      1.00      0.24         2
+                      Parastenella gymnogaster       1.00      0.33      0.50         3
+                           Parastenella ramosa       0.83      0.26      0.39       117
+                          Parastenella spinosa       0.18      0.67      0.29         3
+                            Pennatula aculeata       0.49      0.62      0.55        39
+                             Pennatula grandis       0.00      0.00      0.00        14
+                             Pennatula inflata       0.00      0.00      0.00         7
+                             Pennatula murrayi       0.00      0.00      0.00        55
+                            Pennatula pearceyi       0.86      0.30      0.44        20
+                          Pennatula phosphorea       0.85      0.61      0.71       201
+                      Peponocyathus folliculus       0.11      0.20      0.14         5
+                          Perissogorgia vitrea       0.00      0.00      0.00         2
+                           Phacelocyathus flos       0.00      0.00      0.00         3
+                               Phakellia dalli       0.17      0.11      0.13        27
+                           Phanopathes expansa       0.00      0.00      0.00         8
+                          Phyllangia americana       0.00      0.00      0.00         5
+                         Placogorgia mirabilis       0.00      0.00      0.00         6
+                             Placogorgia rudis       0.00      0.00      0.00         8
+                            Placogorgia tenuis       0.00      0.00      0.00         5
+                    Placospongia melobesioides       0.00      0.00      0.00         4
+                                Plakina tanaga       0.00      0.00      0.00        18
+                         Pliobothrus echinatus       0.00      0.00      0.00         2
+                       Pliobothrus symmetricus       0.00      0.00      0.00         4
+                        Plumapathes fernandezi       0.67      0.67      0.67         3
+                          Plumapathes pennacea       0.00      0.00      0.00         6
+                           Plumarella aculeata       0.00      0.00      0.00         3
+                          Plumarella aleutiana       1.00      0.08      0.14        13
+                              Plumarella aurea       0.00      0.00      0.00         5
+                    Plumarella circumoperculum       0.50      0.07      0.13        27
+                          Plumarella dichotoma       0.00      0.00      0.00         4
+                           Plumarella echinata       0.00      0.00      0.00         4
+                             Plumarella hapala       1.00      0.25      0.40         4
+                         Plumarella longispina       0.58      0.96      0.72       257
+                        Plumarella pourtalesii       0.07      0.05      0.05        22
+                           Plumarella profunda       0.90      0.90      0.90        21
+                            Plumarella superba       0.11      0.14      0.12         7
+                   Poecillastra tenuilaminaris       0.70      0.76      0.73       233
+                       Polymastia boletiformis       0.00      0.00      0.00         9
+                           Polymastia fluegeli       0.04      0.07      0.05        14
+                        Polymastia pachymastia       0.00      0.00      0.00         8
+                            Polymyces fragilis       0.00      0.00      0.00        10
+                              Polymyces wellsi       0.00      0.00      0.00         5
+                      Pourtalocyathus hispidus       0.00      0.00      0.00         4
+                       Pourtalosmilia conferta       0.00      0.00      0.00         3
+                      Premocyathus cornuformis       0.33      0.22      0.27         9
+                              Primnoa notialis       0.25      0.33      0.29         3
+                              Primnoa pacifica       0.70      0.83      0.76       367
+                         Primnoa resedaeformis       1.00      0.10      0.18        10
+                                 Primnoa wingi       0.00      0.00      0.00         4
+                            Primnoella scotiae       0.00      0.00      0.00         4
+                        Protoptilum carpenteri       0.00      0.00      0.00         8
+                     Pseudoanthomastus fisheri       0.00      0.00      0.00        30
+                             Pseudodrifa nigra       0.00      0.00      0.00        13
+                    Pseudosuberites montiniger       0.00      0.00      0.00         3
+                            Psilocalyx wilsoni       0.00      0.00      0.00         4
+                           Ptilosarcus gurneyi       0.41      0.68      0.51       177
+                            Radicipes gracilis       0.33      0.40      0.36         5
+                            Radicipes verrilli       0.98      1.00      0.99       316
+                         Regadrella okinoseana       0.00      0.00      0.00         6
+                              Renilla muelleri       0.00      0.00      0.00         3
+                            Renilla reniformis       0.00      0.00      0.00         4
+                        Rhabdocalyptus dawsoni       0.00      0.00      0.00         3
+                            Rhizaxinella gadus       0.00      0.00      0.00        23
+                            Rhizosmilia gerdae       0.00      0.00      0.00         2
+                          Rhizosmilia maculata       0.00      0.00      0.00         3
+                           Rhizosmilia robusta       0.00      0.00      0.00         2
+                     Rhodaniridogorgia superba       0.00      0.00      0.00         7
+                             Riisea paniculata       0.00      0.00      0.00         6
+                       Saccocalyx pedunculatus       0.00      0.00      0.00        11
+                       Sarcodictyon incrustans       0.00      0.00      0.00         4
+                        Schizocyathus fissilis       0.00      0.00      0.00         8
+                       Scleracis guadalupensis       0.50      0.07      0.12        14
+                             Scleracis petrosa       0.00      0.00      0.00         3
+              Scleranthelia rugosa var. musiva       0.00      0.00      0.00         3
+                     Scleroptilum grandiflorum       0.60      0.30      0.40        10
+                    Sclerothamnopsis compressa       0.79      0.90      0.84        60
+                        Semisuberites cribrosa       0.00      0.00      0.00         5
+                       Sibogagorgia cauliflora       0.00      0.00      0.00         7
+                       Siphonogorgia alexandri       1.00      0.09      0.17        11
+                        Siphonogorgia collaris       0.60      1.00      0.75         9
+                       Solenosmilia variabilis       0.50      0.15      0.24        13
+                         Spirastrella coccinea       0.00      0.00      0.00         4
+                         Sporadopora dichotoma       0.00      0.00      0.00         3
+                         Stachyptilum superbum       0.00      0.00      0.00         3
+                   Staurocalyptus fasciculatus       0.00      0.00      0.00        10
+                      Stauropathes staurocrada       0.00      0.00      0.00        17
+                            Stelletta clarella       0.00      0.00      0.00         3
+                              Stelletta grubii       0.00      0.00      0.00         3
+                      Stenocyathus vermiformis       0.00      0.00      0.00         8
+                           Stenohelia concinna       0.17      0.25      0.20         4
+       Stephanocyathus (Acinocyathus) spiniger       0.00      0.00      0.00         5
+     Stephanocyathus (Odontocyathus) coronatus       0.00      0.00      0.00         8
+    Stephanocyathus (Odontocyathus) weberianus       0.40      0.40      0.40         5
+     Stephanocyathus (Stephanocyathus) diadema       0.24      0.33      0.28        21
+ Stephanocyathus (Stephanocyathus) laevifundus       0.25      0.33      0.29         3
+   Stephanocyathus (Stephanocyathus) paliferus       0.38      0.43      0.40         7
+      Stephanocyathus (Stephanocyathus) regius       0.00      0.00      0.00         2
+                       Stephanohelia praecipua       0.09      0.22      0.12         9
+                  Stereonephthya portoricensis       0.00      0.00      0.00         4
+                          Stichopathes lutkeni       0.46      0.63      0.53       107
+                          Stichopathes spiessi       0.00      0.00      0.00         2
+                           Stylaster alaskanus       0.00      0.00      0.00         7
+                         Stylaster aurantiacus       0.00      0.00      0.00         2
+                              Stylaster brochi       0.08      0.22      0.12        23
+                        Stylaster californicus       0.00      0.00      0.00         6
+                          Stylaster campylecus       0.00      0.00      0.00        35
+                         Stylaster complanatus       0.00      0.00      0.00         2
+                         Stylaster densicaulis       0.00      0.00      0.00         2
+                        Stylaster duchassaingi       0.00      0.00      0.00        10
+                          Stylaster erubescens       0.00      0.00      0.00        19
+                          Stylaster filogranus       0.00      0.00      0.00         4
+                        Stylaster galapagensis       0.50      0.33      0.40         3
+                              Stylaster griggi       0.00      0.00      0.00         3
+                          Stylaster horologium       0.00      0.00      0.00         3
+                          Stylaster imbricatus       0.00      0.00      0.00         4
+                          Stylaster laevigatus       0.00      0.00      0.00         4
+                            Stylaster miniatus       0.00      0.00      0.00         5
+                            Stylaster parageus       0.00      0.00      0.00         2
+                              Stylaster roseus       0.00      0.00      0.00         6
+                            Stylaster sinuosus       0.43      0.75      0.55         4
+                            Stylaster venustus       0.40      0.67      0.50         3
+                           Stylaster verrillii       0.00      0.00      0.00         3
+                             Stylatula elegans       0.56      0.68      0.61        28
+                            Stylatula gracilis       0.50      0.22      0.31         9
+                        Stylopathes columnaris       0.00      0.00      0.00         6
+                           Suberites domuncula       0.18      0.15      0.16        20
+                               Suberites ficus       0.30      0.16      0.21       129
+                                 Swiftia casta       0.00      0.00      0.00        10
+                               Swiftia exserta       0.69      0.40      0.50        86
+                         Swiftia farallonesica       0.86      1.00      0.92         6
+                               Swiftia kofoidi       0.47      0.39      0.42       432
+                              Swiftia pacifica       0.73      0.75      0.74      1209
+                               Swiftia simplex       0.00      0.00      0.00       394
+                            Swiftia spauldingi       0.00      0.00      0.00         8
+                                Sycon ciliatum       0.67      0.67      0.67         3
+                                Sympagella nux       0.00      0.00      0.00         2
+                            Systemapora ornata       0.00      0.00      0.00         6
+                    Tanacetipathes barbadensis       0.00      0.00      0.00         5
+                          Tanacetipathes hirta       0.16      0.25      0.19        12
+                      Tanacetipathes tanacetum       0.06      0.02      0.03        56
+                        Tanacetipathes thamnea       0.00      0.00      0.00         3
+                           Telesto fruticulosa       0.23      0.69      0.35        13
+                               Telesto nelleae       0.00      0.00      0.00         3
+                             Telesto sanguinea       1.00      0.17      0.29         6
+                           Telestula corrugata       0.00      0.00      0.00         2
+                       Tentorium semisuberites       0.00      0.00      0.00         2
+                         Tethocyathus virgatus       0.00      0.00      0.00         2
+                          Tethya seychellensis       0.00      0.00      0.00         2
+                         Thalamophyllia riisei       0.00      0.00      0.00         4
+                         Thecopsammia socialis       0.00      0.00      0.00        18
+                               Thenea muricata       0.69      0.53      0.60       412
+                            Thesea grandiflora       0.00      0.00      0.00         2
+                                  Thesea nivea       0.19      0.70      0.30        47
+                                 Thesea nutans       0.00      0.00      0.00         6
+                             Thesea parviflora       0.00      0.00      0.00         5
+                                  Thesea rubra       0.32      0.97      0.48        32
+          Thouarella (Epithouarella) crenelata       0.14      0.20      0.17         5
+         Thouarella (Euthouarella) hilgendorfi       0.37      0.17      0.23        64
+             Thouarella (Thouarella) bipinnata       0.00      0.00      0.00         2
+             Thouarella (Thouarella) pendulina       0.33      0.60      0.43         5
+                         Thouarella trilineata       0.00      0.00      0.00         5
+                       Titanideum frauenfeldii       0.00      0.00      0.00         8
+                  Trissopathes pseudotristicha       0.90      0.85      0.88       720
+                       Trissopathes tetracrada       0.00      0.00      0.00         3
+   Trochocyathus (Trochocyathus) aithoseptatus       0.00      0.00      0.00         3
+  Trochocyathus (Trochocyathus) philippinensis       0.00      0.00      0.00         3
+        Trochocyathus (Trochocyathus) rawsonii       0.00      0.00      0.00         9
+                   Truncatoflabellum candeanum       0.17      0.20      0.18         5
+                     Umbellapathes helioanthes       0.17      0.10      0.12        10
+                           Umbellula durissima       0.00      0.00      0.00         4
+                            Umbellula lindahli       0.70      0.82      0.76      1285
+                          Umbellula magniflora       0.00      0.00      0.00         3
+                            Umbellula thomsoni       0.00      0.00      0.00         3
+                           Vazella pourtalesii       0.00      0.00      0.00         6
+                         Victorgorgia nuttingi       0.00      0.00      0.00         4
+                        Villogorgia nigrescens       0.00      0.00      0.00         7
+                           Virgularia agassizi       0.00      0.00      0.00         3
+                          Virgularia presbytes       0.00      0.00      0.00         2
+                               Weberella bursa       0.00      0.00      0.00         3
+                       Xestospongia diprosopia       0.28      0.38      0.32        21
+                           Xestospongia edapha       0.00      0.00      0.00         3
+
+                                     micro avg       0.58      0.58      0.58     33063
+                                     macro avg       0.19      0.17      0.15     33063
+                                  weighted avg       0.56      0.58      0.53     33063
