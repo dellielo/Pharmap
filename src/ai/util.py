@@ -55,7 +55,7 @@ def write_data(x, y, idx2label, dir_save = 'data/debug'):
 
 
 def save_model(model, info_run, dir_save = 'data/model'):
-    name_date = 'model-{date:%Y-%m-%d_%H:%M:%S}'.format(date=datetime.datetime.now())
+    name_date = 'model-{date:%Y-%m-%d_%H%M%S}'.format(date=datetime.datetime.now())
     if not os.path.exists(dir_save):
         os.makedirs(dir_save)
 

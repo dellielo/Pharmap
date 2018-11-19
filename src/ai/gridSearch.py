@@ -88,7 +88,7 @@ def write_report(info_run, grid_result_tot, dir_save = "data/report"):
     import json
     import datetime 
 
-    name_date = 'report-{date:%Y-%m-%d_%H:%M:%S}'.format( date=datetime.datetime.now() )
+    name_date = 'report-{date:%Y-%m-%d_%H%M%S}'.format( date=datetime.datetime.now() )
     if not(os.path.exists(dir_save)):
         os.makedirs(dir_save)
 

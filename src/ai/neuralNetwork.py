@@ -108,7 +108,7 @@ def test(model, x_test, y_test, idx2label):
     return results
 
 def write_report_unique(info_run, results, dir_save = "data/report"):
-    name_date = 'report-{date:%Y-%m-%d_%H:%M:%S}'.format( date=datetime.datetime.now() )
+    name_date = 'report-{date:%Y-%m-%d_%H%M%S}'.format( date=datetime.datetime.now() )
     if not(os.path.exists(dir_save)):
         os.makedirs(dir_save)
 
