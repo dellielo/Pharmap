@@ -67,7 +67,7 @@ config:
       kernel_regularizer: null
       name: dense_2
       trainable: true
-      units: 53
+      units: 632
       use_bias: true
   name: sequential
 keras_version: 2.1.6-tf
