@@ -4,27 +4,28 @@ import conf
 import datetime
 from tensorflow import keras
 
-def write_file_error_by_name(y_pred, y_test, x_test,  idx2label, dir_save = 'data/debug'):
+def write_file_error_by_name(probs, y_test, x_test,  idx2label, dir_save = 'data/debug'):
+    n = 5
     if not os.path.exists(dir_save):
         os.makedirs(dir_save)
     for i, t in enumerate(set(y_test)):
         idx = np.where(y_test == t)[0]
         name_coraux = idx2label[t]
-        # errors = np.where(y_pred != y_test)[0]
-        # print("[{}] No of errors = {}/{}".format(name_coraux, len(errors),len(y_test)))
+        
         with open(os.path.join(dir_save, "{}_res.csv".format(name_coraux)), 'w') as fic:
-            fic.write("true; pred; sanction; carac\n")
-            
+            fic.write("true; pred; sanction; carac\n") 
             for _, item in enumerate(idx):
-                pass #/!\ todo: to fix
-                # pred_class = np.argmax(prob[item])
-                # true_label = idx2label[y_test[item]]
-                # pred_label = idx2label[y_pred[item]]
-                # sanction = "OK" if true_label == pred_label else "ERROR"
-                # str_data = ";".join("{:.4f}".format(x) for x in x_test[item])
-
-                # fic.write("[{}];{};{};{}\n".format(true_label, pred_label, sanction, str_data)) # x_test[item],
-
+                str_results = ""
+                true_label = idx2label[y_test[item]]
+                pred_class =  np.argsort(probs[item, :])[::-1][:n] #[-n:] 
+                for k in pred_class:
+                    pred_label= idx2label[k]
+                    str_results += "[{}: {:.3f}]; ".format(pred_label, probs[item, k])
+                    # print(probs.shape, probs[k].shape)
+                
+                sanction = "OK" if true_label == idx2label[pred_class[0]]  else "ERROR"
+                fic.write("[{}];{};{}; \n".format(true_label, sanction, str_results))
+   
 def write_data_by_name(x, y, idx2label, dir_save = 'data/debug'):
     if not os.path.exists(dir_save):
         os.makedirs(dir_save)

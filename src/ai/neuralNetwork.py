@@ -56,7 +56,6 @@ class NeuralNetwork:
         self.model.fit(trainInput, trainOutput, validation_split=0.1, epochs=epochs_)
 
 def top_n_accuracy(preds, truths, n):
-    print(preds.shape)
     best_n = np.argsort(preds, axis=1)[:,-n:]
     ts = truths #np.argmax(truths, axis=1)
     successes = 0
@@ -65,45 +64,76 @@ def top_n_accuracy(preds, truths, n):
         successes += 1
     return float(successes)/ts.shape[0]
 	
-def test(model, x_test, y_test, idx2label):
+
+def keep_n_results_close(preds, n=10, th_pred_min=0.5):
+    preds_ok = np.zeros(preds.shape)
+    best_n = np.argsort(preds, axis=1)[:,-n:]
+    for i in range(preds.shape[0]):
+        if preds[best_n[i,:]] > th_pred_min:
+            preds_ok[i,:] = best_n[i,:]
+        else: 
+            preds_ok[i,:] = 0
+    
+def get_n_best_pred_for_one_item(probs, n, idx2label):
+    results = {}
+    best_n = np.argsort(probs)[-n:][::-1]
+    for index, best_id in enumerate(best_n):
+        results[index] = {'label_pred':idx2label[best_id], 'prob': probs[best_id]}
+    return results
+
+
+def test(model, x_test, y_test, idx2label, k_results = 5):
+    scores_k_rank = []
     y_pred = model.predict_classes(x_test)
     prob = model.predict(x_test)
-    print(top_n_accuracy(prob, y_test, 5))
-    print(top_n_accuracy(prob, y_test, 3))
-    print(top_n_accuracy(prob, y_test, 2))
-    print(top_n_accuracy(prob, y_test, 1))
+    
     errors = np.where(y_pred != y_test)[0]
     print("No of errors = {}/{}".format(len(errors),len(y_test)))
     
     for i in range(len(errors[:5])):
         pred_class = np.argmax(prob[errors[i]])
-        best_n = np.argsort(prob[errors[i]])[-3:]
-        for index, resultas in enumerate(best_n[:3]):
-            pred_label = idx2label[resultas]
-            true_label = idx2label[y_test[errors[i]]]
+        best_n = get_n_best_pred_for_one_item(prob[errors[i]], k_results, idx2label)
+        true_label = idx2label[y_test[errors[i]]]
+        for index, best_result in best_n.iteritems():
+            # print(best_result)
             print('Original label: [{}] n {}, Prediction :[{}], confidence : {:.3f}'.format(
             true_label,
 			index,
-            pred_label,
-            prob[errors[i]][resultas]))
+            best_result['label_pred'],
+            best_result['prob']))
+
+        # for index, resultas in enumerate(best_n[:-3]):
+        #     pred_label = idx2label[resultats]
+        #     true_label = idx2label[y_test[errors[i]]]
+        #     print('Original label: [{}] n {}, Prediction :[{}], confidence : {:.3f}'.format(
+        #     true_label,
+		# 	index,
+        #     pred_label,
+        #     prob[errors[i]][resultas]))
 			
         # todo: to fix
 		# arr.argsort()[-3:][::-1]
-        print(pred_class)
         pred_label = idx2label[pred_class]
         true_label = idx2label[y_test[errors[i]]]
 
-        print('Original label: [{}], Prediction :[{}], confidence : {:.3f}'.format(
+        print('Original label: [{}], Prediction :[{}], confidence : {:.3f} \n'.format(
             true_label,
             pred_label,
             prob[errors[i]][pred_class]))
 
     report = metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()])
     print (metrics.classification_report(y_test, y_pred, target_names=[str(l) for l in idx2label.values()]))
-    scores = model.evaluate(x_test, y_test)  
-    results =  (report, scores)   
+
+    for k in range(1, k_results+1):
+        score = top_n_accuracy(prob, y_test, k)
+        scores_k_rank.append(score)
+        print("Test final topRang{}: {:.3f}%".format(k, score))
+    
+
+    # scores = model.evaluate(x_test, y_test)  
+    results =  (report, scores_k_rank)   
     print("Test final with the best of the best: %2.4f %%"%(metrics.accuracy_score(y_test, y_pred)))
-    util.write_file_error_by_name(y_pred, y_test, x_test, idx2label)
+    util.write_file_error_by_name(prob, y_test, x_test, idx2label)
     
     return results
 
@@ -111,11 +141,11 @@ def write_report_unique(info_run, results, dir_save = "data/report"):
     name_date = 'report-{date:%Y-%m-%d_%H%M%S}'.format( date=datetime.datetime.now() )
     if not(os.path.exists(dir_save)):
         os.makedirs(dir_save)
-
     with open(os.path.join(dir_save, name_date + "_config_nn.txt"), 'w') as fic:
         json.dump(info_run, fic, indent=4)
     with open(os.path.join(dir_save, name_date +"_result_nn.txt"), 'w') as fic:
-        report, scores = results
-        fic.write("Resultas tests: accuracy %f loss % f\n" % (scores[1], scores[0]))
+        report, scores_k_rank = results
+        for k, score in enumerate(scores_k_rank):
+            fic.write("Resultats rank {} :{:.3f}\n".format(k, score))
         fic.write(report)
 
