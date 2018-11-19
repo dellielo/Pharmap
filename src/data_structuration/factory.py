@@ -36,11 +36,11 @@ class mono_band_raster():
     def __init__(self, path):
         self.rs = self.load_raster(path)
     
-    def load_raster(path):
+    def load_raster(self, path):
         rs = gdal.Open(path)
         return rs
 
-    def calc_pixel_coord(geo_coord, data_source):
+    def calc_pixel_coord(self, geo_coord, data_source):
         """Return floating-point value that corresponds to given point."""
         x, y = geo_coord[0], geo_coord[1]
         forward_transform = affine.Affine.from_gdal(*data_source.GetGeoTransform())
@@ -49,7 +49,7 @@ class mono_band_raster():
         px, py = int(px + 0.5), int(py + 0.5)
         return px, py
     
-    def get_pixel_value(pixel_coord, data_source):
+    def get_pixel_value(self, pixel_coord, data_source):
         val= float(src_ds.ReadAsArray(0,0,1,1))
         return val
     
