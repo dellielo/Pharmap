@@ -57,7 +57,7 @@ DRUGCLASS ={
                   "growth inhibitor",
                   "growth inhibiting",
                   "immunomodulator",
-                  "proteasome inhibitor],                  
+                  "proteasome inhibitor"],                  
     
     'antibiotic':["anti-septic", 
                   "anti-microbial", 
@@ -122,7 +122,7 @@ DRUGCLASS ={
                      "polysaccharide",
                      "steroids"],               
                   
-     'psychotropic': ["acetyl-choline receptor agonist",
+     'psychotropic' : ["acetyl-choline receptor agonist",
                       "acetyl-choline receptor antagonist",
                       "anxiolytic",
                       "anxiogenic",

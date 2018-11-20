@@ -5,8 +5,8 @@ import os
 
 import numpy as np
 import pandas as pd
-from sklearn import preprocessing
-from sklearn.model_selection import train_test_split
+
+import dataManage
 
 
 import balanceTool
@@ -14,137 +14,99 @@ import conf
 import neuralNetwork
 import tools
 import util
-import mutipleNetwork
+import gridSearch
 
 import argparse
 
-def orderColumns(tab):
-    cols = tab.columns.tolist()
-    for field in conf.inputFileds:
-        if not field in cols:
-            raise ("Can t find column ", field, " in tab")
-    cols = conf.inputFileds + [x for x in cols if x not in conf.inputFileds]
-    return tab[cols]
+def get_report_test_on_best_model(x_test, y_test, best_model, idx2label, info_run, has_saved_network=False):
+    best_model.summary()
+    if has_saved_network:
+        name_network = util.save_model(best_model, info_run)
+        info_run.update({"name_network": name_network})
+    results = neuralNetwork.test(best_model, dataManage.getInputColumn(x_test), y_test, idx2label)
+    neuralNetwork.write_report_unique(info_run, results)
 
-def cleanTab(tab, remove_duplicate):
-    print("Len Tab with Nan {}".format(len(tab)))
-    #
-    if remove_duplicate :
-        column_dupli = ["ScientificName", "longitude", "latitude", "phosphate.csv" , "oxygen.csv", "salinity.csv", "temperature.csv","nitrate.csv"] 
-        tab = tab.drop_duplicates(subset=column_dupli, keep="first")
-        print("Len Tab without duplicate {}".format(len(tab)))
-
-    tab = tab.dropna(subset=conf.inputFileds)
-    print("Len Tab without Nan {}".format(len(tab)))
-    
-    return tab 
-
-def addOutputColumn(tab):
-    print('adding output column')
-    minSampleSize = 2000 
-    print(tab.keys())
-
-    if 'ScientificName' not in tab.keys() : # to be compatible with old file
-        tab['ScientificName'] = tab['species']
-
-    tab['counts'] = tab.groupby(conf.selectedField)[conf.selectedField].transform('count')  
-    tab = tab[tab.counts > minSampleSize] # select all element that have at least $minSampleSize element
-    print('have', len(tab.groupby(conf.selectedField).size()), 'type with more than', minSampleSize, 'sample')
-    tab = tab.assign(output=(tab[conf.selectedField]).astype('category').cat.codes) #add unique id to each scientific name
-    return tab
-
-def prepareData(data, remove_duplicate):
-    tab = orderColumns(data)
-    tab = cleanTab(tab, remove_duplicate)
-    tab = addOutputColumn(tab)
-    x, y = getInputOutput(tab)
-
-    return x,y, tab
-
-def describe(x, y):
-    unique, counts = np.unique(y, return_counts=True)
-    print(unique, counts)
-    print('Mean output: ', np.mean(counts), "\nRange: ", np.ptp(counts), "\nMax: ", np.amax(counts), "\nMin: ", np.amin(counts))
+def save_out_csv(data):
+    path_save_out_csv = 'data/out_csv'
+    if not os.path.exists(path_save_out_csv):
+        os.makedirs(path_save_out_csv)
+    new_file = os.path.join(path_save_out_csv, "coraux_geo.csv")
+    data.to_csv(new_file, sep=",", encoding = 'utf-8', index=False)
 
 
-def makeStandardization(x_train, x_test):
-    # Standardization
-    scaler = preprocessing.StandardScaler().fit(x_train)
-    x_train = scaler.transform(x_train)
-    x_test = scaler.transform(x_test)
-    return x_train, x_test
+def process(data, args):  
+    if args.save_input_csv:
+        save_out_csv(data)
 
-
-def getInputOutput(tab):
-    x = tab.loc[:,conf.inputFileds].values
-    y = tab.loc[:,conf.outputField].values
-    return (x, y)
-
-def process(data, args):
-
-    x,y, tab = prepareData(data, args.remove_duplicate)
-    # util.write_data_by_name(x,y, util.get_idx2label(tab))
+    dm = dataManage.ManageData(data)
+    dm.prepareData(args.remove_duplicate, args.min_sample_size, args.filter_taxon_rank)
+    x_train, x_test, y_train, y_test = dm.split_train_test()
+    util.write_data_by_name(dm.tab, dm.y, dm.idx2label) # util.get_idx2label(tab)) /!\ to move!
     # util.write_data(x, y, util.get_idx2label(tab))
-    x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=42, test_size=0.1)
 
-    outputNb = len(tab[conf.outputField].unique())
-    labels = sorted(tab[conf.selectedField].unique()) #why sorted ?
 
+    info_run = {'init_tab':len(data),  'x_train':len(x_train), 'x_test':len(x_test), 'nb_classes': dm.nb_labels} #'x':len(x),
+    info_run.update(vars(args))
+    info_run.update({"inputFields": conf.inputFields, "outputField": conf.selectedField})
+    info_run.update({"network": conf.network})
     print("Before balance: ")
-    describe(x_train, y_train)
+    dataManage.describe(y_train)
 
     if args.do_standardization:
         print("Make Standardization")
-        x_train, x_test = makeStandardization(x_train, x_test)
-
+        x_train, x_test = dataManage.makeStandardization(x_train, x_test)
+        
+    # x_train = x_train[:1000]
+    # y_train = y_train[:1000]
+    x_train_data = dataManage.getInputColumn(x_train)
     if args.do_balance_smote:
-        x_train, y_train = balanceTool.smote(x_train, y_train)
+        x_train_data, y_train = balanceTool.smote(x_train_data, y_train)
         print("After balance: ")
-        describe(x_train, y_train)
-
-    x_train = x_train[:1000] # to have a fast result
-    y_train = y_train[:1000] # to have a fast result
+        dataManage.describe(y_train)
 
     if args.run_multiple_config:
         
-        msp = mutipleNetwork.MultiSearchParam()
-        grid_results = msp.run_search(x_train, y_train, outputNb)
+        msp = gridSearch.MultiSearchParam()
+        grid_results, best_params = msp.run_search(x_train_data, y_train, dm.nb_labels)
         # clf = grid_results.best_estimator_
         
-        # Evaluate on Test data with the best network
-        params = grid_results.best_params_
-        best_model = mutipleNetwork.create_best_model(outputNb, params)
-        best_model.fit(x_train, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
-        best_model.summary()
-        pred_best = best_model.predict_classes(x_test)
-        
-        #To move 
-        from sklearn.metrics import accuracy_score
-        print("Test final with the best of the best: %2.4f"%(accuracy_score(y_test, pred_best)))
-        
-        # Write results
-        msp.write_report(args, grid_results, nb_data=len(x))
-        # for param in ["activation", "epochs", "optimizers", "init_mode"]:
-        #     mutipleNetwork.gridSearch_table_plot(grid_results, param)
+        # Retrain and Evaluate on Test data with the best network
+        params = best_params
+        best_model = gridSearch.create_best_model(dm.nb_labels, params)
 
-    else:
-        nn = neuralNetwork.NeuralNetwork(outputNb)
-        nn.train(x_train, y_train, epochs=args.epochs)
+        best_model.fit(x_train_data, y_train, epochs=params['epochs'], batch_size=params['batch_size'])
+       
+        # Write results for all configs
+        gridSearch.write_report(info_run, grid_results)
+      
+    else :
+        #just train one config !
+        nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
+        nn.train(x_train_data, y_train, epochs=args.epochs)
+        best_model = nn.model
 
-        scores = nn.evaluate(x_test, y_test)
-        nn.test(x_test, y_test, labels)
+    #if load_model 
+    # best_model = util.load_model('model-2018-11-16_15:08:34', 'data/bestModel/model1')
+    # util.plot_model(best_model)
+    
+    # Run on test data !
+    get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, info_run, has_saved_network=args.save_network)
 
 
 def main():
+    
     parser = argparse.ArgumentParser(description='Process some networks')
-    parser.add_argument('--epochs', type=int, default=100, help='nb epochs')
-    parser.add_argument('--dir_input', default='data/out'),
-    parser.add_argument('--file_input', default='')
+    parser.add_argument('--epochs', '-e', type=int, default=100, help='nb epochs')
+    parser.add_argument('--dir_input', default='data/out')
+    parser.add_argument('--file_input', default='data/out/coraux_geov2.csv', help='input file')
+    parser.add_argument('--save_input_csv', action='store_true')
     parser.add_argument('--do_standardization', '-s,', action='store_true')
     parser.add_argument('--do_balance_smote', '-b,', action='store_true')
     parser.add_argument('--remove_duplicate', '-d,', action='store_true')
     parser.add_argument('--run_multiple_config', '-r,', action='store_true')
-    parser.add_argument('--config_multiple', default="config.json")
+    parser.add_argument('--min_sample_size', '-n', type=int, default=2000)
+    parser.add_argument('--filter_taxon_rank',default=None, type=str, choices=["species", "genus", "order", "family", "class"])
+    parser.add_argument('--save_network', action='store_true')
     args = parser.parse_args()
     print(args)
 

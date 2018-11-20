@@ -14,13 +14,43 @@ Create virtual environment
 pipenv install
 pipenv shell
 ```
-# Ai
-```
+
+# Usage 
+## AI
+### Launch training and evaluation
+
+
+```shell
 python3 src/ai/index.py --help
 ```
-> Show you all of the available options to train our neural network
+> Show you all of the available options to train our neural network:
 
-# Data structuration
+
+
+```shell
+python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' -epochs 100  --do_standardization --filter_taxon_rank 'species' --min_sample_size 50
+```
+> Run one training  with the network config in conf.py with all classes have more 50 samples on 100 epochs
+
+
+```shell
+python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' --do_standardization --filter_taxon_rank 'species' --run_multiple_config
+```
+> Run the search of the optimal parameters (train multiple networks and compare the performances)
+
+
+### Results
+
+| nb_epochs | nb_class (>min_sample_size) | date_run      | top1   | top2  | top3  | top4  | top5        |
+| --------- | --------------------------- | ------------- | ------ | ----- | ----- | ----- | ----------- |
+| 100       | 574 classes (>10 samples)   | 191118-180901 | 0.5751 | 0.737 | 0.811 | 0.841 | **0.875**   |
+| 100       | 383 classes (>20 samples)   | 191118-133229 | 0.58   | 0.760 | 0.826 | 0.864 | **0.889**   |
+| 100       | classes (>50 samples)       | 191118-183441 | 0.608  | 0.783 | 0.851 | 0.891 | **0.914**   |
+| 100       | 149 classes (>100 samples)  | 191118-115200 | 0.625  | 0.803 | 0.870 | 0.908 | **0.931**   |
+| 100       | 53 classes (>500 samples)   | 191118-165139 | 0.693  | 0.874 | 0.935 | 0.962 | ***0.977*** |
+
+
+## Data structuration
 This is how we regrouped the data and linked them together. It use panda and numpy to perform fast operation
 ```
 python3 src/data_structuration/index.py
@@ -40,7 +70,7 @@ There are 3 methods available
 The fast one is by offset
 The accurate one is by meanNearest
 
-# Crawler
+## Crawler
 Only the most desperate beings venture in the crawler.
 
 You can use the crawl function to explore the "mdpi" website and return a dict of species, molecules, articles.
@@ -66,11 +96,11 @@ mydict.update(crawl(domain=urldomain, start=startingpoint, runlength=N, links=li
 
 > Will resume the crawler
 
-# Web app
+## Web app
 
 The web app is not rady yet, it's just a preview
 
-##  Server
+###  Server
 
 We use flask for our server and a sql database
 
@@ -79,7 +109,7 @@ Command to start the server:
 	cd website/server
 	python3 -m flask run
 ```
-### list species
+#### list species
 Route `/getSpecies`  
 Methode: `get`  
 query:
@@ -96,7 +126,7 @@ Retour:
 	//more incoming
 }
 ```
-### Get predictions
+#### Get predictions
 
 Route `/species/{speciesId}/prediction`  
 Methode: `get`  
@@ -121,7 +151,7 @@ Retour:
 	...
 }
 ```
-## client
+### client
 We use ReactJS
 
 It is located in `website/client`
@@ -129,3 +159,4 @@ It is located in `website/client`
 installation `npm install`
 
 Start client: `npm start`
+
