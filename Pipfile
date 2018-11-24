@@ -21,6 +21,10 @@ flask = "*"
 python-dotenv = "*"
 sqlalchemy = "*"
 pymysql = "*"
+affine = "*"
+gdal = "*"
+ete3 = "*"
+
 
 [dev-packages]
 
