@@ -54,19 +54,6 @@ def transformOutput(tab, selectedField):
     return y, dict_category
 
 
-def makeStandardization(x_train, x_test):
-    # Standardization
-    inputFields = conf.inputFields
-    x_train_p = x_train.loc[:,conf.inputFields]
-    x_test_p = x_test.loc[:,conf.inputFields]
-
-    scaler = preprocessing.StandardScaler().fit(x_train_p) # StandardScaler
-    x_train_transform = scaler.transform(x_train_p)
-    x_test_transform = scaler.transform(x_test_p)
-    x_train.loc[:,conf.inputFields] = x_train_transform
-    x_test.loc[:,conf.inputFields] = x_test_transform
-    return x_train, x_test
-
 def getInputOutput(tab):
     x = tab.loc[:,conf.inputFields].values
     y = tab.loc[:,conf.outputField].values
@@ -85,6 +72,7 @@ def describe(y):
 class ManageData:
     def __init__(self, tab):
         self.tab = tab
+        self.scaler = None
         print("Len Tab init {}".format(len(tab)))
         
         # self.y, self.idx2label = transformOutput(tab, )
@@ -94,10 +82,18 @@ class ManageData:
         return self.idx2label.values()
 
     @property
+    def idx2label(self):
+        return self.idx2label
+
+    @property
+    def scaler(self):
+        return self.scaler
+
+    @property
     def nb_labels(self):
         return len(self.idx2label)
 
-    def prepareData(self,remove_duplicate, min_sample_size, keyTaxonRk, output=conf.selectedField, return_copy=False):
+    def prepare(self,remove_duplicate, min_sample_size, keyTaxonRk, output=conf.selectedField, return_copy=False):
             # tab = data[key]
 
         tab = filterTaxonRank(self.tab, keyTaxonRk)
@@ -125,3 +121,25 @@ class ManageData:
         y = self.y # self.tab[conf.outputField]
         x_train, x_test, y_train, y_test = train_test_split(self.tab, y, random_state=42, test_size=0.2,  stratify=y)
         return  x_train, x_test, y_train, y_test
+
+    # Create scaler 
+    def make_standardization(self, x_train):
+        # Standardization
+        inputFields = conf.inputFields
+        x_train_p = x_train.loc[:,conf.inputFields]
+        # x_test_p = x_test.loc[:,conf.inputFields]
+
+        # scaler = preprocessing.StandardScaler().fit(x_train_p) # StandardScaler
+        self.scaler = preprocessing.StandardScaler().fit(x_train_p) # StandardScaler
+        print(self.scaler.scale_, self.scaler.mean_)
+        x_train_transform = self.scaler.transform(x_train_p)
+        # x_test_transform = self.scaler.transform(x_test_p)
+        
+        x_train.loc[:,conf.inputFields] = x_train_transform
+        #  x_test.loc[:,conf.inputFields] = x_test_transform
+        return x_train 
+    
+    def save_scaler(self):
+        import pickle
+        s = pickle.dumps(self.scaler, 'scaler_save')
+
