@@ -43,12 +43,16 @@ python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' --do_standardi
 
 | nb_epochs | nb_class (>min_sample_size) | date_run      | top1   | top2  | top3  | top4  | top5        |
 | --------- | --------------------------- | ------------- | ------ | ----- | ----- | ----- | ----------- |
-| 100       | 574 classes (>10 samples)   | 191118-180901 | 0.5751 | 0.737 | 0.811 | 0.841 | **0.875**   |
-| 100       | 383 classes (>20 samples)   | 191118-133229 | 0.58   | 0.760 | 0.826 | 0.864 | **0.889**   |
-| 100       | 218 classes (>50 samples)       | 191118-183441 | 0.608  | 0.783 | 0.851 | 0.891 | **0.914**   |
-| 100       | 149 classes (>100 samples)  | 191118-115200 | 0.625  | 0.803 | 0.870 | 0.908 | **0.931**   |
-| 100       | 53 classes (>500 samples)   | 191118-165139 | 0.693  | 0.874 | 0.935 | 0.962 | ***0.977*** |
+| 100       | 574 classes (>10 samples)   | 2018-11-19_180901 | 0.5751 | 0.737 | 0.811 | 0.841 | **0.875**   |
+| 100       | 383 classes (>20 samples)   | 2018-11-19_133229 | 0.58   | 0.760 | 0.826 | 0.864 | **0.889**   |
+| 100       | 218 classes (>50 samples)       | 2018-11-19_183441 | 0.608  | 0.783 | 0.851 | 0.891 | **0.914**   |
+| 100       | 149 classes (>100 samples)  | 2018-11-16_150836 (*) | 0.625  | 0.803 | 0.870 | 0.908 | **0.931**   |
+| 100       | 53 classes (>500 samples)   | 2018-11-16_155759 (**) | 0.693  | 0.874 | 0.935 | 0.962 | ***0.977*** |
 > Find details in /data/bestModel/reports with date_run
+
+> (*) save in data/bestModel/model1 
+
+> (**) save in data/bestModel/model2 
 
 ## Data structuration
 This is how we regrouped the data and linked them together. It use panda and numpy to perform fast operation
