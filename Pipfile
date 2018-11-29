@@ -24,7 +24,7 @@ pymysql = "*"
 affine = "*"
 gdal = "*"
 ete3 = "*"
-
+tensorflow-serving-api="*"
 
 [dev-packages]
 
