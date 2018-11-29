@@ -112,7 +112,6 @@ def main():
     parser.add_argument('--filter_taxon_rank',default=None, type=str, choices=["species", "genus", "order", "family", "class"])
     parser.add_argument('--save_network', action='store_true')
     args = parser.parse_args()
-    print(args)
 
     if (args.file_input):
         data = tools.simpleLoad(args.file_input)
