@@ -9,17 +9,31 @@ import conf
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons="240"):
+# def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons="240"):
+#     inputNb = len(conf.inputFields)
+#     model = keras.Sequential()
+#     model.add(keras.layers.Flatten(input_shape=(inputNb,)))
+#     model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
+#     model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
+#     model.add(keras.layers.Dense(outputNb, activation=act_final))
+#     model.compile(optimizer=optimizer, 
+#                     loss='sparse_categorical_crossentropy',
+#                     metrics=['accuracy'])
+    
+#     return model
+
+def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons_settings=[240, 128]):
     inputNb = len(conf.inputFields)
     model = keras.Sequential()
     model.add(keras.layers.Flatten(input_shape=(inputNb,)))
-    model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
-    model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
+    
+    for nb_neurons in nb_neurons_settings:
+        model.add(keras.layers.Dense(nb_neurons,  kernel_initializer=init_mode, activation=activation))#, kernel_regularizer=keras.regularizers.l2(0.003)))
     model.add(keras.layers.Dense(outputNb, activation=act_final))
     model.compile(optimizer=optimizer, 
                     loss='sparse_categorical_crossentropy',
                     metrics=['accuracy'])
-    
+
     return model
 
 def create_best_model(outputNb, params):
@@ -40,13 +54,13 @@ class MultiSearchParam :
     # learn_rate = [0.001, 0.01, 0.1, 0.2, 0.3]
 
     def __init__(self):
-        self.epochs = [10, 100]
+        self.epochs = [10] #, 100]
         self.optimizers = ['adam', 'RMSprop', 'SGD' , 'Nadam']
         self.init_mode = ['normal', 'uniform', 'glorot_uniform', 'glorot_normal']
         self.batches = [1, 20, 50, 100]
         self.activation = ['relu', 'linear', 'tanh']
         self.act_final = ['softmax', 'sigmoid']
-        
+        self.nb_neurons_settings = [[240, 128], [480, 240], [128, 240], [480, 240, 128]]
         
     def run_search(self, x_train, y_train, outputNb):
         np.random.seed(42) # fix random seed for reproducibility
@@ -54,11 +68,13 @@ class MultiSearchParam :
         model = KerasClassifier(build_fn=createNn, outputNb=outputNb, verbose=0)
         
         param_grid = OrderedDict(optimizer=self.optimizers, 
+                          nb_neurons_settings=self.nb_neurons_settings,
                           epochs=self.epochs, 
                           batch_size=self.batches, 
                           init_mode=self.init_mode, 
                           activation=self.activation, 
-                          act_final=self.act_final)
+                          act_final=self.act_final
+                          )
         best_param = dict()
         grid_result = []
         for key, val in param_grid.items() :
@@ -104,93 +120,4 @@ def write_report(info_run, grid_result_tot, dir_save = "data/report"):
             for mean, stdev, param in zip(means, stds, params):
                 fic.write("%f (%f) with: %r \n" % (mean, stdev, param))
 
-
-def gridSearch_table_plot(grid_clf, param_name,
-                          num_results=15,
-                          graph=True,
-                          display_all_params=True):
-
-    '''Display grid search results
-
-    Arguments
-    ---------
-
-    grid_clf           the estimator resulting from a grid search
-                       for example: grid_clf = GridSearchCV( ...
-
-    param_name         a string with the name of the parameter being tested
-
-    num_results        an integer indicating the number of results to display
-                       Default: 15
-
-    negative           boolean: should the sign of the score be reversed?
-                       scoring = 'neg_log_loss', for instance
-                       Default: True
-
-    graph              boolean: should a graph be produced?
-                       non-numeric parameters (True/False, None) don't graph well
-                       Default: True
-
-    display_all_params boolean: should we print out all of the parameters, not just the ones searched for?
-                       Default: True
-
-    Usage
-    -----
-
-    GridSearch_table_plot(grid_clf, "min_samples_leaf")
-
-                          '''
-    from matplotlib      import pyplot as plt
-    from IPython.display import display
-    import pandas as pd
-
-    clf = grid_clf.best_estimator_
-    clf_params = grid_clf.best_params_
-
-    clf_score = grid_clf.best_score_
-    clf_stdev = grid_clf.cv_results_['std_test_score'][grid_clf.best_index_]
-    cv_results = grid_clf.cv_results_
-
-    print("best parameters: {}".format(clf_params))
-    print("best score:      {:0.5f} (+/-{:0.5f})".format(clf_score, clf_stdev))
-    if display_all_params:
-        import pprint
-        pprint.pprint(clf.get_params())
-
-    # pick out the best results
-    # =========================
-    scores_df = pd.DataFrame(cv_results).sort_values(by='rank_test_score')
-
-    best_row = scores_df.iloc[0, :]
-    best_mean = best_row['mean_test_score']
-    best_stdev = best_row['std_test_score']
-    best_param = best_row['param_' + param_name]
-
-    # # display the top 'num_results' results
-    # # =====================================
-    # display(pd.DataFrame(cv_results) \
-    #         .sort_values(by='rank_test_score').head(num_results))
-
-    # plot the results
-    # ================
-    scores_df = scores_df.sort_values(by='param_' + param_name)
-
-    
-    means = scores_df['mean_test_score']
-    stds = scores_df['std_test_score']
-    params = scores_df['param_' + param_name]
-
-    # plot
-    if graph:
-        plt.figure(figsize=(8, 8))
-        plt.errorbar(params, means, yerr=stds)
-
-        plt.axhline(y=best_mean + best_stdev, color='red')
-        plt.axhline(y=best_mean - best_stdev, color='red')
-        plt.plot(best_param, best_mean, 'or')
-
-        plt.title(param_name + " vs Score\nBest Score {:0.5f}".format(clf_score))
-        plt.xlabel(param_name)
-        plt.ylabel('Score')
-        plt.show()
 

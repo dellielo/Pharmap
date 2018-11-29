@@ -39,7 +39,7 @@ python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' --do_standardi
 > Run the search of the optimal parameters (train multiple networks and compare the performances)
 
 
-### Results
+### Results on species
 
 | nb_epochs | nb_class (>min_sample_size) | date_run      | top1   | top2  | top3  | top4  | top5        |
 | --------- | --------------------------- | ------------- | ------ | ----- | ----- | ----- | ----------- |

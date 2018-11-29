@@ -18,12 +18,12 @@ import gridSearch
 
 import argparse
 
-def get_report_test_on_best_model(x_test, y_test, best_model, idx2label, info_run, has_saved_network=False):
-    best_model.summary()
+def get_report_test_on_best_model(x_test, y_test, best_model, idx2label, scaler, info_run, has_saved_network=False):
+    #best_model.summary()
     if has_saved_network:
-        name_network = util.save_model(best_model, info_run)
+        name_network = util.save_model(best_model, info_run, idx2label, scaler)
         info_run.update({"name_network": name_network})
-    results = neuralNetwork.test(best_model, dataManage.getInputColumn(x_test), y_test, idx2label)
+    results = neuralNetwork.test(best_model, dataManage.getInputColumn(x_test), y_test, idx2label, scaler)
     neuralNetwork.write_report_unique(info_run, results)
 
 def save_out_csv(data):
@@ -39,8 +39,9 @@ def process(data, args):
         save_out_csv(data)
 
     dm = dataManage.ManageData(data)
-    dm.prepareData(args.remove_duplicate, args.min_sample_size, args.filter_taxon_rank)
+    dm.prepare(args.remove_duplicate, args.min_sample_size, args.filter_taxon_rank)
     x_train, x_test, y_train, y_test = dm.split_train_test()
+    
     util.write_data_by_name(dm.tab, dm.y, dm.idx2label) # util.get_idx2label(tab)) /!\ to move!
     # util.write_data(x, y, util.get_idx2label(tab))
 
@@ -54,7 +55,8 @@ def process(data, args):
 
     if args.do_standardization:
         print("Make Standardization")
-        x_train, x_test = dataManage.makeStandardization(x_train, x_test)
+        x_train = dm.make_standardization(x_train) # , x_test)
+
         
     # x_train = x_train[:1000]
     # y_train = y_train[:1000]
@@ -85,12 +87,14 @@ def process(data, args):
         nn.train(x_train_data, y_train, epochs=args.epochs)
         best_model = nn.model
 
+        
+        
     #if load_model 
-    # best_model = util.load_model('model-2018-11-16_15:08:34', 'data/bestModel/model1')
+    # best_model = util.load_model('model-2018-11-16_155757', 'data/bestModel/model2')
     # util.plot_model(best_model)
     
     # Run on test data !
-    get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, info_run, has_saved_network=args.save_network)
+    get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, dm.scaler, info_run, has_saved_network=args.save_network)
 
 
 def main():
@@ -108,7 +112,6 @@ def main():
     parser.add_argument('--filter_taxon_rank',default=None, type=str, choices=["species", "genus", "order", "family", "class"])
     parser.add_argument('--save_network', action='store_true')
     args = parser.parse_args()
-    print(args)
 
     if (args.file_input):
         data = tools.simpleLoad(args.file_input)
