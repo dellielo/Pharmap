@@ -4,7 +4,7 @@ from os.path import join
 import config
 import geopandas as gpd
 import pandas as pd
-
+from glob import glob
 
 def simpleLoad(path, header=0, separator=','):
     path = join(path)
@@ -42,3 +42,31 @@ def multipleTabSave(tabs, dirName):
         save(tab, dirName, name)
 
 notFound = 0
+
+
+def select_rasters(path):
+    rasters = glob(path+"*.tif")+glob(path+"*.nc")
+    return rasters
+    
+def select_csv(path):
+    csv = glob(path+"*.csv")
+    return csv
+    
+def getname(file):
+    return os.path.splitext(os.path.basename(file))[0]
+
+def getpath(file):
+    name = os.path.basename(file)
+    path = file[:-len(name)]
+    return path
+
+def getmeta(file):
+    """
+    return metadata file of given file
+    """
+    name = getname(file)
+    path = getpath(file)
+    print(path, name)
+    meta = glob(path+name+".csv.metadata")[0] #There should be only one meta.
+    return meta
+
