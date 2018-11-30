@@ -123,6 +123,7 @@ class ManageData:
         return  x_train, x_test, y_train, y_test
 
     # Create scaler 
+    # for x_test, it makes later
     def make_standardization(self, x_train):
         # Standardization
         inputFields = conf.inputFields
@@ -131,7 +132,7 @@ class ManageData:
 
         # scaler = preprocessing.StandardScaler().fit(x_train_p) # StandardScaler
         self.scaler = preprocessing.StandardScaler().fit(x_train_p) # StandardScaler
-        print(self.scaler.scale_, self.scaler.mean_)
+        # print(self.scaler.scale_, self.scaler.mean_)
         x_train_transform = self.scaler.transform(x_train_p)
         # x_test_transform = self.scaler.transform(x_test_p)
         

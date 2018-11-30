@@ -83,7 +83,7 @@ def write_data(x, y, idx2label, dir_save = 'data/debug'):
 
 def save_extra_info(idx2label, scaler, dir_saved):
     with open(os.path.join(dir_saved, "idx2label.txt"), 'w') as fic:
-        idx2label = json.dump(idx2label, fic, indent=4)
+        json.dump(idx2label, fic, indent=4)
     
     # scaler
     joblib.dump(scaler, os.path.join(dir_saved, "scaler.txt"))  

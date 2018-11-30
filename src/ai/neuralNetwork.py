@@ -37,19 +37,13 @@ class NeuralNetwork:
         model.add(keras.layers.Flatten(input_shape=(inputNb,)))
         
         for nb_neurons in nb_neurons_settings:
-            # model.add(keras.layers.Dense(nb_neurons,  kernel_initializer=init_mode, activation=activation))#, kernel_regularizer=keras.regularizers.l2(0.003)))
             model.add(keras.layers.Dense(nb_neurons,  kernel_initializer=init_mode))
-            model.add(keras.layers.BatchNormalization())
             model.add(keras.layers.Activation(activation))
-        # model.add(keras.layers.Dense(outputNb,  use_bias=False)) #activation=act_final,
-        # model.add(keras.layers.BatchNormalization())
-        # model.add(keras.layers.Activation(act_final))
-        model.add(keras.layers.Dense(outputNb)) #activation=act_final,
-        # model.add(keras.layers.BatchNormalization())
+
+        model.add(keras.layers.Dense(outputNb)) 
         model.add(keras.layers.Activation(act_final))
         model.compile(optimizer=optimizer, 
-                        loss='sparse_categorical_crossentropy', #[focal_loss], 
-                        # loss='sparse_categorical_crossentropy',
+                        loss='sparse_categorical_crossentropy',
                         metrics=['accuracy'])
     
         self.model = model
@@ -74,7 +68,7 @@ class NeuralNetwork:
 
         early_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=20)
         #self.model.fit(trainInput, trainOutput, validation_split=0.1, callbacks=[early_stopping], epochs=epochs_)
-        history = self.model.fit(trainInput, trainOutput, validation_split=0.1, epochs=epochs_)
+        history = self.model.fit(trainInput, trainOutput, validation_split=0.001, epochs=epochs_)
         label=None
         plot_history(history, extra_label=label)
 
@@ -113,7 +107,8 @@ def keep_n_results_close(preds, n=10, th_pred_min=0.5):
             preds_ok[i,:] = best_n[i,:]
         else: 
             preds_ok[i,:] = 0
-    
+
+
 def get_n_best_pred_for_one_item(probs, n, idx2label):
     results = {}
     best_n = np.argsort(probs)[-n:][::-1]
@@ -142,7 +137,6 @@ def test(model, x_test_origin, y_test, idx2label, scaler = None, k_results = 5):
         best_n = get_n_best_pred_for_one_item(prob[errors[i]], k_results, idx2label)
         true_label = idx2label[y_test[errors[i]]]
         for index, best_result in best_n.iteritems():
-            # print(best_result)
             print('Original label: [{}] n {}, Prediction :[{}], confidence : {:.3f}'.format(
             true_label,
 			index,
@@ -167,7 +161,6 @@ def test(model, x_test_origin, y_test, idx2label, scaler = None, k_results = 5):
         scores_k_rank.append(score)
         print("Test final topRang{}: {:.3f}%".format(k, score))
     
-
     # scores = model.evaluate(x_test, y_test)  
     results =  (report, scores_k_rank)   
     print("Test final with the best of the best: %2.4f %%"%(metrics.accuracy_score(y_test, y_pred)))

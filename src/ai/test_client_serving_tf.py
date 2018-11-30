@@ -17,7 +17,7 @@ import pprint
 
 # pip install tensorflow-serving-api
 # launch the following command: >> tensorflow_model_server --port=9000 --model_name=Pharmap --model_base_path=/data/bestModel/model1
-# and in other terminal: >> python src/ai/test_serving_tf.py 
+# and in other command prompt : >> python src/ai/test_serving_tf.py 
 
 VERSION_MODEL = "1"
 DIR_EXTRA_INFO = "data/bestModel/model1/"+ VERSION_MODEL 
@@ -71,6 +71,7 @@ def main():
     parser.add_argument('--dir_extra_info', default=DIR_EXTRA_INFO)
     args = parser.parse_args()
     do_inference(args.hostport, args.dir_extra_info)
+
 
 if __name__=="__main__":
     main()

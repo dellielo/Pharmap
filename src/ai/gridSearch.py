@@ -6,28 +6,17 @@ import os
 from  collections  import OrderedDict
 
 import conf
+import json
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-# def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons="240"):
-#     inputNb = len(conf.inputFields)
-#     model = keras.Sequential()
-#     model.add(keras.layers.Flatten(input_shape=(inputNb,)))
-#     model.add(keras.layers.Dense(240,  kernel_initializer=init_mode, activation=activation))
-#     model.add(keras.layers.Dense(128,  kernel_initializer=init_mode, activation=activation))
-#     model.add(keras.layers.Dense(outputNb, activation=act_final))
-#     model.compile(optimizer=optimizer, 
-#                     loss='sparse_categorical_crossentropy',
-#                     metrics=['accuracy'])
-    
-#     return model
 
-def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons_settings=[240, 128]):
+def createNn(outputNb, optimizer='adam', init_mode='glorot_uniform', activation='relu', act_final='softmax', nb_neurons_by_layer=[240, 128]):
     inputNb = len(conf.inputFields)
     model = keras.Sequential()
     model.add(keras.layers.Flatten(input_shape=(inputNb,)))
     
-    for nb_neurons in nb_neurons_settings:
+    for nb_neurons in nb_neurons_by_layer:
         model.add(keras.layers.Dense(nb_neurons,  kernel_initializer=init_mode, activation=activation))#, kernel_regularizer=keras.regularizers.l2(0.003)))
     model.add(keras.layers.Dense(outputNb, activation=act_final))
     model.compile(optimizer=optimizer, 
@@ -53,30 +42,41 @@ class MultiSearchParam :
     # neurons_1 and _2 = [1, 5, 10, 15, 20, 25, 30]
     # learn_rate = [0.001, 0.01, 0.1, 0.2, 0.3]
 
-    def __init__(self):
-        self.epochs = [10] #, 100]
-        self.optimizers = ['adam', 'RMSprop', 'SGD' , 'Nadam']
-        self.init_mode = ['normal', 'uniform', 'glorot_uniform', 'glorot_normal']
-        self.batches = [1, 20, 50, 100]
-        self.activation = ['relu', 'linear', 'tanh']
-        self.act_final = ['softmax', 'sigmoid']
-        self.nb_neurons_settings = [[240, 128], [480, 240], [128, 240], [480, 240, 128]]
-        
+    def __init__(self, file_config=None, file_save=None):
+        self.config = OrderedDict()
+        if file_config:
+            self.read_config(file_config)
+        else :
+            self.config['optimizer'] = ['adam', 'RMSprop', 'SGD' , 'Nadam']
+            self.config['epochs'] = [10, 100] #, 100]
+            self.config['init_mode'] = ['normal', 'uniform', 'glorot_uniform', 'glorot_normal']
+            self.config['batch_size'] = [1], #, 20, 50, 100]
+            self.config['activation'] = ['relu', 'linear', 'tanh']
+            self.config['act_final'] = ['softmax', 'sigmoid']
+            self.config['nb_neurons_by_layer'] = [[240, 128], [480, 240], [128, 240], [480, 240, 128]]
+            
+        if file_save:
+            self.write_config(file_save)
+
+    def read_config(self,filename):
+        self.config = json.load(open(filename), object_pairs_hook=OrderedDict)
+
+    def write_config(self, filename):
+        print("Xrite_config")
+        json.dump(self.config, open(filename, "w"), indent=4)
+     
+
     def run_search(self, x_train, y_train, outputNb):
         np.random.seed(42) # fix random seed for reproducibility
         tf.set_random_seed(42)
-        model = KerasClassifier(build_fn=createNn, outputNb=outputNb, verbose=0)
-        
-        param_grid = OrderedDict(optimizer=self.optimizers, 
-                          nb_neurons_settings=self.nb_neurons_settings,
-                          epochs=self.epochs, 
-                          batch_size=self.batches, 
-                          init_mode=self.init_mode, 
-                          activation=self.activation, 
-                          act_final=self.act_final
-                          )
+        model = KerasClassifier(build_fn=createNn, outputNb=outputNb, verbose=1, epochs=10)
+
+        param_grid = self.config
+
         best_param = dict()
         grid_result = []
+        
+        self.write_config('data/report/config_multi_run.json')
         for key, val in param_grid.items() :
             print( "--------------- Run on [%s] --------------- "%(key))
             param_cur = {key: val}
