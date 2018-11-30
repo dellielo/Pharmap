@@ -67,6 +67,6 @@ def getmeta(file):
     name = getname(file)
     path = getpath(file)
     print(path, name)
-    meta = glob(path+name+".csv.metadata")[0] #There should be only one meta.
-    return meta
+    meta = glob(path+name+".csv.metadata") #There should be only one meta.
+    return meta[0] if meta else None
 

@@ -23,6 +23,8 @@ def formatCorailTab(tab):
     return tab.rename(columns={"ScientificName": 'species'})
 
 
+def build_environment_dataframe(origin, extent, res, dir_path):
+
 def build_environment_dataframe(origin, extent, res):
     '''
     origin is (longitude, latitude)
@@ -30,36 +32,35 @@ def build_environment_dataframe(origin, extent, res):
     '''
     origin = np.array(origin)
     extent = np.array(extent)
-    x,y = extent
-    xo, yo = origin
-    xe, ye = origin+extent*res
+    x_size,y_size = abs(extent)
+    xo, yo = origin #origin coordinate
+    xe, ye = origin+extent*res #endpoint coordinate
     half_res = res/2
     
     df = pd.DataFrame()
     
     df["px"] = np.repeat(np.arange(0,y_size), x_size) #adds pixel x position 
     df["py"] = np.tile(np.arange(0,x_size), y_size)   #adds pixel y position
-    df["longitude"] = np.repeat(np.linspace(xo+half_res, xe-half_res, num=x), y) 
-    df["latitude"] = np.tile(np.linspace(yo-half_res, ye+half_res, num=x), y)
+    df["longitude"] = np.repeat(np.linspace(xo+half_res, xe-half_res, num=x_size), y_size) # get longitude at center of pixel
+    df["latitude"] = np.tile(np.linspace(yo-half_res, ye+half_res, num=x_size), y_size)
     
-    raster_files = tools.select_rasters()
-    for file in rasters_files:
+    raster_files = select_rasters(dir_path)
+    raster_files.sort()
+    for file in raster_files:
         filename = tools.getname(file)
         filemeta = tools.getmeta(file)
-        raster = multiband_raster(file)
-        if filemeta: #if it has depth metadata, search at depth
+        raster = multiband_raster(file, filemeta)
+        if filemeta: #if it has depth metadata, search at given depth
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.depth)), axis=1)
         else: #if it is a monoband or without metadata, stick with first band
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude)), axis=1)
-    
-    csv_files = tools.select_csv()
+    csv_files = tools.select_csv(dir_path)
     for file in csv_files:
         filename = tools.getname(file)
         df = pd.read_csv(file)
         df[filename] = df.apply(lambda row: compute_val((row.longitude, row.latitude, row.depth, df)), axis=1)
-
     return df
-
+ 
 def computeRow(row, dataTab):
     tab = cropData(dataTab, row['latitude'], row['longitude'], row['DepthInMeters'])
     if (not tab.empty):
