@@ -24,8 +24,6 @@ def formatCorailTab(tab):
 
 
 def build_environment_dataframe(origin, extent, res, dir_path):
-
-def build_environment_dataframe(origin, extent, res):
     '''
     origin is (longitude, latitude)
     extent is (x_lenght, y_length), beware, positive y goes up, negative goes down
