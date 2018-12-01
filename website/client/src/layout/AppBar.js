@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Menu } from 'antd';
 import { Link, withRouter } from 'react-router-dom'
 import './AppBar.css'
@@ -7,10 +7,10 @@ import MenuItem from 'antd/lib/menu/MenuItem';
 const links = [
     { name: "Molécules", url: "/molecules" },
     { name: "Map", url: "/map" },
-    { name: "Configure", url: "/url" }
+    { name: "Configure", url: "/configure" }
 ]
 
-class AppBar extends Component {
+class AppBar extends React.Component {
 
     constructor(props) {
         super(props)

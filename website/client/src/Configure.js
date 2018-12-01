@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import requiredCookies from './tools/requiredCookies'
 import { withCookies } from 'react-cookie'
-import { Input, Button } from 'antd'
+import { Input, Button, message } from 'antd'
+import {mapDispatchToProps} from './redux/tools'
+import {connect} from 'react-redux'
+import getNeo4j from './tools/neo4j'
 
 class Configure extends Component {
 
@@ -14,7 +17,7 @@ class Configure extends Component {
 
     update = (e) => {
         const { changed } = this.state
-        changed[e.target.name] = [e.target.value]
+        changed[e.target.name] = e.target.value
         this.setState({ changed: changed })
     }
 
@@ -22,8 +25,16 @@ class Configure extends Component {
         const { cookies } = this.props
         const { changed } = this.state
         for (let key in changed) {
-            console.log(key, changed[key])
             cookies.set(key, changed[key], { path: '/' });
+        }
+        try {
+            const neo = getNeo4j(cookies.get('endpoint'), cookies.get('username'), cookies.get('password'))
+            message.success('connected to the neo4j db')
+            this.props.updateNeo(neo.session, neo.driver)
+        }
+        catch (e) {
+          console.log('fail to connect neo4j', e)
+          message.error('failed to connect to the neo4j db')
         }
     }
 
@@ -33,7 +44,11 @@ class Configure extends Component {
                 {requiredCookies.map(c => {
                     return (
                         <div key={c.name} style={{margin: '30px'}}>
-                            <Input type={c.name === "password" ? "password" : "text"} name={c.name} style={{ maxWidth: "300px"}} placeholder={c.name} key={c.name} onChange={this.update} />
+                            <Input type={c.name === "password" ? "password" : "text"} name={c.name}
+                            style={{ maxWidth: "300px"}}
+                            placeholder={c.name}
+                            key={c.name}
+                            onChange={this.update} />
                         </div>
                     )
                 })}
@@ -45,4 +60,4 @@ class Configure extends Component {
     }
 }
 
-export default withCookies(Configure);
+export default connect(null, mapDispatchToProps)(withCookies(Configure));
