@@ -44,7 +44,7 @@ def build_environment_dataframe(origin, extent, res):
     df["longitude"] = np.repeat(np.linspace(xo+half_res, xe-half_res, num=x_size), y_size) # get longitude at center of pixel
     df["latitude"] = np.tile(np.linspace(yo-half_res, ye+half_res, num=x_size), y_size)
     
-    raster_files = select_rasters(dir_path)
+    raster_files = tools.select_rasters(dir_path)
     raster_files.sort()
     for file in raster_files:
         filename = tools.getname(file)
