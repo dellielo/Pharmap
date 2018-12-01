@@ -1,28 +1,36 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import AppBar from './layout/AppBar'
+import 'antd/dist/antd.css';
+import { Route, withRouter } from 'react-router-dom'
+import Configure from './Configure'
+import requiredCookies from './tools/requiredCookies'
+import { withCookies } from 'react-cookie'
+
+
+const About = (props) => {
+  return (
+    <div>
+      About
+    </div>
+  )
+}
 
 class App extends Component {
   render() {
+    const { cookies } = this.props;
+    if (requiredCookies.some(c => !cookies.get(c.name)) && this.props.location.pathname !== '/configure') {
+      this.props.history.push('/configure')
+    }
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+        <div >
+          <AppBar />
+          <Route path="/configure" component={Configure}/>
+          <Route path="/about" component={About} />
+          <Route path="/about" component={About} />
+        </div>
     );
   }
 }
 
-export default App;
+export default withRouter(withCookies(App));
