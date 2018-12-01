@@ -40,24 +40,24 @@ class dbDriver(object):
     
     
     def add_prop_to_mol(self, molecule, effect):
-        txt = '\
+        request  = '\
         MATCH (m:molecule) WHERE m.name="'+molecule+'"\
         MERGE (e:effect {name:"'+effect+'"})\
         MERGE (m)-[:haseffect]->(e)'
-        self.push_transaction(txt)
+        self.push_transaction(request )
         
     def add_mol_to_sp(self, molecule, sp, L):    
         print(molecule, sp, L)
-        txt = '\
+        request  = '\
         MATCH (sp) WHERE sp.name="'+sp+'"\
         MERGE (m:molecule {name:"'+molecule+'"})\
         MERGE (sp)-[:has {L:'+str(L)+'}]->(m)'
-        self.push_transaction(txt)
+        self.push_transaction(request )
 
     def db_addchild(self, parent_name, child_rank, child_name):
-        txt = ('MATCH (p) WHERE p.name="'+parent_name+'"'\
+        request  = ('MATCH (p) WHERE p.name="'+parent_name+'"'\
               'CREATE (c:'+child_rank+'{name:"'+child_name+'"})-[:parent]->(p)')
-        self.push_transaction(txt)
+        self.push_transaction(request )
 
     def load_locations(self, path):
         
@@ -71,14 +71,14 @@ class dbDriver(object):
             return 0
         '''
         
-        txt = '\
+        request  = '\
         USING PERIODIC COMMIT 250\
         LOAD CSV WITH HEADERS FROM "'+path+'" AS line\
         MATCH (s:species {name:line.name})\
         WHERE line.name IS NOT NULL AND line.longitude IS NOT NULL AND line.latitude IS NOT NULL AND line.depth IS NOT NULL\
         CREATE (l:location {longitude:toFloat(line.longitude), latitude:toFloat(line.latitude), depth:toFloat(line.depth)})\
         CREATE (l)<-[:at]-(s)'
-        self.push_transaction(txt)
+        self.push_transaction(request )
 
 
     def score(self, select):
@@ -120,17 +120,49 @@ class dbDriver(object):
         self.push_transaction(select+apply_score)
 
     def add_cat_to_prop(self, effect, prop):
-        txt = '\
+        request  = '\
         MERGE (e:effect {name:"'+effect+'"})\
         MERGE (p:property {name:"'+prop+'"})\
         MERGE (e)-[:haseffect]->(p)'
-        return txt
+        return request 
     
     def build_drug_prop_rel(self):
         for i in DRUGCLASS:
             for j in DRUGCLASS[i]:
-                txt = self.add_cat_to_prop(j, i)
-                self.push_transaction(txt)
+                request  = self.add_cat_to_prop(j, i)
+                self.push_transaction(request )
+
+    
+    def fetch_all_molecules(self):
+        request = "MATCH (m:molecule)\
+        RETURN collect(m.name)"
+
+        result = self.push_transaction(request)
+        molecules = result.single()[0]        
+        return molecules
+    
+    def fetch_mol_locations(self, molecule, proba):
+        request  = '\
+        MATCH (m:molecule)<-[r1:has]-()<-[:parent *..2]-()-[r2:at]->(loc:location) \
+        WHERE m.name="' +mol_name+ '"\
+        AND ( (NOT exists(r2.L) AND r1.L>' +str(proba)+ ') OR (exists(r2.L) AND r1.L*r2.L>' +str(proba)+')) \
+        RETURN collect([loc.longitude, loc.latitude])'
+        result = self.push_transaction(request )
+        locations = result.single()[0]
+        return locations
+    
+    def fetch_species_at_location(self, origin, extent):
+        xo, yo = origin
+        xe, ye = origin+extent
+        request  = '\
+        MATCH (loc:location)<-[:at]-(x) \
+        WHERE '+str(xo)+'<=loc.longitude<='+str(xe)+' AND '+str(yo)+'<=loc.latitude<='+str(ye)' \
+        WITH DISTINCT loc, collect(x.name) AS species \
+        RETURN collect([[loc.longitude, loc.latitude], species])'
+        result = self.push_transaction(request )
+        result = result.single()[0]
+        return result
+        
 
 
 def confirm(x):
