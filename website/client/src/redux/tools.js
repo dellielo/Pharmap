@@ -1,15 +1,13 @@
 const mapStateToProps = state => {
-    console.log(state)
     return {
-        neo: state,
+        ...state,
     }
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        updateNeo: (session, driver) => {
-            console.log('updating: ', session, driver)
-            dispatch({ type: "UPDATE", session, driver})
+        updateInfo: (data) => {
+            dispatch({ type: "UPDATE", username: data.username, password: data.password, endpoint: data.endpoint})
         }
     }
 }

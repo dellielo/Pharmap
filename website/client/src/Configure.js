@@ -1,18 +1,23 @@
 import React, { Component } from 'react';
-import requiredCookies from './tools/requiredCookies'
 import { withCookies } from 'react-cookie'
 import { Input, Button, message } from 'antd'
 import {mapDispatchToProps} from './redux/tools'
 import {connect} from 'react-redux'
-import getNeo4j from './tools/neo4j'
+
+const fields = ['endpoint', 'username',  'password']
 
 class Configure extends Component {
 
     constructor(props) {
         super(props)
+        const {cookies} = props
         this.state = {
-            changed: {}
+            changed: fields.reduce((d, f) => {
+                d[f] = cookies.get(f) || ""
+                return d
+            }, {})
         }
+        console.log(this.state.changed)
     }
 
     update = (e) => {
@@ -25,29 +30,25 @@ class Configure extends Component {
         const { cookies } = this.props
         const { changed } = this.state
         for (let key in changed) {
+            if (key === "password") continue;
             cookies.set(key, changed[key], { path: '/' });
         }
-        try {
-            const neo = getNeo4j(cookies.get('endpoint'), cookies.get('username'), cookies.get('password'))
-            message.success('connected to the neo4j db')
-            this.props.updateNeo(neo.session, neo.driver)
-        }
-        catch (e) {
-          console.log('fail to connect neo4j', e)
-          message.error('failed to connect to the neo4j db')
-        }
+        this.props.updateInfo(changed)
+        message.success('info updatated')
     }
 
     render() {
+
         return (
             <div style={{width: '100%', textAlign: "center"}}>
-                {requiredCookies.map(c => {
+                {fields.map(f => {
                     return (
-                        <div key={c.name} style={{margin: '30px'}}>
-                            <Input type={c.name === "password" ? "password" : "text"} name={c.name}
+                        <div key={f} style={{margin: '30px'}}>
+                            <Input type={f === "password" ? "password" : "text"} name={f}
                             style={{ maxWidth: "300px"}}
-                            placeholder={c.name}
-                            key={c.name}
+                            placeholder={f}
+                            value={console.log(this.state.changed[f]) || this.state.changed[f]}
+                            key={f}
                             onChange={this.update} />
                         </div>
                     )

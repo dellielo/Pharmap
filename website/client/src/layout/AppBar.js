@@ -19,12 +19,6 @@ class AppBar extends React.Component {
         }
     }
 
-    handleClick = (e) => {
-        //this.setState({
-        //    current: e.key,
-        //});
-    }
-
     render() {
         return (
             <Menu

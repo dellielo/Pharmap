@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
 import AppBar from './layout/AppBar'
 import 'antd/dist/antd.css';
-import { Route, withRouter } from 'react-router-dom'
+import { Route, withRouter, Switch } from 'react-router-dom'
 import Configure from './Configure'
-import requiredCookies from './tools/requiredCookies'
-import { withCookies } from 'react-cookie'
-import getNeo4j from './tools/neo4j'
+import { withCookies, Cookies } from 'react-cookie'
 import Molecules from './molecules/Molecules'
-import { message } from 'antd';
-import {mapStateToProps, mapDispatchToProps} from './redux/tools'
-import {connect} from 'react-redux'
+import { mapStateToProps, mapDispatchToProps } from './redux/tools'
+import { connect } from 'react-redux'
+import loaded from './tools/loaded'
+import Error404 from './Error404'
 
 const About = (props) => {
   return (
@@ -21,39 +20,31 @@ const About = (props) => {
 
 class App extends Component {
 
-  componentWillUnmount() {
-    if (this.props.neo.driver)
-        this.props.neo.driver.close()
-  }
-
   componentDidMount() {
-    const {cookies} = this.props
-    try {
-      const neo = getNeo4j(cookies.get('endpoint'), cookies.get('username'), cookies.get('password'))
-      message.success('connected to the neo4j db')
-      this.props.updateNeo(neo.session, neo.driver)
-    }
-    catch (e) {
-      console.log('fail to connect neo4j', e)
-      message.error('failed to connect to the neo4j db')
-      this.props.history.push('/configure')
-    }
+    const { cookies } = this.props
+    const info = ["password", "username", "endpoint"]
+    let knownInfo = {}
+    info.forEach(e => knownInfo[e] = cookies.get(e))
+    this.props.updateInfo(knownInfo)
   }
 
   render() {
-    const privateRoute = [
-      <Route path="/molecules" key={0} component={Molecules} />
+    const routes = [
+      { component: Molecules, url: '/molecules', needLoaded: true },
+      { component: Configure, url: '/configure', needLoaded: false },
+      { component: About, url: '/about', needLoaded: false },
     ]
-    const publicRoute = [
-      <Route path="/configure" key={1} component={Configure} />,
-      <Route path="/about" key={2} component={About} />
-    ]
-    console.log(this.props.neo)
+    const load = loaded(this.props)
     return (
       <div >
         <AppBar />
-        {this.props.neo.session && privateRoute}
-        {publicRoute}
+        <Switch>
+          {routes.map(e => {
+            if (!load && e.needLoaded) return "";
+            return <Route path={e.url} key={e.url} component={e.component} />
+          })}
+          <Route path={'*'} component={Error404} />
+        </Switch>
       </div>
     );
   }

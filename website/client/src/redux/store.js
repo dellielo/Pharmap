@@ -1,11 +1,15 @@
 import {createStore} from 'redux'
 
-const defaultstate = {session: null, driver: null}
+const defaultstate = {username: null, password: null, endpoint: null}
 
 export const neo4jReducer = (state = defaultstate, action) => {
     switch (action.type) {
         case "UPDATE":
-            return {session: action.session, driver: action.driver};
+            return {
+                username: action.username || state.username,
+                password: action.password || state.password,
+                endpoint: action.endpoint || state.endpoint
+            };
         case "RESET":
             return defaultstate;
         default:
