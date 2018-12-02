@@ -70,3 +70,14 @@ def getmeta(file):
     meta = glob(path+name+".csv.metadata") #There should be only one meta.
     return meta[0] if meta else None
 
+def divide_by_proc(n_row):
+    core_count = os.cpu_count()
+    
+    #We create a decreasing list of number from nb of core to 0
+    search_list = np.flipud(np.arange(core_count+1))
+    result = 0
+    for x in search_list:
+        if not n_row%x:
+            result = x
+            break
+    return result

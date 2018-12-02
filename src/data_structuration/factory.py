@@ -5,7 +5,7 @@ import pandas as pd
 import math
 import gdal
 import affine
-
+import multiprocessing
 
 '''
 CSV and df functions
@@ -22,6 +22,24 @@ def formatNoaaTab(tab):
 def formatCorailTab(tab):
     return tab.rename(columns={"ScientificName": 'species'})
 
+def apply_environment_values(df, dir_path):   
+    raster_files = tools.select_rasters(dir_path)
+    raster_files.sort()
+    for file in raster_files:
+        filename = tools.getname(file)
+        filemeta = tools.getmeta(file)
+        raster = multiband_raster(file, filemeta)
+        if filemeta: #if it has depth metadata, search at given depth
+            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.depth)), axis=1)
+        else: #if it is a monoband or without metadata, stick with first band
+            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude)), axis=1)
+    csv_files = tools.select_csv(dir_path)
+    for file in csv_files:
+        filename = tools.getname(file)
+        df = pd.read_csv(file)
+        df[filename] = df.apply(lambda row: compute_val((row.longitude, row.latitude, row.depth, df)), axis=1)
+    
+    return df
 
 def build_environment_dataframe(origin, extent, res, dir_path):
     '''
@@ -42,23 +60,17 @@ def build_environment_dataframe(origin, extent, res, dir_path):
     df["longitude"] = np.repeat(np.linspace(xo+half_res, xe-half_res, num=x_size), y_size) # get longitude at center of pixel
     df["latitude"] = np.tile(np.linspace(yo-half_res, ye+half_res, num=x_size), y_size)
     
-    raster_files = tools.select_rasters(dir_path)
-    raster_files.sort()
-    for file in raster_files:
-        filename = tools.getname(file)
-        filemeta = tools.getmeta(file)
-        raster = multiband_raster(file, filemeta)
-        if filemeta: #if it has depth metadata, search at given depth
-            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.depth)), axis=1)
-        else: #if it is a monoband or without metadata, stick with first band
-            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude)), axis=1)
-    csv_files = tools.select_csv(dir_path)
-    for file in csv_files:
-        filename = tools.getname(file)
-        df = pd.read_csv(file)
-        df[filename] = df.apply(lambda row: compute_val((row.longitude, row.latitude, row.depth, df)), axis=1)
-    return df
- 
+    number_of_proc = tools.divide_by_proc(len(df))
+    df_list = df_slices(df, number_of_proc)
+    pool = multiprocessing.Pool(number_of_proc)
+    total_tasks = number_of_proc
+    results = pool.map_async(work, df_list)
+    pool.close()
+    pool.join()
+    result_df = pd.concat(results.get())
+    
+    return result_df
+     
 def computeRow(row, dataTab):
     tab = cropData(dataTab, row['latitude'], row['longitude'], row['DepthInMeters'])
     if (not tab.empty):
@@ -304,4 +316,17 @@ def removeTrailingSpaces(s):
     while (s[-1] == ' '):
         s = s[:-1]
     return s
+
+def df_split(df, size):
+    df1, df2 = df.head(size), df.tail(len(df)-size) if len(df) > size else df, None
+    return df1, df2
+
+def df_slices(df, n):
+    
+    df_list = []
+    for i in range(loop):
+        head, df = split(df, chunk_size)
+        df_list.append(head) if not head.empty else None
+    return df_list
+
 
