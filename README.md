@@ -102,65 +102,45 @@ mydict.update(crawl(domain=urldomain, start=startingpoint, runlength=N, links=li
 
 ## Web app
 
-The web app is not rady yet, it's just a preview
+### Server
 
-###  Server
+We use ExpressJS
+It's just a dump server that execute query on neo4j db
 
-We use flask for our server and a sql database
+Command to install and start the server:
 
-Command to start the server:
 ```
-	cd website/server
-	python3 -m flask run
+cd website/server
+npm install
+npm start
 ```
-#### list species
-Route `/getSpecies`  
-Methode: `get`  
-query:
-```js
-	max: 300 // the max number of species returned (default return all)
-	offset: 100 // the offset in list (default 0)
-```
-These query are optional
 
-Retour:
+Route `/query`
+Methode: `post`
+body:
 ```js
 {
-    id: 13
-	//more incoming
+	query: "MATCH (m:molecule) RETURN collect(m.name)"
+    endpoint: "bolt://35.189.195.75"
+    username: "neo4j"
+    password: "neo4j"
 }
 ```
-#### Get predictions
+It return the result of your query
 
-Route `/species/{speciesId}/prediction`  
-Methode: `get`  
-query:
-```js
-    latitudeMax: 70
-    latitudeMin: 60
-    longitudeMin: 100
-    longitudeMax: 120
-    minPrediction: 0.7
-```
-These query are optional
-
-Retour:
-```js
-{
-	[
-		lattitue: 63,2
-		longitude: 112
-		prediction: 0.8 // probability that the species can be find at this localisation
-	],
-	...
-}
-```
 ### client
+
 We use ReactJS
 
-It is located in `website/client`
+Command to install and start the client:
+```
+cd website/client
+npm install
+npm start
+```
 
-installation `npm install`
+**Molecule Tab**
+On this tab you can get access of all molecules that we handle. By clicking on one of them you access to the details of this molecule and  a map that display the localisation of corals which contain this molecule
 
-Start client: `npm start`
-
+**Configure Tab**
+This is where you enter your credentials for the neo4j database
