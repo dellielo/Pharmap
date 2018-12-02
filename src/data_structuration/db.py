@@ -141,6 +141,20 @@ class dbDriver(object):
         molecules = result.single()[0]        
         return molecules
     
+    def fetch_molecules_info(self):
+        '''
+        Returns a list of list like this : [ [molecule, [[specie1, proba_of_presence], [specie2, proba_of_presence]...], [effect1, effect2, ...]], ... ]
+        '''
+        request = "MATCH (m:molecule)<-[r:has]-(x)\
+        OPTIONAL MATCH (e:effect)<-[:haseffect]-(m)\
+        WITH DISTINCT m, [x.name, r.L] as sp, e\
+        WITH DISTINCT m, collect(sp) as species, collect(e.name) as effects\
+        RETURN [m.name,species,effects]"
+
+        result = self.push_transaction(request)
+        molecules = result.single()[0]        
+        return molecules
+    
     def fetch_mol_locations(self, molecule, proba):
         request  = '\
         MATCH (m:molecule)<-[r1:has]-()<-[:parent *..2]-()-[r2:at]->(loc:location) \
