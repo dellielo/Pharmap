@@ -10,9 +10,16 @@ class dbDriver(object):
         self._driver.close()
 
     def push_transaction(self, message):
+    '''
+    For queries not requiring csv loading, use push_query for those
+    '''
         with self._driver.session() as session:
             result = session.write_transaction(self._run, message)
             return result
+
+    def push_query(self, message):
+        with self._driver.session() as session:
+            session.run(message)    
     
     def time_transaction(self, message):
         result = self.push_transaction(message)
@@ -59,7 +66,7 @@ class dbDriver(object):
               'CREATE (c:'+child_rank+'{name:"'+child_name+'"})-[:parent]->(p)')
         self.push_transaction(request )
 
-    def load_locations(self, path):
+    def load_species_locations(self, path):
         
         '''
         /!\ WIP : neo4j path and os path are different, need fix
@@ -78,8 +85,25 @@ class dbDriver(object):
         WHERE line.name IS NOT NULL AND line.longitude IS NOT NULL AND line.latitude IS NOT NULL AND line.depth IS NOT NULL\
         CREATE (l:location {longitude:toFloat(line.longitude), latitude:toFloat(line.latitude), depth:toFloat(line.depth)})\
         CREATE (l)<-[:at]-(s)'
-        self.push_transaction(request )
+        self.push_query(request )
 
+    def load_env_map(self, name, res, path):
+        create_map = '\
+        CREATE (m:map {name:"'+name+'")'
+        
+        create_constraint = 'CREATE CONSTRAINT ON (m:map) ASSERT m.name IS UNIQUE'
+        build_csv  = '\
+        LOAD CSV WITH HEADERS FROM "'+path+'" AS line\
+        WITH toFloat(line.latitude) as x, toFloat(line.longitude) as y, toFloat('+res+')/2.0 as r, line\
+        CREATE (pixloc:pixel_location)\
+        SET pixloc += line\
+        WITH x, y, r\
+        MATCH (loc:location), (m:map {name:"'+name+'"})\
+        WHERE x-r<loc.longitude<x+r AND y-r<loc.latitude<y+r\
+        CREATE (m)<-[:within]-(pixloc)<-[:at]-(loc)'        
+        self.push_transaction(create_map)
+        self.push_transaction(create_contraint)
+        self.push_query(build_csv)
 
     def score(self, select):
         test_score = '\
