@@ -152,8 +152,8 @@ class dbDriver(object):
         RETURN [m.name,species,effects]"
 
         result = self.push_transaction(request)
-        molecules = result.single()[0]        
-        return molecules
+        molecules_info = result.single()[0]        
+        return molecules_info
     
     def fetch_mol_locations(self, molecule, proba):
         request  = '\

@@ -4,6 +4,7 @@ from os.path import join
 import config
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 from glob import glob
 
 def simpleLoad(path, header=0, separator=','):

@@ -1,11 +1,13 @@
 import time
 import config
+import tools
 import numpy as np
 import pandas as pd
 import math
 import gdal
 import affine
 import multiprocessing
+from functools import partial
 
 '''
 CSV and df functions
@@ -28,17 +30,18 @@ def apply_environment_values(df, dir_path):
     for file in raster_files:
         filename = tools.getname(file)
         filemeta = tools.getmeta(file)
-        raster = multiband_raster(file, filemeta)
+        print(filename)
+        print(filemeta)
+        raster = multi_band_raster(file, filemeta)
         if filemeta: #if it has depth metadata, search at given depth
-            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.depth)), axis=1)
+            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.a_depth)), axis=1)
         else: #if it is a monoband or without metadata, stick with first band
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude)), axis=1)
     csv_files = tools.select_csv(dir_path)
     for file in csv_files:
         filename = tools.getname(file)
-        df = pd.read_csv(file)
-        df[filename] = df.apply(lambda row: compute_val((row.longitude, row.latitude, row.depth, df)), axis=1)
-    
+        df_csv = pd.read_csv(file)
+        df[filename] = df.apply(lambda row: compute_val(row.longitude, row.latitude, row.a_depth, df), axis=1)
     return df
 
 def build_environment_dataframe(origin, extent, res, dir_path):
@@ -62,13 +65,15 @@ def build_environment_dataframe(origin, extent, res, dir_path):
     
     number_of_proc = tools.divide_by_proc(len(df))
     df_list = df_slices(df, number_of_proc)
+    
     pool = multiprocessing.Pool(number_of_proc)
     total_tasks = number_of_proc
-    results = pool.map_async(lambda df: apply_environment_values(df, dir_path), df_list)
+    apply_values = partial(apply_environment_values, dir_path=dir_path)
+    results = pool.map_async(apply_values, df_list)
     pool.close()
     pool.join()
-    result_df = pd.concat(results.get())
-    
+    results = results.get()
+    result_df = pd.concat(results)
     return result_df
      
 def computeRow(row, dataTab):
@@ -212,7 +217,7 @@ def cropData(t, lat, lon, depth):
     return t
 
 def compute_val(longitude, latitude, depth, dataTab):
-    crop = cropData(t=dataTab, longitude=longitude, latitude=latitude, depth=depth)
+    crop = cropData(t=dataTab, lon=longitude, lat=latitude, depth=depth)
     value = meanNeightbor(crop, lon=longitude, lat=latitude, depth=depth)
     return value
 
@@ -251,11 +256,12 @@ class mono_band_raster():
 
 
 class multi_band_raster():
-    def __init__(self, path):
+    def __init__(self, path, metadata_path=None):
         self.rs = self.load_raster(path)
-        self.band_meta = self.load_meta(metadata_path)
+        self.band_meta = self.load_meta(metadata_path) if metadata_path else None
 
     def load_meta(self, path):
+        print(path)
         df = pd.read_csv(path)
         df = self.band_csv_to_value(df)
         return df
@@ -264,7 +270,7 @@ class multi_band_raster():
         rs = gdal.Open(path)
         return rs
 
-    def band_csv_to_value(df):
+    def band_csv_to_value(self, df):
         df.columns = ["band", "depth"]
         def get_band_number(x):
          return int(x[5:]) #Strips leading letters 
@@ -318,14 +324,18 @@ def removeTrailingSpaces(s):
     return s
 
 def df_split(df, size):
-    df1, df2 = df.head(size), df.tail(len(df)-size) if len(df) > size else df, None
+    print(len(df))
+    df1 = df.head(size) if len(df) > size else df
+    df2 = df.tail(len(df)-size) if len(df) > size else None
     return df1, df2
 
 def df_slices(df, n):
     
+    chunk_size = int(len(df)/n)
+    print(chunk_size, n)
     df_list = []
-    for i in range(loop):
-        head, df = split(df, chunk_size)
+    for i in range(n):
+        head, df = df_split(df, chunk_size)
         df_list.append(head) if not head.empty else None
     return df_list
 
