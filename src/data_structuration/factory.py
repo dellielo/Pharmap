@@ -28,20 +28,25 @@ def apply_environment_values(df, dir_path):
     raster_files = tools.select_rasters(dir_path)
     raster_files.sort()
     for file in raster_files:
+        print("Importing raster : " + file)
         filename = tools.getname(file)
         filemeta = tools.getmeta(file)
         print(filename)
         print(filemeta)
         raster = multi_band_raster(file, filemeta)
         if filemeta: #if it has depth metadata, search at given depth
-            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.a_depth)), axis=1)
+            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, abs(row.a_depth))), axis=1)
         else: #if it is a monoband or without metadata, stick with first band
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude)), axis=1)
     csv_files = tools.select_csv(dir_path)
     for file in csv_files:
+        print("Importing csv : " + file)
         filename = tools.getname(file)
-        df_csv = pd.read_csv(file)
-        df[filename] = df.apply(lambda row: compute_val(row.longitude, row.latitude, row.a_depth, df), axis=1)
+        df_csv = pd.read_csv(file, skiprows=1)
+        print(df_csv.head(5))
+        df_csv = formatNoaaTab(df_csv)
+        print(df_csv.head(5))
+        df[filename] = df.apply(lambda row: compute_val(row.longitude, row.latitude, abs(row.a_depth), df_csv), axis=1)
     return df
 
 def build_environment_dataframe(origin, extent, res, dir_path):
@@ -202,9 +207,9 @@ def cropData(t, lat, lon, depth):
         isinstance(x, int)
         and
             (
-                x < (depth + offset['depth'])
+                x <= (depth + offset['depth'])
                 and
-                x > (depth - offset['depth'])
+                x >= (depth - offset['depth'])
             )
         )
         or
@@ -219,6 +224,7 @@ def cropData(t, lat, lon, depth):
 def compute_val(longitude, latitude, depth, dataTab):
     crop = cropData(t=dataTab, lon=longitude, lat=latitude, depth=depth)
     value = meanNeightbor(crop, lon=longitude, lat=latitude, depth=depth)
+    print("lat:"+str(latitude)+", long:"+str(longitude)+", depth:"+str(depth)+" --> value :"+str(value))
     return value
 
 '''
@@ -261,7 +267,7 @@ class multi_band_raster():
         self.band_meta = self.load_meta(metadata_path) if metadata_path else None
 
     def load_meta(self, path):
-        print(path)
+        #print(path)
         df = pd.read_csv(path)
         df = self.band_csv_to_value(df)
         return df
@@ -283,7 +289,7 @@ class multi_band_raster():
     def calc_pixel_coord(self, geo_coord):
         """Return floating-point value that corresponds to given point."""
         x, y = geo_coord[0], geo_coord[1]
-        print(self.rs)
+        #print(self.rs)
         forward_transform = affine.Affine.from_gdal(*self.rs.GetGeoTransform())
         reverse_transform = ~forward_transform
         px, py = reverse_transform * (x, y)

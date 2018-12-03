@@ -17,5 +17,6 @@ if __name__ == "__main__":
     parser.add_argument('--output', '-o', help="Output as", type= str, default="~/output.csv")
     args=parser.parse_args()
     df = factory.build_environment_dataframe(origin=(args.xo, args.yo), extent=(args.ex, args.ey), res=args.res, dir_path=args.dir)
+    print(df)
     tools.save_out_csv(tab=df, dirname = tools.getpath(args.output), filename= os.path.basename(args.output))
     print("Successfully created environment csv")
