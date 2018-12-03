@@ -64,7 +64,7 @@ def build_environment_dataframe(origin, extent, res, dir_path):
     df_list = df_slices(df, number_of_proc)
     pool = multiprocessing.Pool(number_of_proc)
     total_tasks = number_of_proc
-    results = pool.map_async(work, df_list)
+    results = pool.map_async(lambda df: apply_environment_values(df, dir_path), df_list)
     pool.close()
     pool.join()
     result_df = pd.concat(results.get())
