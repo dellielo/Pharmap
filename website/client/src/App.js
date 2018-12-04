@@ -9,6 +9,7 @@ import { mapStateToProps, mapDispatchToProps } from './redux/tools'
 import { connect } from 'react-redux'
 import loaded from './tools/loaded'
 import Error404 from './Error404'
+import './App.css'
 
 const About = (props) => {
   return (
