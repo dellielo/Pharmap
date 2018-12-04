@@ -13,11 +13,9 @@ from functools import partial
 CSV and df functions
 '''
 def formatNoaaTab(tab):
-    print('formating')
     newTab = tab.rename(columns=removeTrailingSpaces)
     newTab = newTab.rename(columns={'#COMMA SEPARATED LATITUDE':'latitude', "LONGITUDE":'longitude', 'AND VALUES AT DEPTHS (M):0':'0'})
     newTab = newTab.rename(columns=toNumber)
-    print('done formating')
     return newTab
 
 
@@ -31,8 +29,7 @@ def apply_environment_values(df, dir_path):
         print("Importing raster : " + file)
         filename = tools.getname(file)
         filemeta = tools.getmeta(file)
-        print(filename)
-        print(filemeta)
+
         raster = multi_band_raster(file, filemeta)
         if filemeta: #if it has depth metadata, search at given depth
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, abs(row.a_depth))), axis=1)
@@ -43,9 +40,7 @@ def apply_environment_values(df, dir_path):
         print("Importing csv : " + file)
         filename = tools.getname(file)
         df_csv = pd.read_csv(file, skiprows=1)
-        print(df_csv.head(5))
         df_csv = formatNoaaTab(df_csv)
-        print(df_csv.head(5))
         df[filename] = df.apply(lambda row: compute_val(row.longitude, row.latitude, abs(row.a_depth), df_csv), axis=1)
     return df
 
@@ -139,8 +134,8 @@ def meanNeightbor(df, lat, lon, depth):
     allDist = getDist(df, lat, lon, depth)
     maxDist = allDist.max()
     weights = np.apply_along_axis(lambda x: maxDist / x, 0, allDist)
-
     values = []
+    weights[weights > 100000] = 100000 #We ceil huge values in case of divide by 0 or near-0 weight
     for index, row in df.iterrows():
         values.append(closestDepth(row, depth))
     values = np.array(values)
@@ -221,10 +216,9 @@ def cropData(t, lat, lon, depth):
     t = t.loc[:,nb]
     return t
 
-def compute_val(longitude, latitude, depth, dataTab):
+def compute_val(longitude, latitude, depth, dataTab, debug=False):
     crop = cropData(t=dataTab, lon=longitude, lat=latitude, depth=depth)
     value = meanNeightbor(crop, lon=longitude, lat=latitude, depth=depth)
-    print("lat:"+str(latitude)+", long:"+str(longitude)+", depth:"+str(depth)+" --> value :"+str(value))
     return value
 
 '''
@@ -338,7 +332,6 @@ def df_split(df, size):
 def df_slices(df, n):
     
     chunk_size = int(len(df)/n)
-    print(chunk_size, n)
     df_list = []
     for i in range(n):
         head, df = df_split(df, chunk_size)

@@ -25,6 +25,8 @@ affine = "*"
 gdal = "*"
 ete3 = "*"
 tensorflow-serving-api="*"
+"beautifulsoup4" = "*"
+"neo4j" = "*"
 
 [dev-packages]
 

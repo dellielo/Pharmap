@@ -8,6 +8,7 @@ import pickle
 from molregex import REG, DRUGCLASS
 from db import dbDriver
 from addTaxonomy import fetchID, fetchTaxonomy
+from bs4 import BeautifulSoup
 
 def fetchDict(page):
     article_titles = page.find_all("a", attrs={"class":u"title-link"})
