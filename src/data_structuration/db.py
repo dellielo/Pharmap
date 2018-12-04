@@ -194,7 +194,7 @@ class dbDriver(object):
         xe, ye = origin+extent
         request  = '\
         MATCH (loc:location)<-[:at]-(x) \
-        WHERE '+str(xo)+'<=loc.longitude<='+str(xe)+' AND '+str(yo)+'<=loc.latitude<='+str(ye)' \
+        WHERE '+str(xo)+'<=loc.longitude<='+str(xe)+' AND '+str(yo)+'<=loc.latitude<='+str(ye)+' \
         WITH DISTINCT loc, collect(x.name) AS species \
         RETURN collect([[loc.longitude, loc.latitude], species])'
         result = self.push_transaction(request )
