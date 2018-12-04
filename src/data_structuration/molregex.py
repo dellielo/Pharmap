@@ -143,8 +143,8 @@ DRUGCLASS ={
                                    "glutamate receptor agonist",
                                    "glutamate receptor antagonist",
                                    "neuroprotective",
-					               "TRPV1 receptor antagonist",
-					               "anesthetic", 
+			           "TRPV1 receptor antagonist",
+			           "anesthetic", 
                                    "analgesic",
                                    "pain inhibitor"]
 }
