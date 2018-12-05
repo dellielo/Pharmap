@@ -8,7 +8,7 @@ import gdal
 import affine
 import multiprocessing
 from functools import partial
-from raster import *
+import rasterTools 
 
 '''
 CSV and df functions
@@ -31,7 +31,7 @@ def apply_environment_values(df, dir_path):
         filename = tools.getname(file)
         filemeta = tools.getmeta(file)
 
-        raster = multi_band_raster(file, filemeta)
+        raster = rasterTools.multi_band_raster(file, filemeta)
         if filemeta: #if it has depth metadata, search at given depth
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, abs(row.a_depth))), axis=1)
         else: #if it is a monoband or without metadata, stick with first band

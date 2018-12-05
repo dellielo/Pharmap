@@ -1,5 +1,11 @@
+import time
+import pandas as pd
+import numpy as np
+import os
+import sys
 from neo4j import GraphDatabase
 from molregex import DRUGCLASS
+import rasterTool
 
 class dbDriver(object):
 
@@ -89,21 +95,57 @@ class dbDriver(object):
 
     def load_env_map(self, name, res, path):
         create_map = '\
-        CREATE (m:map {name:"'+name+'")'
+        MERGE (m:map {name:"'+name+'"})'
         
         create_constraint = 'CREATE CONSTRAINT ON (m:map) ASSERT m.name IS UNIQUE'
         build_csv  = '\
         LOAD CSV WITH HEADERS FROM "'+path+'" AS line\
-        WITH toFloat(line.latitude) as x, toFloat(line.longitude) as y, toFloat('+res+')/2.0 as r, line\
+        WITH toFloat(line.longitude) as x, toFloat(line.latitude) as y, toFloat('+str(res)+')/2.0 as r, line\
         CREATE (pixloc:pixel_location)\
         SET pixloc += line\
-        WITH x, y, r\
-        MATCH (loc:location), (m:map {name:"'+name+'"})\
-        WHERE x-r<loc.longitude<x+r AND y-r<loc.latitude<y+r\
-        CREATE (m)<-[:within]-(pixloc)<-[:at]-(loc)'        
+        WITH pixloc,x,y,r\
+        MATCH (m:map {name:"'+name+'"})\
+        CREATE (m)<-[:within]-(pixloc)\
+        WITH x, y, r, pixloc\
+        MATCH (loc:location)\
+        WHERE x-r<=loc.longitude<=x+r AND y-r<=loc.latitude<=y+r\
+        CREATE (pixloc)<-[:at]-(loc)'       
         self.push_transaction(create_map)
-        self.push_transaction(create_contraint)
+        self.push_transaction(create_constraint)
         self.push_query(build_csv)
+
+    def fetch_score_map(self, name):
+        request_pixel = '\
+        MATCH (m:map {name:"'+name+'"})-[:within]-(p:pixel_location) \
+        UNWIND keys(p) as key \
+        WITH DISTINCT p, m, key WHERE key contains "score" \
+                                OR key in ["px","py","latitude","longitude"]\
+        WITH DISTINCT p, m, collect([key, p[key]]) as props \
+        RETURN [m.res, collect(props)]'
+        
+        carte = self.push_transaction(request_pixel).single()[0]
+        name = carte[0]
+        origin = (carte[1], carte[2] )
+        extent = (carte[3], carte[4] )
+        resolution = carte[5]
+        pixels = carte[6:]
+        
+        df_map = pixels_to_df(pixels)
+        array_list = map_df_to_val_array_list(df, extent)
+        raster.array_to_raster(array_list, origin, extent, resolution)
+        return 1
+
+    def select_species_at_location(origin, extent):
+        xo, yo = origin
+        xe, ye = origin+extent
+        txt = '\
+        MATCH (loc:location)<-[:at]-(x) \
+        WHERE '+str(xo)+'<=loc.longitude<='+str(xe)+' AND '+str(yo)+'<=loc.latitude<='+str(ye)+' \
+        WITH DISTINCT loc, collect(x.name) AS species \
+        RETURN collect([[loc.longitude, loc.latitude], species])'
+        result = driver.push_transaction(txt)
+        result = result.single()[0]
+        return result
 
     def score(self, select):
         test_score = '\
@@ -201,6 +243,42 @@ class dbDriver(object):
         result = result.single()[0]
         return result
         
+
+def pixels_to_df(pixels)    
+    for pix in pixels:
+        for props in pix:
+            prop_a = np.array(props)
+            prop_a = np.rot90(prop_a, 3)
+            values = list(prop_a[1])
+            new_df= pd.DataFrame([values], columns=prop_a[0])
+                if not 'df' in locals():
+                    df = new_df
+                else:
+                    df = df.append(new_df)
+    return df
+    
+def get_score_columns(df):
+    L = []
+    for column in df.columns:
+        L.append(column) if "score" in column else None
+    return L
+
+
+def map_df_to_val_array_list(df, extent):
+    columns = get_score_columns(old_df)
+    ex,ey = extent
+    array_list = []
+        for c in columns:
+        print(c)
+        array = np.zeros([ex,ey])
+        for x, y in itertools.product(range(ex), range(ey)):
+            serie = old_df.loc[(old_df["py"]==str(y)) & (old_df["px"]==str(x)) & (old_df[c])][c]
+            try:
+                array[y][x]=float(serie)
+            except:
+                pass
+        array_list.append(array)
+    return array_list
 
 
 def confirm(x):
