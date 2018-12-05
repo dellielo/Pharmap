@@ -109,11 +109,33 @@ class dbDriver(object):
         WITH x, y, r, pixloc\
         MATCH (loc:location)\
         WHERE x-r<=loc.longitude<=x+r AND y-r<=loc.latitude<=y+r\
-        CREATE (pixloc)<-[:at]-(loc)'       
+        CREATE (pixloc)<-[:at]-(loc)'
+
+        
+        
         self.push_transaction(create_map)
         self.push_transaction(create_constraint)
         self.push_query(build_csv)
+        self.score_map()
 
+    def score_map(m):        
+        request = '\
+        MATCH (m:map {name:"'+name+'"})<-[:within]-(p:pixel_location)\
+        OPTIONAL MATCH (p)<-[:at]-(loc:location)\
+        OPTIONAL MATCH (loc)<-[:at]-(s:species)\
+        UNWIND keys(s) as key\
+        WITH s, \
+	         p,\
+             key WHERE key contains "score"\
+        WITH DISTINCT s, \
+		        	  key, \
+                      sum(s[key]) as score,\
+                      p\
+        WITH p, apoc.map.fromValues([key, score]) AS property\
+        SET p+= property'
+        
+        self.push_transaction(request)
+        
     def fetch_score_map(self, name):
         request_pixel = '\
         MATCH (m:map {name:"'+name+'"})-[:within]-(p:pixel_location) \
