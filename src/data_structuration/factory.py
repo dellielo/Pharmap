@@ -218,7 +218,10 @@ def cropData(t, lat, lon, depth):
 
 def compute_val(longitude, latitude, depth, dataTab, debug=False):
     crop = cropData(t=dataTab, lon=longitude, lat=latitude, depth=depth)
-    value = meanNeightbor(crop, lon=longitude, lat=latitude, depth=depth)
+    if not crop.empty:
+         value = meanNeightbor(crop, lon=longitude, lat=latitude, depth=depth)
+    else:
+         value = 0
     return value
 
 '''
