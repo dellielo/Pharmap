@@ -30,7 +30,6 @@ class Configure extends Component {
         const { cookies } = this.props
         const { changed } = this.state
         for (let key in changed) {
-            if (key === "password") continue;
             cookies.set(key, changed[key], { path: '/' });
         }
         this.props.updateInfo(changed)
