@@ -7,7 +7,7 @@ const axios = Axios.create({
 });
 
 async function query(queryString, props) {
-        if (!loaded(props)) throw('Not loaded')
+        if (!loaded(props)) throw(Error('Not loaded'))
         return (await axios.post('/query', { query: queryString,
             username: props.username,
             password: props.password,

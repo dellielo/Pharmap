@@ -1,3 +1,8 @@
+.leaflet-container {
+  height: 400px;
+  width: 100%;
+}
+
 .first-cap-span {
   display: inline-block;
 }
