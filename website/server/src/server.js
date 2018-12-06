@@ -51,6 +51,7 @@ app.post('/query', async (req, res) => {
         res.status(200).send(r.records)
         neo.driver.close()
     } catch(e) {
+        console.log(e)
         return res.status(e.status || 500).send({error: e})
     }
 })

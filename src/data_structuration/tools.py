@@ -4,6 +4,7 @@ from os.path import join
 import config
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 from glob import glob
 
 def simpleLoad(path, header=0, separator=','):
@@ -66,7 +67,6 @@ def getmeta(file):
     """
     name = getname(file)
     path = getpath(file)
-    print(path, name)
     meta = glob(path+name+".csv.metadata") #There should be only one meta.
     return meta[0] if meta else None
 

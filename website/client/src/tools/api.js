@@ -12,7 +12,7 @@ async function query(queryString, props) {
             username: props.username,
             password: props.password,
             endpoint: props.endpoint
-        })).data
+        }, {timeout: 30000})).data
 }
 
 export { query }

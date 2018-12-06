@@ -1,21 +1,22 @@
 import time
 import config
+import tools
 import numpy as np
 import pandas as pd
 import math
 import gdal
 import affine
 import multiprocessing
+from functools import partial
+import rasterTools 
 
 '''
 CSV and df functions
 '''
 def formatNoaaTab(tab):
-    print('formating')
     newTab = tab.rename(columns=removeTrailingSpaces)
     newTab = newTab.rename(columns={'#COMMA SEPARATED LATITUDE':'latitude', "LONGITUDE":'longitude', 'AND VALUES AT DEPTHS (M):0':'0'})
     newTab = newTab.rename(columns=toNumber)
-    print('done formating')
     return newTab
 
 
@@ -26,19 +27,22 @@ def apply_environment_values(df, dir_path):
     raster_files = tools.select_rasters(dir_path)
     raster_files.sort()
     for file in raster_files:
+        print("Importing raster : " + file)
         filename = tools.getname(file)
         filemeta = tools.getmeta(file)
-        raster = multiband_raster(file, filemeta)
+
+        raster = rasterTools.multi_band_raster(file, filemeta)
         if filemeta: #if it has depth metadata, search at given depth
-            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, row.depth)), axis=1)
+            df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude, abs(row.a_depth))), axis=1)
         else: #if it is a monoband or without metadata, stick with first band
             df[filename] = df.apply(lambda row: raster.get_coord_value((row.longitude, row.latitude)), axis=1)
     csv_files = tools.select_csv(dir_path)
     for file in csv_files:
+        print("Importing csv : " + file)
         filename = tools.getname(file)
-        df = pd.read_csv(file)
-        df[filename] = df.apply(lambda row: compute_val((row.longitude, row.latitude, row.depth, df)), axis=1)
-    
+        df_csv = pd.read_csv(file, skiprows=1)
+        df_csv = formatNoaaTab(df_csv)
+        df[filename] = df.apply(lambda row: compute_val(row.longitude, row.latitude, abs(row.a_depth), df_csv), axis=1)
     return df
 
 def build_environment_dataframe(origin, extent, res, dir_path):
@@ -62,13 +66,15 @@ def build_environment_dataframe(origin, extent, res, dir_path):
     
     number_of_proc = tools.divide_by_proc(len(df))
     df_list = df_slices(df, number_of_proc)
+    
     pool = multiprocessing.Pool(number_of_proc)
     total_tasks = number_of_proc
-    results = pool.map_async(lambda df: apply_environment_values(df, dir_path), df_list)
+    apply_values = partial(apply_environment_values, dir_path=dir_path)
+    results = pool.map_async(apply_values, df_list)
     pool.close()
     pool.join()
-    result_df = pd.concat(results.get())
-    
+    results = results.get()
+    result_df = pd.concat(results)
     return result_df
      
 def computeRow(row, dataTab):
@@ -129,8 +135,8 @@ def meanNeightbor(df, lat, lon, depth):
     allDist = getDist(df, lat, lon, depth)
     maxDist = allDist.max()
     weights = np.apply_along_axis(lambda x: maxDist / x, 0, allDist)
-
     values = []
+    weights[weights > 100000] = 100000 #We ceil huge values in case of divide by 0 or near-0 weight
     for index, row in df.iterrows():
         values.append(closestDepth(row, depth))
     values = np.array(values)
@@ -197,9 +203,9 @@ def cropData(t, lat, lon, depth):
         isinstance(x, int)
         and
             (
-                x < (depth + offset['depth'])
+                x <= (depth + offset['depth'])
                 and
-                x > (depth - offset['depth'])
+                x >= (depth - offset['depth'])
             )
         )
         or
@@ -211,94 +217,11 @@ def cropData(t, lat, lon, depth):
     t = t.loc[:,nb]
     return t
 
-def compute_val(longitude, latitude, depth, dataTab):
-    crop = cropData(t=dataTab, longitude=longitude, latitude=latitude, depth=depth)
+def compute_val(longitude, latitude, depth, dataTab, debug=False):
+    crop = cropData(t=dataTab, lon=longitude, lat=latitude, depth=depth)
     value = meanNeightbor(crop, lon=longitude, lat=latitude, depth=depth)
     return value
 
-'''
-RASTER functions
-'''
-
-class mono_band_raster():
-    '''
-    This class allows basic manipulation of single-band raster (geotiff or nc format)
-    It will NOT work with multiband, please use multiband class if you need to work with multiband raster
-    self.get_coord_value(geo_coord=(lat,lon)) returns value at given coordinate
-    '''
-    def __init__(self, path):
-        self.rs = gdal.Open(path)
-    def calc_pixel_coord(self, geo_coord):
-        """Return floating-point value that corresponds to given point."""
-        x, y = geo_coord[0], geo_coord[1]
-        print(self.rs)
-        forward_transform = affine.Affine.from_gdal(*self.rs.GetGeoTransform())
-        reverse_transform = ~forward_transform
-        px, py = reverse_transform * (x, y)
-        px, py = int(px + 0.5), int(py + 0.5)
-        return px, py
-    
-    def get_pixel_value(self, pixel_coord):
-        x, y = pixel_coord[0], pixel_coord[1]
-        val= float(self.rs.ReadAsArray(x,y,1,1))
-        return val
-    
-    def get_coord_value(self, geo_coord):
-        pixel_coord = self.calc_pixel_coord(geo_coord)
-        pixel_value = self.get_pixel_value(pixel_coord)
-        return pixel_value
-
-
-
-class multi_band_raster():
-    def __init__(self, path):
-        self.rs = self.load_raster(path)
-        self.band_meta = self.load_meta(metadata_path)
-
-    def load_meta(self, path):
-        df = pd.read_csv(path)
-        df = self.band_csv_to_value(df)
-        return df
-
-    def load_raster(self, path):
-        rs = gdal.Open(path)
-        return rs
-
-    def band_csv_to_value(df):
-        df.columns = ["band", "depth"]
-        def get_band_number(x):
-         return int(x[5:]) #Strips leading letters 
-        def get_depth_value(x):
-         return int(x[:-1]) #Strips trailing letter
-        df.band = df.band.apply(get_band_number)
-        df.depth = df.depth.apply(get_depth_value)
-        return df
-    
-    def calc_pixel_coord(self, geo_coord):
-        """Return floating-point value that corresponds to given point."""
-        x, y = geo_coord[0], geo_coord[1]
-        print(self.rs)
-        forward_transform = affine.Affine.from_gdal(*self.rs.GetGeoTransform())
-        reverse_transform = ~forward_transform
-        px, py = reverse_transform * (x, y)
-        px, py = int(px + 0.5), int(py + 0.5)
-        return px, py
-    
-    def get_pixel_value(self, pixel_coord, band_number):
-        x, y = pixel_coord[0], pixel_coord[1]
-        val= float(self.rs.GetRasterBand(band_number).ReadAsArray(x,y,1,1))
-        return val
-  
-    def get_coord_value(self, geo_coord):
-        '''
-        Geocoord must be 3 values in this order x,y,z with z the depth.
-        '''
-        band_depth = closestValue(self.band_meta.depth.values, geo_coord[2]) if len(geo_coord)==3 else None
-        band_number = int(self.band_meta.loc[self.band_meta.depth==band_depth].band.values) if band_depth else 1 #If we don't specify depth, we work at surface
-        
-        pixel_coord = self.calc_pixel_coord(geo_coord)
-        pixel_value = self.get_pixel_value(pixel_coord, band_number)
-        return pixel_value
 
     
 '''
@@ -318,14 +241,17 @@ def removeTrailingSpaces(s):
     return s
 
 def df_split(df, size):
-    df1, df2 = df.head(size), df.tail(len(df)-size) if len(df) > size else df, None
+    print(len(df))
+    df1 = df.head(size) if len(df) > size else df
+    df2 = df.tail(len(df)-size) if len(df) > size else None
     return df1, df2
 
 def df_slices(df, n):
     
+    chunk_size = int(len(df)/n)
     df_list = []
-    for i in range(loop):
-        head, df = split(df, chunk_size)
+    for i in range(n):
+        head, df = df_split(df, chunk_size)
         df_list.append(head) if not head.empty else None
     return df_list
 
