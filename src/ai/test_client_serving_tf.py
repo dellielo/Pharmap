@@ -16,7 +16,7 @@ import os
 import pprint
 
 # pip install tensorflow-serving-api
-# launch the following command: >> tensorflow_model_server --port=9000 --model_name=Pharmap --model_base_path=/data/bestModel/model1
+# launch the following command: >> tensorflow_model_server --port=9000 --model_name=pharmap_model1 --model_base_path=/data/bestModel/model1
 # and in other terminal: >> python src/ai/test_serving_tf.py 
 
 VERSION_MODEL = "1"
