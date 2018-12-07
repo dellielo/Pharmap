@@ -4,7 +4,7 @@ import { mapStateToProps } from '../redux/tools'
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet'
 import '../../node_modules/leaflet/dist/leaflet.css'
 
-const position = [51.505, -0.09]
+const position = [21.289373, -157.917480]
 
 
 class MapComponent extends Component {
