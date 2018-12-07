@@ -572,7 +572,3 @@ Virgularia presbytes
 Weberella bursa
 Xestospongia diprosopia
 Xestospongia edapha
-
-micro avg
-macro avg
-weighted avg

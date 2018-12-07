@@ -3,6 +3,7 @@ import os
 import pprint
 import sys
 import numpy as np
+import pandas as pd
 
 def json_to_array(file_path):
     with open(file_path) as f:
@@ -25,6 +26,9 @@ def nn_class_to_columns(file_path):
 
 def predict_to_csv(predict_path, class_path, out_path):
     array = json_to_array(predict_path)
-    col - nn_class_to_columns(class_path)
+    col = nn_class_to_columns(class_path)
     df = pd.DataFrame(array, columns=col)
     df.to_csv(out_path)
+
+if __name__=="__main__":
+    predict_to_csv("/home/idiot_cr0w/micro.json", "/home/idiot_cr0w/Pharmap/data/bestModel/model3/classes.txt", "test.csv")
