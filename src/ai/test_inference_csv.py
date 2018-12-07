@@ -23,6 +23,8 @@ def convert_csv_to_json(path_csv, scaler):
     data_json['input'] = []
     df = pd.read_csv(path_csv)
     df = df.dropna(subset=input_fields)
+    df["a_depth"]=df["a_depth"].apply(np.abs)
+    
     x = df.loc[:,input_fields].values
     name_json = "input.json"
     x_scaler = scaler.transform(x)
