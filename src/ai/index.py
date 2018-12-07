@@ -83,17 +83,17 @@ def process(data, args):
       
     else :
         #just train one config !
-        pass
-        # nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
-        # nn.train(x_train_data, y_train, epochs=args.epochs)
-        # best_model = nn.model
+        # pass
+        nn = neuralNetwork.NeuralNetwork(dm.nb_labels)
+        nn.train(x_train_data, y_train, epochs=args.epochs)
+        best_model = nn.model
 
         
         
     #if load_model 
-    best_model = util.load_model('model-2018-11-16_155757', 'data/bestModel/model2') 
-    # 2018-11-29_181913', 'data/bestModel/model3')
-    util.plot_model(best_model)
+    # best_model = util.load_model('model-2018-11-16_155757', 'data/bestModel/model2') 
+    # # 2018-11-29_181913', 'data/bestModel/model3')
+    # util.plot_model(best_model)
     
     # Run on test data !
     get_report_test_on_best_model(x_test, y_test, best_model, dm.idx2label, dm.scaler, info_run, has_saved_network=args.save_model)
