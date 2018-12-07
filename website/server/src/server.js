@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 })
 
 app.use(function (req, res, next) {
-    var allowedOrigins = ['http://localhost:3000'];
+    var allowedOrigins = ['http://localhost:3000', 'https://projet-hackathon-03.appspot.com'];
     var origin = req.headers.origin;
     if (allowedOrigins.indexOf(origin) > -1) {
         res.setHeader('Access-Control-Allow-Origin', origin);

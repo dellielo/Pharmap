@@ -2,7 +2,7 @@ import loaded from './loaded'
 
 const Axios = require('axios');
 const axios = Axios.create({
-    baseURL: 'http://localhost:8081',
+    baseURL: 'http://35.211.66.152:8081',
     timeout: 5000,
 });
 

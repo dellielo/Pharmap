@@ -28,13 +28,13 @@ python3 src/ai/index.py --help
 
 
 ```shell
-python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' -epochs 100  --do_standardization --filter_taxon_rank 'species' --min_sample_size 50
+python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' --epochs 100  --do_standardization --filter_taxon_rank 'species' --min_sample_size 50
 ```
 > Run one training  with the network config in conf.py with all classes have more 50 samples on 100 epochs
 
 
 ```shell
-python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' --do_standardization --filter_taxon_rank 'species' --run_multiple_config
+python3 src/ai/index.py  --file_input 'data/out/coraux_geov2.csv' --epochs 100 --do_standardization --filter_taxon_rank 'species' --run_multiple_config
 ```
 > Run the search of the optimal parameters (train multiple networks and compare the performances)
 
