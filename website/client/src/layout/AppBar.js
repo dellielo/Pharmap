@@ -28,7 +28,7 @@ class AppBar extends React.Component {
                 className="menu"
             >
                 <MenuItem>
-                    <img className="icon" src='/logo.png' />
+                    <img alt='pharmap' className="icon" src='/logo.png' />
                     <span className="title">
                         Pharmap
             </span>

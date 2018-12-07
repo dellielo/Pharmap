@@ -3,13 +3,14 @@ import AppBar from './layout/AppBar'
 import 'antd/dist/antd.css';
 import { Route, withRouter, Switch } from 'react-router-dom'
 import Configure from './Configure'
-import { withCookies, Cookies } from 'react-cookie'
+import { withCookies } from 'react-cookie'
 import Molecules from './molecules/Molecules'
 import { mapStateToProps, mapDispatchToProps } from './redux/tools'
 import { connect } from 'react-redux'
 import loaded from './tools/loaded'
 import Error404 from './Error404'
 import './App.css'
+import MapComponent from './map/Map';
 
 const About = (props) => {
   return (
@@ -33,6 +34,7 @@ class App extends Component {
     const routes = [
       { component: Molecules, url: '/molecules', needLoaded: true },
       { component: Configure, url: '/configure', needLoaded: false },
+      { component: MapComponent, url: '/map', needLoaded: false },
       { component: About, url: '/about', needLoaded: false },
     ]
     const load = loaded(this.props)

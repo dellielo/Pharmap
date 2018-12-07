@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { mapStateToProps } from '../redux/tools'
 import { query } from '../tools/api'
-import { message, List, Card } from 'antd'
+import { message, Card } from 'antd'
 import { Row, Col } from 'antd';
 import { Link } from 'react-router-dom'
 
-const defaultQuery = 'MATCH (m:molecule) RETURN collect(m.name)'
+//const defaultQuery = 'MATCH (m:molecule) RETURN collect(m.name)'
 
 const advencedQuery = "MATCH (m:molecule)<-[r:has]-(x) \
 OPTIONAL MATCH (e:effect)<-[:haseffect]-(m) \
@@ -74,7 +74,7 @@ class Molecules extends Component {
                         return (
                             <Col sm={24} md={12} lg={8} xl={6} style={{ padding: '20px' }}>
                                 <Card
-                                    extra={<Link to="/map">map</Link>}
+                                    extra={<Link to={`/map?molecule=${molecule.name}`}>map</Link>}
                                     title={
                                         <span className="first-cap first-cap-span" style={{ color: "#2D397F" }}>
                                             {molecule.name}
