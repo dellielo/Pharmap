@@ -76,12 +76,11 @@ def write_data(x, y, idx2label, dir_save = 'data/debug'):
     df[conf.outputField] = y
 
     if not os.path.exists(dir_save):
-        os.makedirs(dir_save)
-        
+        os.makedirs(dir_save)       
     df.to_csv(os.path.join(dir_save, "data_input_pd.csv"), sep='\t')
 
 
-def save_extra_info(idx2label, scaler, dir_saved):
+def _save_extra_info(idx2label, scaler, dir_saved):
     with open(os.path.join(dir_saved, "idx2label.txt"), 'w') as fic:
         idx2label = json.dump(idx2label, fic, indent=4)
     
@@ -95,6 +94,22 @@ def load_extra_info(dir_saved):
     return idx2label, scaler
 
 def save_model(model, info_run, idx2label, scaler, dir_save = 'data/model'):
+    """Save the model, config, results, and for tensorflow serving
+    
+    :param model: the model created by NeuralNetwork
+    :type model: keras model
+    :param info_run: dict with all result and config 
+    :type info_run: dict
+    :param idx2label: Link between the index and the labels 
+    :type idx2label: map or dict        
+    :param scaler: to normalize input data  
+    :type scaler: StandardScaler (scikit learn) 
+    :param dir_save: where all data will be save , defaults to 'data/model'
+    :param dir_save: str, optional
+    :return: the name of the folder 
+    :rtype: str
+    """
+
     name_date = 'model-{date:%Y-%m-%d_%H%M%S}'.format(date=datetime.datetime.now())
     if not os.path.exists(dir_save):
         os.makedirs(dir_save)
@@ -113,9 +128,12 @@ def save_model(model, info_run, idx2label, scaler, dir_save = 'data/model'):
     dir_saved_model = os.path.join(dir_save, name_version)
     # if not os.path.exists(dir_saved_model):
     #     os.makedirs(dir_saved_model)
-
+    # import evaluation
+    # outputs = evaluation.get_n_best_pred_for_one_item_tensor(model.output, 5, idx2label)
+    # outputs = tf.convert_to_tensor(outputs)
+    outputs = model.output
     signature = tf.saved_model.signature_def_utils.predict_signature_def(                                                                        
-    inputs={'input': model.input}, outputs={'scores': model.output})                                                                         
+    inputs={'input': model.input}, outputs={'scores': outputs})                                                                         
                                                                                                                                              
     builder = tf.saved_model.builder.SavedModelBuilder(dir_saved_model)                                                                    
     builder.add_meta_graph_and_variables(                                                                                                        
@@ -127,11 +145,21 @@ def save_model(model, info_run, idx2label, scaler, dir_save = 'data/model'):
         })                                                                                                                                       
     builder.save()
     
-    save_extra_info(idx2label, scaler, dir_saved_model)
+    _save_extra_info(idx2label, scaler, dir_saved_model)
     return name_date
 
 
 def load_model(name_model, dir_save = 'data/model'):
+    """Load the keras model 
+    
+    :param name_model: the name of the model (return by save_model)
+    :type name_model: str
+    :param dir_save: where all data will be save , defaults to 'data/model'
+    :param dir_save: str, optional
+    :return: the loaded model 
+    :rtype: keras.models
+    """
+
     # load YAML and create model 
     with open(os.path.join(dir_save, name_model+'.yaml'), 'r') as yaml_file:
         loaded_model_yaml = yaml_file.read()

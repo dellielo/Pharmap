@@ -34,7 +34,7 @@ def get_n_best_pred_for_one_item(probs, n, idx2label):
 
 def do_inference(hostport, dir_extra_info):
     idx2label, scaler = util.load_extra_info(dir_extra_info)
-    print(type(idx2label), idx2label['0'])
+    # print(type(idx2label), idx2label['0'])
     # channel = implementations.insecure_channel(hostport) 
     channel = grpc.insecure_channel(hostport)
     stub = prediction_service_pb2_grpc.PredictionServiceStub(channel)
@@ -49,7 +49,7 @@ def do_inference(hostport, dir_extra_info):
     inp_2 = [4.655654, 660, 2.946845, 0.520219, 34.254101, 42.145364] # Heteropolypus ritteri
     inp_3 = [4.208168562365363,	914, 3.2018021623, 0.5074285316, 34.414465499, 43.407423898496646] # Heteropolypus ritteri
     
-    inputs = [inp_1, inp_2, inp_3]
+    inputs = [inp_2, inp_1, inp_2, inp_3]
     inputs = scaler.transform(inputs) # the scaler must be the same as during the training !
     
     request.inputs['input'].CopyFrom(tf.make_tensor_proto(inputs, dtype=np.float32))
@@ -60,9 +60,15 @@ def do_inference(hostport, dir_extra_info):
 
 
     print(res_np.shape)
+    print(res_np)
     for n in range(0, res_np.shape[0]):
         print(" ****** ")
         pprint.pprint(get_n_best_pred_for_one_item(res_np[n,:], 5, idx2label))
+  
+    # for n in range(0, res_np.shape[:]):
+    #     print(" ****** ")
+    #     print(res_np[n])
+        # pprint.pprint(get_n_best_pred_for_one_item(res_np[n,:], 5, idx2label))
 
 
 def main():
